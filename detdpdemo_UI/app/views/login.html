@@ -1,0 +1,35 @@
+
+
+<div ng-controller="DemoCtrl" layout="column" ng-cloak="" class="inputdemoIcons" ng-app="detdpdemoApp">
+  <br>
+  <md-content layout-padding="" class="autoScroll">
+     <md-input-container class="md-icon-float md-block">
+       <!-- Use floating label instead of placeholder -->
+       <label>Name</label>
+       <md-icon md-svg-src="img/icons/ic_person_24px.svg" class="name"></md-icon>
+       <input ng-model="user.name" type="text">
+     </md-input-container>
+   </md-content>
+
+   <md-content layout-padding="" class="autoScroll">
+      <md-input-container class="md-icon-float md-block">
+        <!-- Use floating label instead of placeholder -->
+        <label>Password</label>
+        <md-icon md-svg-src="img/icons/ic_person_24px.svg" class="password"></md-icon>
+        <input ng-model="user.password" type="text">
+      </md-input-container>
+    </md-content>
+</div>
+
+
+<div ng-controller="LoginCtrl" class="buttondemoBasicUsage"  ng-cloak="" ng-app="detdpdemoApp">
+  <md-content>
+    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+      <md-button class="md-raised md-primary">Login Here!</md-button>
+    </section>
+  </md-content>
+</div>
+
+<div class="row marketing">
+
+</div>
