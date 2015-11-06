@@ -24,10 +24,4 @@ angular.module('detdpdemoApp')
 
   $scope.googleUrl = 'http://google.com';
 
-})
-.controller('DemoCtrl', function($scope) {
-    $scope.user = {
-      name: ,
-      password: ''
-    };
-  });
+});

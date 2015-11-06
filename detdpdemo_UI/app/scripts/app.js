@@ -10,7 +10,8 @@
  */
 angular
   .module('detdpdemoApp', [
-    'ngRoute'
+    'ngRoute',
+    'ngMaterial'
   ])
   .config(function ($routeProvider) {
     $routeProvider

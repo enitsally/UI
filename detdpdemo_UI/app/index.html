@@ -8,61 +8,36 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/main.css -->
-    <link rel="stylesheet" href="styles/login.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="detdpdemoApp">
+  <body ng-app="detdpdemoApp" layout="column">
     <!--[if lte IE 8]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
 
     <!-- Add your site or application content here -->
-    <div class="header">
-
-        <div class="container">
-          <div href="#/" layout-align="center center">
-            <h1>Det Data Process Demo</h1>
-          </div>
-        </div>
-
-        <div class="navbar navbar-default" role="navigation">
-          <div class="container">
-            <div class="collapse navbar-collapse" id="js-navbar-collapse">
-              <ul class="nav navbar-nav">
-                <li class="active"><a href="#/">Login</a></li>
-                <li><a ng-href="#/upload">Upload</a></li>
-                <li><a ng-href="#/retrieve">Retrieve</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-    </div>
-
-    <div class="container">
-    <div ng-view=""></div>
-    </div>
-
-    <div class="footer">
-      <div class="container">
-        <p><span class="glyphicon glyphicon-heart"></span> from the {MAP} team</p>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" aria-label="Settings">
+          <md-icon md-svg-icon="images/icon/menu.svg"></md-icon>
+        </md-button>
+        <h2>
+          <span>DET Data Processing Demo</span>
+        </h2>
+        <span flex></span>
+        <md-button class="md-icon-button" aria-label="More">
+          <md-icon md-svg-icon="images/icon/more_vert.svg"></md-icon>
+        </md-button>
       </div>
-    </div>
+    </md-toolbar>
 
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
-       !function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=l,A[l]=A[l]||function(){
-       (A[l].q=A[l].q||[]).push(arguments)},A[l].l=+new Date,a=n.createElement(g),
-       r=n.getElementsByTagName(g)[0],a.src=u,r.parentNode.insertBefore(a,r)
-       }(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-       ga('create', 'UA-XXXXX-X');
-       ga('send', 'pageview');
-    </script>
+<md-content flex>
+    <div ng-view=""></div>
+</md-content>
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
@@ -70,6 +45,9 @@
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.js"></script>
+    <script src="bower_components/angular-material/angular-material.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
