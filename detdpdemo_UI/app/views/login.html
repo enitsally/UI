@@ -1,20 +1,30 @@
-<md-content>
-<form>
-  <md-card>
-    <md-card-content layout="column" layout-align="center center">
-      <md-input-container>
-      <label>User name</label>
-      <input ng-model="user.name">
-    </md-input-container>
-    <md-input-container>
-      <label>Password</label>
-      <input ng-model="user.password">
-    </md-input-container>
-    </md-card-content>
+<md-content layout layout-align="center center">
+  <div flex="25"></div>
+  <form flex="50">
+    <md-card>
+      <md-card-content layout="column" layout-align="center center">
+        <md-input-container>
+          <label>User name</label>
+          <input ng-model="user.name">
+        </md-input-container>
+        <md-input-container>
+          <label>Password</label>
+          <input ng-model="user.password">
+        </md-input-container>
+      </md-card-content>
 
-    <div class="md-actions" layout="row" layout-align="center center">
-        <md-button>Login</md-button>
+      <div class="md-actions" layout="row" layout-align="center center">
+        <md-button ng-click="doLogin()">Login</md-button>
       </div>
-  </md-card>
-</form>
+    </md-card>
+  </form>
+
+  <div flex="25"></div>
+
+
 </md-content>
+{{loginResult}}
+<ul>
+  <li ng-repeat="file in data">
+    <div ng-repeat="f in file">{{f}}</div></li>
+</ul>
