@@ -28,25 +28,20 @@ def login():
     var_password = input_data['password']
     db = detdp()
     var_user_group = db.getlogin(var_username,var_password)
-    if  var_user_group is None:
-        status = "User login failed, Please try again."
-        # return render_template('index.html', error = statues)
+    if var_user_group is None:
+        status = None
     else:
         session['logged_in'] = True
-        flash('You were just logged in!')
-        status = "User login succeed,"
-        if var_user_group == 'R':
-            status = status + 'point to retrieve page'
-            # return render_template('views/retrieve.html', error = status)
-        else:
-            status = status + 'point to upload page'
-            # return render_template('views/upload.html', error = status)
+        status = var_user_group
+
+    print status
     return jsonify ({'status': status})
 
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
-    return redirect(url_for('index'))
+    status = "You are log out."
+    return jsonify ({'status': status})
 
 
 if __name__ == "__main__":

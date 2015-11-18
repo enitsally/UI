@@ -10,27 +10,28 @@
  */
 angular
   .module('detdpdemoApp', [
-    'ngRoute',
+    'ui.router',
     'ngMaterial'
-  ])
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
+  ]).config(function ($urlRouterProvider) {
+    $urlRouterProvider.otherwise('/login');
+  })
+  .config(function ($stateProvider) {
+    $stateProvider
+      .state('login', {
+        url: '/login',
         templateUrl: 'views/login.html',
         controller: 'LoginCtrl',
         controllerAs: 'login'
-      })
-      .when('/upload', {
+      }).state('upload', {
+        url: '/upload',
         templateUrl: 'views/upload.html',
         controller: 'UploadCtrl',
         controllerAs: 'upload'
       })
-      .when('/retrieve', {
+      .state('retrieve', {
+        url: '/retrieve',
         templateUrl: 'views/retrieve.html',
         controller: 'RetrieveCtrl',
         controllerAs: 'retrieve'
-      })
-      .otherwise({
-        redirectTo: '/'
       });
   });

@@ -17,7 +17,7 @@
 //   });
 
 angular.module('detdpdemoApp')
-  .controller('LoginCtrl', function ($scope, $http) {
+  .controller('LoginCtrl', function ($scope, $http,$state) {
     $scope.user = {
       username:'',
       password:''
@@ -27,12 +27,23 @@ angular.module('detdpdemoApp')
     $scope.googleUrl = 'http://google.com';
 
     $scope.doLogin = function (){
+
       $http.post('http://localhost:5000/login', $scope.user).then(function(response){
-        $scope.loginResult = response.data;
+        var loginResult = response.data.status;
+        if (loginResult == 'R')
+        {
+          $state.go('retrieve');
+        }
 
+        else if (loginResult  == 'U')
+        {
+          $state.go('upload');
+        }
+        else
+        {
+          $scope.message = "Login failed, please try again."
+        }
       },function(response){
-
       })
     }
-
   });
