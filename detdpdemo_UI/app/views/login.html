@@ -5,7 +5,7 @@
       <md-card-content layout="column" layout-align="center center">
         <md-input-container>
           <label>User name</label>
-          <input ng-model="user.name">
+          <input ng-model="user.username">
         </md-input-container>
         <md-input-container>
           <label>Password</label>
@@ -17,14 +17,19 @@
         <md-button ng-click="doLogin()">Login</md-button>
       </div>
     </md-card>
+      <p class="error"><strong> {{loginResult.status}}</strong> {{error}}</p>
+      <!-- <p ng-repeat = "f in get_flashed_messages()"><strong> {{f}}</strong> {{error}}</p> -->
+
+      {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+      <div class="row">
+        <div class="alert alert-info" role="alert">{{ message }}</div>
+      </div>
+            {% endfor %}
+          {% endif %}
+      {% endwith %}
+      
   </form>
-
   <div flex="25"></div>
-
-
 </md-content>
-{{loginResult}}
-<ul>
-  <li ng-repeat="file in data">
-    <div ng-repeat="f in file">{{f}}</div></li>
-</ul>
