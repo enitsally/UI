@@ -8,21 +8,15 @@
  * Controller of the detdpdemoApp
  */
 angular.module('detdpdemoApp')
-  .controller('UploadOverviewCtrl', function ($scope, $http) {
-    $scope.file = {
-      read_only:'',
-      upload_date:'',
-      upload_user:'',
-      doe_name:'',
-      doe_descr: '',
-      record_mode:'',
-      program:'',
-      file_size:''
-    };
+  .controller('UploadOverviewCtrl', function ($scope, $http, $mdDialog, items) {
+    $scope.file = items;
 
-  $http.get('http://localhost:5000/get$upload$overview').then (function(response){
+    $http.get('http://localhost:5000/get$upload$overview').then (function (response) {
       $scope.uploadinfo = response.data.status;
-  }, function(response){
-  });
+    }, function (response) {
+    });
 
-});
+    $scope.cancel = function () {
+      $mdDialog.cancel();
+    };
+  });

@@ -56,7 +56,7 @@ class detdp:
         for row in conf_info.find():
             conf_list.append(row.get('_id'))
 
-        data_info = self.db.data_file.find({}, projection={'doe_name': True, 'doe_descr': True, 'Comment': True,
+        data_info = self.db.data_file.find({}, projection={'doe_name': True, 'doe_descr': True, 'comment': True,
                                                            'upload_date': True, 'upload_user': True, 'file_size': True,
                                                            '_id': False})
         data_list = []

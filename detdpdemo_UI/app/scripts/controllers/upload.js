@@ -43,17 +43,32 @@ angular.module('detdpdemoApp')
        $http.get('http://localhost:5000/get$overview').then(function(response){
          var loginResult = response.data.status;
        },function(response){
-       })
-     }
+       });
+     };
+
+  $scope.doUplSearch= function (ev){
+      $mdDialog.show({
+        templateUrl: 'views/upload_overview.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose:true,
+        controller: 'UploadOverviewCtrl',
+        locals: {items: $scope.file}
+      })
+      .then(function() {
+      }, function() {
+      });
+    };
   $scope.showAdvanced = function(ev) {
        $mdDialog.show({
          templateUrl: 'views/upload_overview.html',
          parent: angular.element(document.body),
          targetEvent: ev,
          clickOutsideToClose:true,
-         controller: 'UploadOverviewCtrl'
+         controller: 'UploadOverviewCtrl',
+         locals: {items: $scope.file}
        })
-       .then(function(answer) {
+       .then(function() {
        }, function() {
        });
      };

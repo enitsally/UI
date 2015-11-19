@@ -17,7 +17,7 @@
            </md-select>
           </md-input-container>
         </div>
-        <div><p ng-if="file.doe_program" || "file.doe_record_mode">You selected a "{{file.doe_record_mode}}" record mode with program "{{file.doe_program}}".</p></div>
+        <div><p ng-if="file.doe_program || file.doe_record_mode">You selected a "{{file.doe_record_mode}}" record mode with program "{{file.doe_program}}".</p></div>
         <br>
         <div layout = "row">
           <md-radio-group ng-model="doe_read_only">
@@ -62,6 +62,7 @@
       </md-card-content>
       <div class="md-actions" layout="row" layout-align="center center">
           <md-button class="md-primary md-raised" ng-click="doUpload()"><strong>Upload</strong></md-button>
+          <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
           <span flex></span>
           <md-button ng-click="showAdvanced($event)">Get Overview</md-button>
       </div>
