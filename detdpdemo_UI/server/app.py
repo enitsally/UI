@@ -27,7 +27,7 @@ def login():
     var_username = input_data['username']
     var_password = input_data['password']
     db = detdp()
-    var_user_group = db.getlogin(var_username,var_password)
+    var_user_group = db.get_login(var_username,var_password)
     if var_user_group is None:
         status = None
     else:
@@ -43,7 +43,24 @@ def logout():
     status = "You are log out."
     return jsonify ({'status': status})
 
+@app.route('/get$record$mode')
+def get_record_mode():
+    db = detdp()
+    status = db.get_record_mode()
+    return jsonify ({'status': status})
 
+@app.route('/get$program')
+def get_program():
+    db = detdp()
+    status = db.get_program()
+    return jsonify ({'status': status})
+
+@app.route('/get$upload$overview')
+def get_upload_overview():
+    db=detdp()
+    status = db.get_upload_overview()
+    return jsonify ({'status': status})
+    
 if __name__ == "__main__":
 
     app.run(debug=True)

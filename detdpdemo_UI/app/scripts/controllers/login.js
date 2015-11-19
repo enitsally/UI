@@ -23,9 +23,6 @@ angular.module('detdpdemoApp')
       password:''
     };
 
-
-    $scope.googleUrl = 'http://google.com';
-
     $scope.doLogin = function (){
 
       $http.post('http://localhost:5000/login', $scope.user).then(function(response){
