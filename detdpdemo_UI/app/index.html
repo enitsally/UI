@@ -8,14 +8,14 @@
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
   <!-- build:css(.) styles/vendor.css -->
   <!-- bower:css -->
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
-  <link rel="stylesheet" href="bower_components/angular-material/angular-material.css"/>
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <link rel="stylesheet" href="bower_components/angular-material/angular-material.css" />
   <!-- endbower -->
   <!-- endbuild -->
   <!-- build:css(.tmp) styles/main.css -->
   <!-- endbuild -->
 </head>
-<body ng-app="detdpdemoApp" layout="column">
+<body ng-app="detdpdemoApp" ng-controller="ApplicationController" layout="column">
 <!--[if lte IE 8]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
@@ -23,7 +23,7 @@
 
 <!-- Add your site or application content here -->
 <md-toolbar>
-  <div class="md-toolbar-tools">
+  <div class="md-toolbar-tools" layout="row">
     <md-button class="md-icon-button" aria-label="Settings">
       <md-icon md-svg-icon="images/icon/menu.svg"></md-icon>
     </md-button>
@@ -31,6 +31,15 @@
       <span>DET Data Processing Demo</span>
     </h2>
     <span flex></span>
+
+    <div layout="column">
+      <div ng-if="currentUser">Welcome, {{ currentUser.id }}</div>
+      <div ng-switch on="currentUser.role">
+        <div ng-switch-when="userRoles.admin">You're admin.</div>
+        <div ng-switch-default></div>
+      </div>
+    </div>
+
     <md-button class="md-icon-button" aria-label="More">
       <md-icon md-svg-icon="images/icon/more_vert.svg"></md-icon>
     </md-button>
@@ -50,6 +59,7 @@
 <script src="bower_components/angular-aria/angular-aria.js"></script>
 <script src="bower_components/angular-material/angular-material.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
 <!-- endbower -->
 <!-- endbuild -->
 
@@ -60,5 +70,6 @@
 <script src="scripts/controllers/upload.js"></script>
 <script src="scripts/controllers/retrieve.js"></script>
 <!-- endbuild -->
+<div login-dialog ng-if="!isLoginPage"></div>
 </body>
 </html>

@@ -5,16 +5,16 @@
       <md-card-content layout="column" layout-align="center center">
         <md-input-container>
           <label>User name</label>
-          <input ng-model="user.username">
+          <input ng-model="credentials.username">
         </md-input-container>
         <md-input-container>
           <label>Password</label>
-          <input ng-model="user.password">
+          <input ng-model="credentials.password">
         </md-input-container>
       </md-card-content>
 
       <div class="md-actions" layout="row" layout-align="center center">
-        <md-button ng-click="doLogin()">Login</md-button>
+        <md-button ng-click="doLogin(credentials)">Login</md-button>
       </div>
     </md-card>
       <p class="error"><strong> {{message}}</strong> {{error}}</p>

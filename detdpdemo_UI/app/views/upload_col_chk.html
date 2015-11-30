@@ -1,0 +1,144 @@
+<md-dialog aria-label="List dialog">
+   <md-dialog-content>
+       <md-tabs md-dynamic-height md-border-bottom>
+           <md-tab label="Data File Analysis">
+             <div layout="row" flex>
+                 <md-card flex="50">
+                     <p><strong>New Data File Columns</strong></p>
+                     <md-card-content ng-hide="items.new_data.length">
+                         <p>No new columns from data file that beyond existing columns in database</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.new_data.length">
+                         <table class="table table-hover">
+                             <tr>
+                                 <th>New Column Name</th>
+                             </tr>
+                             <tr ng-repeat="item in items.new_data">
+                                 <td>{{item}}</td>
+                             </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+                 <md-card flex="50">
+                     <p><strong>Duplicated Data File Columns</strong></p>
+                     <md-card-content ng-hide="items.dup_data.length">
+                         <p>No duplicated columns from data file</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.dup_data.length">
+                         <table class="table table-hover">
+                             <tr>
+                                 <th>Duplicated Column Name</th>
+                             </tr>
+                             <tr ng-repeat="item in items.dup_data">
+                                 <td>{{item}}</td>
+                             </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+               </div>
+             <div layout="column" flex>
+                 <md-card>
+                     <p><strong>New Data Columns Comparison Ratio</strong></p>
+                     <md-card-content ng-hide="items.new_data_ratio.length">
+                         <p>No new columns from data file that beyond existing columns in database</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.new_data_ratio.length">
+                          <table class="table table-hover">
+                               <tr>
+                                   <th>New Cols Name</th>
+                                   <th>Existing Cols Name</th>
+                                   <th>Comp Ratio</th>
+                                 </tr>
+                               <tr ng-repeat="item in items.new_data_ratio">
+                                   <td>{{item[0]}}</td>
+                                   <td>{{item[1]}}</td>
+                                   <td>{{item[2]}}</td>
+                                 </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+               </div>
+             </md-tab>
+           <md-tab label="Conf File Analysis">
+               <div layout="row" flex>
+                 <md-card flex="50">
+                     <p><strong>New Conf. File Columns</strong></p>
+                     <md-card-content ng-hide="items.new_conf.length">
+                         <p>No new columns from conf. file that beyond existing columns in database</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.new_conf.length">
+                         <table class="table table-hover">
+                             <tr>
+                                 <th>New Column Name</th>
+                               </tr>
+                             <tr ng-repeat="item in items.new_conf">
+                                 <td>{{item}}</td>
+                               </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+                 <md-card flex="50">
+                     <p><strong>Duplicated Conf. File Columns</strong></p>
+                     <md-card-content ng-hide="items.dup_conf.length">
+                         <p>No duplicated columns from conf. file</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.dup_conf.length">
+                         <table class="table table-hover">
+                             <tr>
+                                 <th>Duplicated Column Name</th>
+                               </tr>
+                             <tr ng-repeat="item in items.dup_conf">
+                                 <td>{{item}}</td>
+                               </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+               </div>
+             <div layout="column" flex>
+                 <md-card>
+                     <p><strong>New Conf.Columns Comparison Ratio</strong></p>
+                     <md-card-content ng-hide="items.new_conf_ratio.length">
+                         <p>No new columns from conf. file that beyond existing columns in database</p>
+                       </md-card-content>
+                     <md-card-content ng-hide="!items.new_conf_ratio.length">
+                          <table class="table table-hover">
+                               <tr>
+                                   <th>New Cols Name</th>
+                                   <th>Existing Cols Name</th>
+                                   <th>Comp Ratio</th>
+                                 </tr>
+                               <tr ng-repeat="item in items.new_conf_ratio">
+                                   <td>{{item[0]}}</td>
+                                   <td>{{item[1]}}</td>
+                                   <td>{{item[2]}}</td>
+                                 </tr>
+                           </table>
+                       </md-card-content>
+                   </md-card>
+               </div>
+             </md-tab>
+         </md-tabs>
+      </md-dialog-content>
+    <md-dialog-actions>
+      <div layout="column" flex>
+        <div layout="row" flex>
+          <p ng-show="items.dup_data.length || items.dup_data.length" ng-style="{color:'red'}">The uploaded data or conf file have duplicated columns, uploading is denied.</p>
+        </div>
+        <div layout="row" flex>
+          <md-button class="md-primary md-raised" ng-show="items.dup_data.length && items.dup_data.length" ng-click="closeDialog()">
+            Please Fix it
+          </md-button>
+          <md-button class="md-primary md-raised" ng-hide="items.dup_data.length && items.dup_data.length" ng-click="doUpload()">
+            CONFIRM
+          </md-button>
+          <md-button class="md-primary md-raised" ng-hide="items.dup_data.length && items.dup_data.length" ng-click="doDelTemp()">
+            CANCEL
+          </md-button>
+          <span flex></span>
+          <md-button ng-click="closeDialog()" class="md-primary">
+                Close Dialog
+          </md-button>
+        </div>
+      </div>
+    </md-dialog-actions>
+  </md-dialog>
