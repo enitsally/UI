@@ -3,56 +3,80 @@
   <form flex="50">
     <md-card>
       <md-card-content layout="column" layout-align="center left">
-        <div layout="row" layout-align = "center, center">
+        <div layout="row" layout-align="center, center">
           <md-input-container>
-             <label>Record Mode</label>
-             <md-select ng-model="file.doe_record_mode">
-               <md-option ng-repeat="mode in recordmode_list" value="{{mode}}" >{{mode}}</md-option>
-             </md-select>
+            <label>Record Mode</label>
+            <md-select ng-model="file.doe_record_mode">
+              <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
+            </md-select>
           </md-input-container>
           <md-input-container>
-           <label>Program</label>
-           <md-select ng-model="file.doe_program">
-               <md-option ng-repeat = "f in program_list | filter: {record_mode: file.doe_record_mode }"  value = "{{f.program}}">{{f.program}}</md-option>
-           </md-select>
+            <label>Program</label>
+            <md-select ng-model="file.doe_program">
+              <md-option ng-repeat="f in program_list | filter: {record_mode: file.doe_record_mode }"
+                         value="{{f.program}}">{{f.program}}
+              </md-option>
+            </md-select>
           </md-input-container>
         </div>
-        <div><p ng-if="file.doe_program || file.doe_record_mode">You selected a "{{file.doe_record_mode}}" record mode with program "{{file.doe_program}}".</p></div>
+        <div><p ng-if="file.doe_program || file.doe_record_mode">You selected a "{{file.doe_record_mode}}" record mode
+          with program "{{file.doe_program}}".</p></div>
         <br>
-        <div layout = "row">
-          <md-radio-group ng-model="doe_read_only">
+
+        <div layout="row">
+          <md-radio-group ng-model="file.doe_read_only">
             <md-radio-button value="Y">Read Only</md-radio-button>
-            <md-radio-button value="N"> Full Device </md-radio-button>
+            <md-radio-button value="N"> Full Device</md-radio-button>
           </md-radio-group>
         </div>
         <br>
 
-        <div layout = "column" layout-align = "center, center">
+        <div layout="column" layout-align="center, center">
+          <md-input-container class="md-icon-float md-block">
+            <md-icon md-svg-src="images/icon/folder.svg" class="DataFile"></md-icon>
+            <label>Select a Data File </label>
+            <br>
+            <input nv-file-select uploader="uploader" type="file" name="dFile" ng-model="file.data_input"
+                   options="{url:'http://localhost:5000/upload$d', alias:'data'}">
+          </md-input-container>
 
-            <md-input-container class="md-icon-float md-block">
-              <md-icon md-svg-src="images/icon/folder.svg" class="DataFile"></md-icon>
-              <label>Select a Data File </label>
-              <br>
-              <input ng-model="file.data_file" type="file">
-            </md-input-container>
-
-            <md-input-container class="md-icon-float md-block">
-              <md-icon md-svg-src="images/icon/folder.svg" class="ConfFile"></md-icon>
-              <label>Select a Conf. File</label>
-              <br>
-              <input ng-model="file.conf_file" type="file">
-            </md-input-container>
+          <md-input-container class="md-icon-float md-block">
+            <md-icon md-svg-src="images/icon/folder.svg" class="ConfFile"></md-icon>
+            <label>Select a Conf. File</label>
+            <br>
+            <input nv-file-select uploader="uploader" type="file" name="cFile" ng-model="file.conf_input"
+                   options="{url:'http://localhost:5000/upload$c', alias:'conf'}">
+          </md-input-container>
         </div>
-
+        <table class="table">
+          <thead>
+          <tr>
+            <th width="50%">Name</th>
+            <th ng-show="uploader.isHTML5">Size</th>
+            <th ng-show="uploader.isHTML5">Progress</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="item in uploader.queue">
+            <td><strong>{{ item.file.name }}</strong></td>
+            <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+            <td ng-show="uploader.isHTML5">
+              <div class="progress" style="margin-bottom: 0;">
+                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
         <br>
         <md-input-container>
           <label>DOE File Name</label>
-          <input ng-model="file.doe_name" >
+          <input ng-model="file.doe_name">
         </md-input-container>
 
         <md-input-container>
           <label>DOE File Description</label>
-          <input ng-model="file.doe_descr" >
+          <input ng-model="file.doe_descr">
         </md-input-container>
 
         <md-input-container>
@@ -61,10 +85,12 @@
         </md-input-container>
       </md-card-content>
       <div class="md-actions" layout="row" layout-align="center center">
-          <md-button class="md-primary md-raised" ng-click="doUpload()"><strong>Upload</strong></md-button>
-          <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
-          <span flex></span>
-          <md-button ng-click="showAdvanced($event)">Get Overview</md-button>
+        <md-button class="md-primary md-raised" ng-click="uploader.uploadAll()"><strong>Upload</strong></md-button>
+        <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
+        <span flex></span>
+        <md-button ng-click="doClearAll()">Clear All</md-button>
+        <span flex></span>
+        <md-button ng-click="showAdvanced($event)">Get Overview</md-button>
       </div>
     </md-card>
   </form>
