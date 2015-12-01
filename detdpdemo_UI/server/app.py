@@ -21,12 +21,6 @@ def allowed_file(filename):
   result = '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
   return result
 
-
-@app.route("/hello")
-def hello():
-  return 'hello'
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   input_data = json.loads(request.data)
@@ -84,16 +78,20 @@ def get_upload_overview():
   status = db.get_upload_overview()
   return jsonify({'status': status})
 
+@app.route('/get$exist$chk', methods=['GET', 'POST'])
+def get_exist_chk():
+    db = detdp()
+    input_data = json.loads(request.data)
+    print input_data
+    doe_name = input_data['doe_name']
+    program = input_data['doe_program']
+    record_mode = input_data['doe_record_mode']
+    read_only = input_data['doe_read_only']
+    result = db.get_exist_chk(program, record_mode,read_only,doe_name)
+    return jsonify({'status': result})
 
 @app.route('/upload$d', methods=['GET', 'POST'])
 def get_chk_data():
-  # input_data = json.loads(request.data)
-  # var_doe_name = input_data['doe_name']
-  # var_doe_descr = input_data['doe_descr']
-  # var_doe_comment = input_data['doe_comment']
-  # var_doe_program = input_data['doe_program']
-  # var_doe_record_mode = input_data['doe_record_mode']
-  # var_doe_read_only = input_data['doe_read_only']
 
   if request.method == 'POST':
     db = detdp()
@@ -107,13 +105,6 @@ def get_chk_data():
 
 @app.route('/upload$c', methods=['GET', 'POST'])
 def get_chk_conf():
-  # input_data = json.loads(request.data)
-  # var_doe_name = input_data['doe_name']
-  # var_doe_descr = input_data['doe_descr']
-  # var_doe_comment = input_data['doe_comment']
-  # var_doe_program = input_data['doe_program']
-  # var_doe_record_mode = input_data['doe_record_mode']
-  # var_doe_read_only = input_data['doe_read_only']
 
   if request.method == 'POST':
     db = detdp()
@@ -126,6 +117,7 @@ def get_chk_conf():
 
 @app.route('/get$upload', methods=['GET', 'POST'])
 def get_upload():
+  print 'Good here'
   db = detdp()
   var_input = json.loads(request.data)
   print var_input
@@ -139,10 +131,20 @@ def get_upload():
   data_file = var_input['data_file']
   conf_file = var_input['conf_file']
   flag = var_input['flag']
-
-  result = db.upload_data_files(doe_program,doe_record_mode,doe_read_only,data_file,conf_file,doe_name,doe_descr,doe_comment,flag)
+  result = db.upload_data_files(doe_program,doe_record_mode,doe_read_only,data_file,conf_file,doe_name,doe_descr,doe_comment,upload_user,flag)
   print result
   return jsonify({'status': result})
+
+@app.route('/get$del$temp', methods=['GET', 'POST'])
+def get_delete_temp():
+    db = detdp()
+    var_input = json.loads(request.data)
+    data_file = var_input['data_file']
+    conf_file = var_input['conf_file']
+    data_status = db.delete_temp(data_file)
+    conf_status = db.delete_temp(conf_file)
+    result = {'data_status':data_status,'conf_status':conf_status}
+    return jsonify({'status': result})
 
 
 if __name__ == "__main__":

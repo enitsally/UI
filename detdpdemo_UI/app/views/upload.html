@@ -6,13 +6,13 @@
         <div layout="row" layout-align="center, center">
           <md-input-container>
             <label>Record Mode</label>
-            <md-select ng-model="file.doe_record_mode">
+            <md-select ng-model="file.doe_record_mode" required>
               <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
             </md-select>
           </md-input-container>
           <md-input-container>
             <label>Program</label>
-            <md-select ng-model="file.doe_program">
+            <md-select ng-model="file.doe_program" required>
               <md-option ng-repeat="f in program_list | filter: {record_mode: file.doe_record_mode }"
                          value="{{f.program}}">{{f.program}}
               </md-option>
@@ -24,7 +24,7 @@
         <br>
 
         <div layout="row">
-          <md-radio-group ng-model="file.doe_read_only">
+          <md-radio-group ng-model="file.doe_read_only" required>
             <md-radio-button value="Y">Read Only</md-radio-button>
             <md-radio-button value="N"> Full Device</md-radio-button>
           </md-radio-group>
@@ -76,16 +76,18 @@
 
         <md-input-container>
           <label>DOE File Description</label>
-          <input ng-model="file.doe_descr">
+          <input ng-model="file.doe_descr" >
         </md-input-container>
 
         <md-input-container>
           <label>DOE File Comment</label>
           <input ng-model="file.doe_comment">
         </md-input-container>
+
+        <div ng-if="pass == 'N'">Caution! {{mgs}}</div>
       </md-card-content>
       <div class="md-actions" layout="row" layout-align="center center">
-        <md-button class="md-primary md-raised" ng-click="uploader.uploadAll()"><strong>Upload</strong></md-button>
+        <md-button class="md-primary md-raised" ng-click="doUploadChk()"><strong>Upload</strong></md-button>
         <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
         <span flex></span>
         <md-button ng-click="doClearAll()">Clear All</md-button>

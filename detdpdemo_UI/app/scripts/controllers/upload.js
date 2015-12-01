@@ -20,6 +20,9 @@ angular.module('detdpdemoApp')
       flag: 1
     };
 
+    $scope.pass = '';
+    $scope.mgs = '';
+
     $scope.chkCols = {
       new_conf: '',
       dup_conf: '',
@@ -34,6 +37,52 @@ angular.module('detdpdemoApp')
     $scope.uploader = new FileUploader({
       queueLimit: 2
     });
+
+    $scope.doUploadChk = function(){
+
+        console.log("Test starting");
+        if ( angular.element("input[name='dFile']").val() == "" || angular.element("input[name='cFile']").val() == ""){
+            $scope.pass = 'N';
+            $scope.mgs = '<br> No files are selected for uploading!';
+        }
+
+        else if ($scope.file.doe_name == '' || $scope.file.prgram == '' || $scope.file.record_mode == '' || $scope.file.read_only == ''){
+            $scope.pass = 'N';
+            $scope.mgs = '<br> Required fields need to have values!';
+        }
+        else{
+          $http.post('http://localhost:5000/get$exist$chk',$scope.file).then(function (r) {
+              if (r.data.status.status == 'EXIST'){
+                $scope.pass = 'N';
+                $scope.mgs = r.data.status.comment;
+              }
+              else{
+                $scope.pass = 'Y';
+              }
+              if ( $scope.pass== 'N' && $scope.file.flag == 1){
+                var confirm = $mdDialog.confirm()
+                  .title('Would you replace the existing files?')
+                  .textContent('')
+                  .ok('Please replace it!')
+                  .cancel('NO, try it again after modification!');
+                $mdDialog.show(confirm).then(function () {
+                  $scope.file.flag = 2;
+                  $scope.mgs = $scope.mgs + " <br> You confirmed to replace them."
+                }, function(){
+
+                });
+                $scope.uploader.cancelAll();
+              }
+              else{
+                $scope.mgs = $scope.mgs + " <br> You confirmed to replace them."
+                $scope.uploader.uploadAll();
+              }
+
+          }),function(){
+            }
+        };
+
+    };
 
     $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
       var result = response.status;
@@ -72,7 +121,7 @@ angular.module('detdpdemoApp')
         $scope.file.data_file = result['temp_file_id'];
       }
     };
-
+    console.log($scope.file)
     $scope.uploader.onCompleteAll = function () {
       $mdDialog.show({
         templateUrl: 'views/upload_col_chk.html',
@@ -86,6 +135,7 @@ angular.module('detdpdemoApp')
       });
 
       function DialogController($scope, $mdDialog, result, arg) {
+        console.log(arg)
         $scope.items = result;
         $scope.closeDialog = function () {
           $mdDialog.hide();
@@ -93,48 +143,22 @@ angular.module('detdpdemoApp')
         $scope.doUpload = function () {
           $http.post('http://localhost:5000/get$upload', arg).then (function (resp) {
             var result = resp.data.status;
-            console.log(resp)
-            console.log(result)
-            if (result.status == 'EXIST') {
-              var confirm = $mdDialog.confirm()
-                .title('Would you replace the existing files?')
-                .textContent('')
-                .ok('Please replace it!')
-                .cancel('NO, try it again after modification!');
-              $mdDialog.show(confirm).then(function () {
-                arg.flag = 2;
-                console.log(arg);
-                $http.post('http://localhost:5000/get$upload', arg).then (function (respp) {
-                  console.log(respp);
-                  $mdDialog.show(
-                    $mdDialog.alert()
-                      .parent(angular.element(document.querySelector('#popupContainer')))
-                      .clickOutsideToClose(true)
-                      .title('This is an confirm message')
-                      .textContent(resp.data.comment)
-                      .ok('Got it!')
-                  );
-                }, function () {
-
-                });
-              }, function () {
-                arg.flag = 1;
-                $state.go('upload')
-              });
-            }
-            else {
-
-            }
+            console.log(resp);
+            console.log(result);
           }, function (response) {
           });
-        }
+        };
         $scope.doDelTemp = function () {
           $http.post('http://localhost:5000/get$del$temp', arg).then (function (response) {
-            $scope.doneDel = response.data.status;
+            $scope.doneDel = { 'data_status':response.data.status.data_status,
+                               'conf_status':response.data.status.conf_status};
+            console.log("delete temp" + $scope.doneDel);
+            doClearAll();
+            $mdDialog.hide();
           }, function (response) {
           });
-        }
-      }
+        };
+      };
 
       $scope.uploader.clearQueue();
     };
@@ -164,9 +188,11 @@ angular.module('detdpdemoApp')
         doe_comment: '',
         doe_program: '',
         doe_record_mode: '',
-        doe_read_only: ''
+        doe_read_only: '',
+        flag : 1
       };
-
+      $scope.pass = '';
+      $scope.mgs = '';
       angular.element("input[type='file']").val(null);
     };
 
