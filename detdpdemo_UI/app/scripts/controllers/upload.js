@@ -40,7 +40,6 @@ angular.module('detdpdemoApp')
 
     $scope.doUploadChk = function(){
 
-        console.log("Test starting");
         if ( angular.element("input[name='dFile']").val() == "" || angular.element("input[name='cFile']").val() == ""){
             $scope.pass = 'N';
             $scope.mgs = '<br> No files are selected for uploading!';
@@ -62,7 +61,9 @@ angular.module('detdpdemoApp')
               if ( $scope.pass== 'N' && $scope.file.flag == 1){
                 var confirm = $mdDialog.confirm()
                   .title('Would you replace the existing files?')
-                  .textContent('')
+                  //.textContent('dsfsfsdf')
+                  .ariaLabel('Confirm')
+                  .targetEvent()
                   .ok('Please replace it!')
                   .cancel('NO, try it again after modification!');
                 $mdDialog.show(confirm).then(function () {
@@ -121,7 +122,7 @@ angular.module('detdpdemoApp')
         $scope.file.data_file = result['temp_file_id'];
       }
     };
-    console.log($scope.file)
+
     $scope.uploader.onCompleteAll = function () {
       $mdDialog.show({
         templateUrl: 'views/upload_col_chk.html',
@@ -143,8 +144,7 @@ angular.module('detdpdemoApp')
         $scope.doUpload = function () {
           $http.post('http://localhost:5000/get$upload', arg).then (function (resp) {
             var result = resp.data.status;
-            console.log(resp);
-            console.log(result);
+            $mdDialog.hide();
           }, function (response) {
           });
         };
