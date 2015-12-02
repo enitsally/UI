@@ -90,9 +90,9 @@
         <md-button class="md-primary md-raised" ng-click="doUploadChk()"><strong>Upload</strong></md-button>
         <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
         <span flex></span>
-        <md-button ng-click="doClearAll()">Clear All</md-button>
+        <md-button ng-click="doClearAll($event)">Clear All</md-button>
         <span flex></span>
-        <md-button ng-click="showAdvanced($event)">Get Overview</md-button>
+        <md-button ng-click="doOverview($event)">Get Overview</md-button>
       </div>
     </md-card>
   </form>

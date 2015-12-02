@@ -23,8 +23,8 @@ def allowed_file(filename):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+  print 'API: /login, method: login()'
   input_data = json.loads(request.data)
-
   var_username = input_data['username']
   var_password = input_data['password']
   db = detdp()
@@ -51,6 +51,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+  print 'API: /logout, method: logout()'
   session.pop('logged_in', None)
   status = "You are logged out."
   return jsonify({'status': status})
@@ -59,6 +60,7 @@ def logout():
 @cross_origin()
 @app.route('/get$record$mode')
 def get_record_mode():
+  print 'API: /get$record$mode, method: get_record_mode()'
   db = detdp()
   status = db.get_record_mode()
   return jsonify({'status': status})
@@ -67,6 +69,7 @@ def get_record_mode():
 @cross_origin()
 @app.route('/get$program')
 def get_program():
+  print 'API: /get$program, method: get_program()'
   db = detdp()
   status = db.get_program()
   return jsonify({'status': status})
@@ -74,25 +77,26 @@ def get_program():
 
 @app.route('/get$upload$overview')
 def get_upload_overview():
+  print 'API: /get$upload$overview, method: get_upload_overview()'
   db = detdp()
   status = db.get_upload_overview()
   return jsonify({'status': status})
 
 @app.route('/get$exist$chk', methods=['GET', 'POST'])
 def get_exist_chk():
-    db = detdp()
-    input_data = json.loads(request.data)
-    print input_data
-    doe_name = input_data['doe_name']
-    program = input_data['doe_program']
-    record_mode = input_data['doe_record_mode']
-    read_only = input_data['doe_read_only']
-    result = db.get_exist_chk(program, record_mode,read_only,doe_name)
-    return jsonify({'status': result})
+  print 'API: /get$exist$chk, method: get_exist_chk()'
+  db = detdp()
+  input_data = json.loads(request.data)
+  doe_name = input_data['doe_name']
+  program = input_data['doe_program']
+  record_mode = input_data['doe_record_mode']
+  read_only = input_data['doe_read_only']
+  result = db.get_exist_chk(program, record_mode,read_only,doe_name)
+  return jsonify({'status': result})
 
 @app.route('/upload$d', methods=['GET', 'POST'])
 def get_chk_data():
-
+  print 'API: /upload$d, method: get_chk_data()'
   if request.method == 'POST':
     db = detdp()
     file = request.files['data']
@@ -105,22 +109,18 @@ def get_chk_data():
 
 @app.route('/upload$c', methods=['GET', 'POST'])
 def get_chk_conf():
-
+  print 'API: /upload$c, method: get_chk_conf()'
   if request.method == 'POST':
     db = detdp()
     file = request.files['conf']
-    # file_name = file.filename
-    # if file and allowed_file(file_name):
-    #   file.save(os.path.join(app.config['UPLOAD_FOLDER_C'], file_name))
     result = db.get_column_chk_conf(file)
     return jsonify({'status': result})
 
 @app.route('/get$upload', methods=['GET', 'POST'])
 def get_upload():
-  print 'Good here'
+  print 'API: /get$upload, method: get_upload()'
   db = detdp()
   var_input = json.loads(request.data)
-  print var_input
   doe_name = var_input['doe_name']
   doe_descr = var_input['doe_descr']
   doe_comment = var_input['doe_comment']
@@ -137,6 +137,7 @@ def get_upload():
 
 @app.route('/get$del$temp', methods=['GET', 'POST'])
 def get_delete_temp():
+    print 'API: /get$del$temp, method: get_delete_temp()'
     db = detdp()
     var_input = json.loads(request.data)
     data_file = var_input['data_file']

@@ -17,7 +17,7 @@
 //   });
 
 angular.module('detdpdemoApp')
-  .controller('LoginCtrl', function ($scope, $rootScope, $http, $state, AUTH_EVENTS, AuthService) {
+  .controller('LoginCtrl', function ($scope, $rootScope, $http, $state, $mdToast, AUTH_EVENTS, AuthService) {
     $scope.credentials = {
       username: '',
       password: ''
@@ -40,6 +40,9 @@ angular.module('detdpdemoApp')
     //  }, function (response) {
     //  })
     //};
+    $scope.showSimpleToast = function(showmgs) {
+      $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
+    };
 
     $scope.doLogin = function (credentials) {
       AuthService.login(credentials).then(function (user) {
@@ -47,16 +50,19 @@ angular.module('detdpdemoApp')
         $scope.setCurrentUser(user);
         if (user.role == 'retriever' || user.role == 'admin'){
           $state.go('retrieve')
+          $scope.message = user.id + ", You are logged in."
         }
-        else if(user.role = 'uploader'){
+        else if(user.role == 'uploader'){
           $state.go('upload')
+          $scope.message = user.id + ", You are logged in."
         }
         else{
           $scope.message = "Login failed, please try again."
-          $state.go('login')
+          $scope.setCurrentUser(null);
+          $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
         }
+        $scope.showSimpleToast($scope.message);
       }, function () {
-        $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
       });
     };
   })

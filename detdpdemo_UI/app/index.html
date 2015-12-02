@@ -15,40 +15,93 @@
   <!-- build:css(.tmp) styles/main.css -->
   <!-- endbuild -->
 </head>
-<body ng-app="detdpdemoApp" ng-controller="ApplicationController" layout="column">
+<body ng-app="detdpdemoApp" ng-controller="ApplicationController"  layout="row">
 <!--[if lte IE 8]>
 <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
   your browser</a> to improve your experience.</p>
 <![endif]-->
 
 <!-- Add your site or application content here -->
-<md-toolbar>
-  <div class="md-toolbar-tools" layout="row">
-    <md-button class="md-icon-button" aria-label="Settings">
-      <md-icon md-svg-icon="images/icon/menu.svg"></md-icon>
-    </md-button>
-    <h2>
-      <span>DET Data Processing Demo</span>
-    </h2>
-    <span flex></span>
 
-    <div layout="column">
-      <div ng-if="currentUser">Welcome, {{ currentUser.id }}</div>
-      <div ng-switch on="currentUser.role">
-        <div ng-switch-when="userRoles.admin">You're admin.</div>
-        <div ng-switch-default></div>
+<md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+      <md-toolbar class="md-tall md-hue-2">
+        <div layout="column">
+          <span flex></span>
+          <br>
+          <md-icon ng-if = "currentUser" md-svg-icon="images/icon/account_circle.svg"></md-icon>
+          <md-icon ng-if = "currentUser == null" md-svg-icon="images/icon/account_off.svg"></md-icon>
+          <div ng-if = "currentUser" layout = "row" layout-align = "center center"><h4>{{currentUser.id}}</h4></div>
+          <div ng-if = "currentUser" layout = "row" layout-align = "center center"><h4>You are an {{currentUser.role}}.</h4></div>
+          <div ng-if = "currentUser == null" layout = "row" layout-align = "center center"><h4>Welcome! please login.</h4></div>
+        </div>
+      </md-toolbar>
+      <md-list>
+      <md-item ng-repeat="item in menu">
+        <a>
+          <md-item-content md-ink-ripple layout="row" layout-align="start center">
+            <div class="inset">
+              <ng-md-icon icon="item.icon"></ng-md-icon>
+            </div>
+            <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
+          </md-item-content>
+        </a>
+      </md-item>
+      <md-divider></md-divider>
+      <md-subheader ng-show = "currentUser.role == 'admin'">System Setting</md-subheader>
+      <md-item ng-show = "currentUser.role == 'admin'" ng-repeat="item in admin">
+        <a>
+          <md-item-content md-ink-ripple layout="row" layout-align="start center">
+            <div class="inset">
+              <ng-md-icon icon="item.icon"></ng-md-icon>
+            </div>
+            <div class="inset">{{item.title}}
+            </div>
+          </md-item-content>
+        </a>
+      </md-item>
+    </md-list>
+    <br>
+    <br>
+    <md-button ng-click="close()" class="md-primary">
+         Close Side Menu
+    </md-button>
+  </md-sidenav>
+
+<div layout="column" flex>
+    <md-toolbar>
+      <div class="md-toolbar-tools" layout="row">
+        <md-button class="md-icon-button" ng-click="toggleSidenav('left')" aria-label="Menu">
+          <md-icon md-svg-icon="images/icon/menu.svg"></md-icon>
+        </md-button>
+        <h2>
+          <span>DET Data Processing Demo</span>
+        </h2>
+        <span flex></span>
+
+        <!-- <div layout="column">
+          <div ng-if="currentUser">Welcome, {{ currentUser.id }}</div>
+          <div ng-switch on="currentUser.role">
+            <div ng-switch-when="userRoles.admin">You're admin.</div>
+            <div ng-switch-default></div>
+          </div>
+        </div> -->
+
+        <md-button class="md-icon-button" aria-label="logout">
+            <md-icon ng-if = "currentUser" md-svg-icon="images/icon/logout.svg" ng-click = "doLogout()"></md-icon>
+            <md-icon ng-if = "currentUser == null " md-svg-icon="images/icon/account_off.svg" ng-click = "doDirectLogin()"></md-icon>
+        </md-button>
+
       </div>
-    </div>
+    </md-toolbar>
 
-    <md-button class="md-icon-button" aria-label="More">
-      <md-icon md-svg-icon="images/icon/more_vert.svg"></md-icon>
-    </md-button>
-  </div>
-</md-toolbar>
+    <md-content flex>
+      <div ui-view=""></div>
+    </md-content>
+</div>
 
-<md-content flex>
-  <div ui-view=""></div>
-</md-content>
+
+
+
 
 <!-- build:js(.) scripts/vendor.js -->
 <!-- bower:js -->
@@ -66,9 +119,9 @@
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="scripts/app.js"></script>
 <script src="scripts/controllers/login.js"></script>
-<script src="scripts/controllers/upload_overview.js"></script>
 <script src="scripts/controllers/upload.js"></script>
 <script src="scripts/controllers/retrieve.js"></script>
+<script src="scripts/controllers/user_setting.js"></script>
 <!-- endbuild -->
 <div login-dialog ng-if="!isLoginPage"></div>
 </body>
