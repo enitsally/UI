@@ -89,7 +89,7 @@ class detdp:
     sys_cols_conf = sys_cols.get('conf_cols')
 
     conf_file.seek(0)
-    reader = unicodecsv.reader(conf_file, encoding='utf-8')
+    reader = unicodecsv.reader(conf_file)
     conf_file_cols_list = reader.next()
     conf_file_cols_list = [x.lower().encode('ascii', 'ignore') for x in conf_file_cols_list]
 
@@ -133,6 +133,7 @@ class detdp:
   def get_column_chk_data(self, data_file):
     str_method = 'get_column_chk_data(data_file = {})'.format(data_file)
     print 'call method: ', str_method
+
     temp_file_id = self.upload_temp(data_file)
     sys_cols = self.db.system_conf.find_one({})
     sys_cols_full = sys_cols.get('full_cols')
@@ -319,6 +320,7 @@ class detdp:
   def upload_temp(self, tempFile):
     str_method = 'upload_temp( tempFile = {})'.format(tempFile)
     print 'call method: ', str_method
+
     fs = gridfs.GridFS(self.db)
     file_id = fs.put(tempFile)
     return file_id
@@ -333,3 +335,4 @@ class detdp:
       return False
     else:
       return True
+
