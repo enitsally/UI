@@ -6,7 +6,7 @@ import operator
 from fuzzywuzzy import fuzz
 import unicodecsv
 import StringIO
-from hurry.filesize import size
+import time
 
 
 class detdp:
@@ -181,22 +181,28 @@ class detdp:
     return result
 
   def get_exist_chk(self, program, record_mode, read_only, doe_name):
-    str_method = 'get_exist_chk(program = {}, record_mode = {}, read_only = {}, doe_name = {})'.format(program, record_mode,
-                                                                                                read_only,
-                                                                                                doe_name)
+    str_method = 'get_exist_chk(program = {}, record_mode = {}, read_only = {}, doe_name = {})'.format(program,
+                                                                                                       record_mode,
+                                                                                                       read_only,
+                                                                                                       doe_name)
     print 'call method: ', str_method
 
     status = 'PASS'
     comment = ''
     # ------ Check if the DOE name is already stored in database, if exist, delete, for both data file and conf file
-    exist_data_file = self.db.data_file.find({'doe_name': doe_name},
-                                             projection={'data_file_id': True, '_id': True})
+    exist_data_file = self.db.data_file.find(
+      {'doe_name': doe_name, 'program': program, 'record_mode': record_mode, 'read_only': read_only},
+      projection={'data_file_id': True, '_id': True})
     exist_conf_file = self.db.conf_file.find(
       {'doe_name': doe_name, 'program': program, 'record_mode': record_mode, 'read_only': read_only})
     if (exist_data_file.count() > 0) or (exist_conf_file.count() > 0):
       status = 'EXIST'
       if exist_conf_file.count() > 0:
         one_record = exist_conf_file[0]
+        comment = "File exists! The existing file have the Program name as : {}, Record_mode as : {}, Read_only as : {}".format(
+          one_record.get('program'), one_record.get('record_mode'), one_record.get('read_only'))
+      elif exist_data_file.count() > 0:
+        one_record = exist_data_file[0]
         comment = "File exists! The existing file have the Program name as : {}, Record_mode as : {}, Read_only as : {}".format(
           one_record.get('program'), one_record.get('record_mode'), one_record.get('read_only'))
       else:
@@ -218,27 +224,31 @@ class detdp:
     status = ''
     comment = ''
     # ------ Check if the DOE name is already stored in database, if exist, delete, for both data file and conf file
-    exist_data_file = self.db.data_file.find({'doe_name': doe_name},
-                                             projection={'data_file_id': True, '_id': True})
+    exist_data_file = self.db.data_file.find(
+      {'doe_name': doe_name, 'program': program, 'record_mode': record_mode, 'read_only': read_only},
+      projection={'data_file_id': True, '_id': True})
     exist_conf_file = self.db.conf_file.find(
       {'doe_name': doe_name, 'program': program, 'record_mode': record_mode, 'read_only': read_only})
     if (exist_data_file.count() > 0) or (exist_conf_file.count() > 0):
       if flag == 2:  # user choose to update the existing data
         # 1 for data file in 'data_file' collection, if find, delete
         count = 0
+        count_dfile = 0
         if exist_data_file.count() > 0:
           for f in exist_data_file:
             fs.delete(f['data_file_id'])
+            result = self.db.data_file.delete_many({'data_file_id': f['data_file_id']})
             count += 1
-          comment += '\nDelete data file record from detdp database gridfs collection, # of deleted records: {}'.format(
+            count_dfile += result.deleted_count
+          comment += 'Delete data file record from detdp database gridfs collection, # of deleted records: {} \n'.format(
             count)
-          result = self.db.data_file.delete_many({'data_file_id': f['data_file_id']})
-          comment += '\nDelete data file index record from data_file collection, # of deleted records: {}'.format(
-            result.deleted_count)
+          comment += 'Delete data file index record from data_file collection, # of deleted records: {} \n'.format(
+            count_dfile)
         # 2 for conf file in 'conf_file' collection, if find, delete
         if exist_conf_file.count() > 0:
-          result = self.db.conf_file.delete_many({'doe_name': doe_name})
-          comment += '\nDelete conf file record from conf_file collection, # of deleted records: {}'.format(
+          result = self.db.conf_file.delete_many(
+            {'doe_name': doe_name, 'program': program, 'record_mode': record_mode, 'read_only': read_only})
+          comment += 'Delete conf file record from conf_file collection, # of deleted records: {} \n'.format(
             result.deleted_count)
 
     # ------- Insert new data file into gridfs and an index file into 'data_file' collection
@@ -247,11 +257,15 @@ class detdp:
     data_dict = {'doe_name': doe_name,
                  'doe_descr': doe_descr,
                  'comment': doe_comment,
+                 'program': program,
+                 'record_mode': record_mode,
+                 'read_only': read_only,
                  'upload_user': user_name,
-                 'upload_date': temp.upload_date,  # time.strftime('%m/%d/%Y,%H:%M:%S')
-                 'file_size': size(temp.length),
+                 'upload_date': time.strftime('%m/%d/%Y,%H:%M:%S'),
+                 'file_size': str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB',
                  'data_file_id': data_file_id}
     self.db.data_file.insert_one(data_dict)
+    print 'File Size:', str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB'
 
     # -------- Insert conf file into the 'conf_file' collection
 
@@ -311,8 +325,8 @@ class detdp:
         result = self.db.system_conf.replace_one({'conf_cols': old_conf_cols_list},
                                                  {'conf_cols': list(update_conf_cols_list)}, True)
 
-    status += 'INSERT'
-    comment += '<br> Upload data file and conf. file succeeded.'
+    status = 'INSERT'
+    comment += 'Upload data file and conf. file succeeded. \n'
     self.delete_temp(data_file_input)
     self.delete_temp(conf_file_input)
     return {'status': status, 'comment': comment}
@@ -335,4 +349,65 @@ class detdp:
       return False
     else:
       return True
+
+  def get_system_cols(self):
+    str_method = 'get_full_cols( )'
+    print 'call method: ', str_method
+    tmp = self.db.system_conf.find_one({})
+    if tmp is not None:
+      result = {'standard_cols': tmp.get('standard_cols'),
+                'full_cols': tmp.get('full_cols')
+                }
+    else:
+      result = {'standard_cols': [],
+                'full_cols': []
+                }
+    return result
+
+  def get_user_cols(self, user_name):
+    str_method = 'get_user_cols( user_name = {})'.format(user_name)
+    print 'call method: ', str_method
+
+    result = {'standard_cols': [],
+              'customized_cols': []}
+    r = self.db.user.find({'user_name': user_name})
+    sys = self.get_system_cols()
+    if r.count() != 1:
+      print "System error, no user or multiple user"
+    else:
+      tmp = r[0]
+      if tmp.get('standard_cols') == None:
+        std_comment = "User have no standard setup, use system setup"
+      else:
+        std_comment = 'Get user standard setup'
+        result['standard_cols'] = tmp.get('standard_cols')
+      if tmp.get('customized_cols') == None:
+        cus_comment = "User have no customized setup, use system setup"
+      else:
+        cus_comment = 'Get user customized setup'
+        result['customized_cols'] = tmp.get('customized_cols')
+
+    result['cus_comment'] = cus_comment
+    result['std_comment'] = std_comment
+    return result
+
+  def set_user_cols(self, user_name, std_cols, cus_cols):
+    str_method = 'get_user_cols( user_name = {}, std_cols = {}, cus_cols = {})'.format(user_name, std_cols, cus_cols)
+    print 'call method: ', str_method
+
+    user_column = self.db.user.find_one({'user_name': user_name})
+    old_std_cols_list = user_column.get('standard_cols')
+    old_cus_cols_list = user_column.get('customized_cols')
+    if old_std_cols_list is None:
+      std_comment = "No user standard setup, add new setup"
+    else:
+      std_comment = "User standard setup replaced"
+    if old_cus_cols_list is None:
+      cus_comment = "No user customized setup, add new setup"
+    else:
+      cus_comment = "User customized setup replaced"
+    self.db.user.find_one_and_update({'user_name': user_name},
+                                     {'$set': {'customized_cols': cus_cols, 'standard_cols': std_cols}})
+
+    return {'std_comment':std_comment, 'cus_comment':cus_comment}
 

@@ -21,6 +21,7 @@ def allowed_file(filename):
   result = '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
   return result
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
   print 'API: /login, method: login()'
@@ -45,8 +46,8 @@ def login():
       role = 'retriever'
     else:
       role = ''
-    user = {'id': var_username, 'role':role}
-  return jsonify({'status': status, 'id':id, 'user':user})
+    user = {'id': var_username, 'role': role}
+  return jsonify({'status': status, 'id': id, 'user': user})
 
 
 @app.route('/logout')
@@ -82,6 +83,7 @@ def get_upload_overview():
   status = db.get_upload_overview()
   return jsonify({'status': status})
 
+
 @app.route('/get$exist$chk', methods=['GET', 'POST'])
 def get_exist_chk():
   print 'API: /get$exist$chk, method: get_exist_chk()'
@@ -91,8 +93,9 @@ def get_exist_chk():
   program = input_data['doe_program']
   record_mode = input_data['doe_record_mode']
   read_only = input_data['doe_read_only']
-  result = db.get_exist_chk(program, record_mode,read_only,doe_name)
+  result = db.get_exist_chk(program, record_mode, read_only, doe_name)
   return jsonify({'status': result})
+
 
 @app.route('/upload$d', methods=['GET', 'POST'])
 def get_chk_data():
@@ -116,6 +119,7 @@ def get_chk_conf():
     result = db.get_column_chk_conf(file)
     return jsonify({'status': result})
 
+
 @app.route('/get$upload', methods=['GET', 'POST'])
 def get_upload():
   print 'API: /get$upload, method: get_upload()'
@@ -131,21 +135,52 @@ def get_upload():
   data_file = var_input['data_file']
   conf_file = var_input['conf_file']
   flag = var_input['flag']
-  result = db.upload_data_files(doe_program,doe_record_mode,doe_read_only,data_file,conf_file,doe_name,doe_descr,doe_comment,upload_user,flag)
+  result = db.upload_data_files(doe_program, doe_record_mode, doe_read_only, data_file, conf_file, doe_name, doe_descr,
+                                doe_comment, upload_user, flag)
   print result
   return jsonify({'status': result})
 
+
 @app.route('/get$del$temp', methods=['GET', 'POST'])
 def get_delete_temp():
-    print 'API: /get$del$temp, method: get_delete_temp()'
-    db = detdp()
-    var_input = json.loads(request.data)
-    data_file = var_input['data_file']
-    conf_file = var_input['conf_file']
-    data_status = db.delete_temp(data_file)
-    conf_status = db.delete_temp(conf_file)
-    result = {'data_status':data_status,'conf_status':conf_status}
-    return jsonify({'status': result})
+  print 'API: /get$del$temp, method: get_delete_temp()'
+  db = detdp()
+  var_input = json.loads(request.data)
+  data_file = var_input['data_file']
+  conf_file = var_input['conf_file']
+  data_status = db.delete_temp(data_file)
+  conf_status = db.delete_temp(conf_file)
+  result = {'data_status': data_status, 'conf_status': conf_status}
+  return jsonify({'status': result})
+
+
+@app.route('/get$system$setup', methods=['GET', 'POST'])
+def get_system_setup():
+  print 'API: /get$system$setup, method: get_system_setup()'
+  db = detdp()
+  result = db.get_system_cols()
+  return jsonify({'status': result})
+
+
+@app.route('/get$user$setup', methods=['GET', 'POST'])
+def get_user_setup():
+  print 'API: /get$user$setup, method: get_user_setup()'
+  input_data = json.loads(request.data)
+  user_name = input_data['user_name']
+  db = detdp()
+  result = db.get_user_cols(user_name)
+  return jsonify({'status': result})
+
+@app.route('/get$save$setup', methods=['GET', 'POST'])
+def set_user_setup():
+  print 'API: /get$save$setup, method: set_user_setup()'
+  input_data = json.loads(request.data)
+  user_name = input_data['user_name']
+  std_cols = input_data['std_cols']
+  cus_cols = input_data['cus_cols']
+  db = detdp()
+  result = db.set_user_cols(user_name, std_cols, cus_cols)
+  return jsonify({'status': result})
 
 
 if __name__ == "__main__":
