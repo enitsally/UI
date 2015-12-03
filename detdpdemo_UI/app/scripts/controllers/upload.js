@@ -9,6 +9,10 @@
  */
 angular.module('detdpdemoApp')
   .controller('UploadCtrl', function ($scope, $http, $state, $mdDialog, $mdToast, FileUploader) {
+    // if ($scope.currentUser == null){
+    //   $state.go('login')
+    // }
+
     $scope.file = {
       doe_name: '',
       doe_descr: '',
@@ -43,12 +47,12 @@ angular.module('detdpdemoApp')
         console.log("Test starting");
         if ( angular.element("input[name='dFile']").val() == "" || angular.element("input[name='cFile']").val() == ""){
             $scope.pass = 'N';
-            $scope.mgs = '\n No files are selected for uploading!';
+            $scope.mgs = ' No files are selected for uploading!';
         }
 
         else if ($scope.file.doe_name == '' || $scope.file.prgram == '' || $scope.file.record_mode == '' || $scope.file.read_only == ''){
             $scope.pass = 'N';
-            $scope.mgs = '\n Required fields need to have values!';
+            $scope.mgs = ' Required fields need to have values!';
         }
         else{
           $http.post('http://localhost:5000/get$exist$chk',$scope.file).then(function (r) {
@@ -66,14 +70,14 @@ angular.module('detdpdemoApp')
                   .cancel('NO, try it again after modification!');
                 $mdDialog.show(confirm).then(function () {
                   $scope.file.flag = 2;
-                  $scope.mgs = $scope.mgs + " <br> You confirmed to replace them."
+                  $scope.mgs = $scope.mgs + " You confirmed to replace them."
                 }, function(){
 
                 });
                 $scope.uploader.cancelAll();
               }
               else{
-                $scope.mgs = $scope.mgs + " <br> You confirmed to replace them."
+                $scope.mgs = $scope.mgs + " You confirmed to replace them."
                 $scope.uploader.uploadAll();
               }
 
@@ -145,7 +149,14 @@ angular.module('detdpdemoApp')
             var result = resp.data.status;
             $mdDialog.hide();
             $scope.doClearAll();
-            $scope.showSimpleToast(result.commnet)
+            console.log(result)
+            if (result.status == 'INSERT'){
+              $scope.showSimpleToast("INSERT DONE!")
+            }
+            else {
+              $scope.showSimpleToast("INSERT FAILED!")
+            }
+
           }, function (response) {
             });
         };
@@ -155,7 +166,14 @@ angular.module('detdpdemoApp')
                                'conf_status':response.data.status.conf_status ? "Deleted":'Wrong'};
             $mdDialog.hide();
             $scope.doClearAll();
-            $scope.showSimpleToast(doneDel)
+            console.log(doneDel);
+            if ( response.data.status.data_status && response.data.status.conf_status){
+              $scope.showSimpleToast("TEMP DELETE DONE!")
+            }
+            else{
+              $scope.showSimpleToast("TEMP DELETE FAILED!")
+            }
+
           }, function (response) {
           });
         };
@@ -175,11 +193,6 @@ angular.module('detdpdemoApp')
 
     $http.get('http://localhost:5000/get$program').then (function (response) {
       $scope.program_list = response.data.status;
-    }, function (response) {
-    });
-
-    $http.get('http://localhost:5000/get$upload$overview').then (function (response) {
-      $scope.uploadinfo = response.data.status;
     }, function (response) {
     });
 
@@ -216,24 +229,30 @@ angular.module('detdpdemoApp')
         };
     };
     $scope.doOverview = function (ev) {
-      $mdDialog.show({
-          templateUrl: 'views/upload_overview.html',
-          parent: angular.element(document.body),
-          targetEvent: ev,
-          clickOutsideToClose: true,
-          controller: UploadOverviewCtrl,
-          locals: {uploadinfo: $scope.uploadinfo}
-        });
-        function UploadOverviewCtrl($scope, $mdDialog, uploadinfo) {
-          $scope.uploadinfo = uploadinfo;
-          $scope.closeDialog = function () {
-            $mdDialog.hide();
+      $http.get('http://localhost:5000/get$upload$overview').then (function (response) {
+        $scope.uploadinfo = response.data.status;
+
+        $mdDialog.show({
+            templateUrl: 'views/upload_overview.html',
+            parent: angular.element(document.body),
+            targetEvent: ev,
+            clickOutsideToClose: true,
+            controller: UploadOverviewCtrl,
+            locals: {uploadinfo: $scope.uploadinfo}
+          });
+          function UploadOverviewCtrl($scope, $mdDialog, uploadinfo) {
+            $scope.uploadinfo = uploadinfo;
+            $scope.closeDialog = function () {
+              $mdDialog.hide();
+            };
           };
-        };
+
+      }, function (response) {
+      });
     };
 
     $scope.showSimpleToast = function(showmgs) {
       $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
-  };
+    };
 
   });

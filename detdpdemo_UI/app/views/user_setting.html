@@ -1,36 +1,86 @@
-<p>This is user setting page</p>
+<link rel="stylesheet" href="styles/user_setting.css" />
+<br>
+<div layout = "row">
+  <div flex="5"></div>
+  <form flex = "90" layout = "row">
+    <span class="md-headline">Search and build user's columns setup</span>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doSaveToDB()">Save</md-button>
+    <md-card>
+      <div layout="row" layout-align="end center">
+        <span flex></span>
+        <md-checkbox ng-model="StdFlag">Standard</md-checkbox>
+        <md-checkbox ng-model="CusFlag">customized</md-checkbox>
+        <md-button class="md-primary md-raised" ng-click="doGetSysStd()"><strong>Get Sys.Standard</strong></md-button>
+        <span flex></span>
+        <md-button ng-click="doResetToUserProf()">Reset</md-button>
+      </div>
+    <md-card>
+  </form>
+  <div flex="5"></div>
+</div>
+<div layout="column" ng-cloak="" class="chipsdemoCustomInputs">
+  <md-content class="md-padding" layout="row">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-selected="selectedIndex" md-dynamic-height md-border-bottom >
+      <md-tab label="Standard Setup ({{selectedStdCols.length}})" id = 1>
+        <md-card>
+          <md-card-title>
+          </md-card-title>
 
-<div ng-controller="UserSettingCtrl as ctrl" layout="column" ng-cloak="" class="chipsdemoCustomInputs">
-  <md-content class="md-padding" layout="column">
-    <h2 class="md-title">Use <code>md-autocomplete</code>  to build an ordered set of chips.</h2>
+          <md-card-content>
+            <md-chips ng-model="selectedStdCols" md-autocomplete-snap="" md-transform-chip="transformChip($chip)" md-require-match="true">
+              <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item" placeholder="Search for a column name">
+                <span md-highlight-text="searchText">{{item}}</span>
+              </md-autocomplete>
+              <md-chip-template>
+                <span>
+                  <strong>{{$chip}}</strong>
+                </span>
+              </md-chip-template>
+            </md-chips>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+      <md-tab label="Customized Setup ({{selectedCusCols.length}})" id = 2>
+        <md-card>
+          <md-card-title>
+          </md-card-title>
 
-    <md-chips ng-model="ctrl.selectedVegetables" md-autocomplete-snap="" md-transform-chip="ctrl.transformChip($chip)" md-require-match="ctrl.autocompleteDemoRequireMatch">
-      <md-autocomplete md-selected-item="ctrl.selectedItem" md-search-text="ctrl.searchText" md-items="item in ctrl.querySearch(ctrl.searchText)" md-item-text="item.name" placeholder="Search for a vegetable">
-        <span md-highlight-text="ctrl.searchText">{{item.name}} :: {{item.type}}</span>
-      </md-autocomplete>
-      <md-chip-template>
-        <span>
-          <strong>{{$chip.name}}</strong>
-          <em>({{$chip.type}})</em>
-        </span>
-      </md-chip-template>
-    </md-chips>
-
-    <md-checkbox ng-model="ctrl.autocompleteDemoRequireMatch">
-      Tell the autocomplete to require a match (when enabled you cannot create new chips)
-    </md-checkbox>
-
-    <br>
-    <h2 class="md-title">Vegetable Options</h2>
-
-    <md-list>
-      <md-list-item class="md-2-line veggie-option" ng-repeat="veg in ctrl.vegetables" layout="row" layout-wrap="">
-        <div class="md-item-text md-whiteframe-z1" flex="">
-          <h3>{{veg.name}}</h3>
-          <p>{{veg.type}}</p>
-        </div>
-      </md-list-item>
-    </md-list>
-
+          <md-card-content>
+            <md-chips ng-model="selectedCusCols" md-autocomplete-snap="" md-transform-chip="transformChip($chip)" md-require-match="true">
+              <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item" placeholder="Search for a column name">
+                <span md-highlight-text="searchText">{{item}}</span>
+              </md-autocomplete>
+              <md-chip-template>
+                <span>
+                  <strong>{{$chip}}</strong>
+                </span>
+              </md-chip-template>
+            </md-chips>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+    </md-tabs>
+    <md-card>
+      <md-card-title>
+        <md-checkbox ng-model="showFlag">
+          Show Full System Columns List
+        </md-checkbox>
+      </md-card-title>
+      <md-card-content>
+        <md-list ng-show = "showFlag">
+          <md-list-item class="md-2-line veggie-option" ng-repeat="col in fulllist" layout="row" layout-wrap="">
+            <div class="md-item-text md-whiteframe-z1" flex="">
+              <h5>{{col}}</h5>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-card-content>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-card>
+  </form>
+  <div flex="5"></div>
   </md-content>
 </div>

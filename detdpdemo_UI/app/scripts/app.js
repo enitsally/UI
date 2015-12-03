@@ -107,29 +107,33 @@ angular
    $scope.doLogout = function(){
 
      $http.get('http://localhost:5000/logout').then(function(req){
-       $scope.showSimpleToast(req.data.status)
+       $scope.showSimpleToast(req.data.status);
      });
-      $rootScope.currentUser = null
-      $state.go('login')
+      $rootScope.currentUser = null;
+      $state.go('login');
    };
 
    $scope.doDirectLogin = function(){
-     $rootScope.currentUser = null
-     $state.go('login')
+     $rootScope.currentUser = null;
+     $state.go('login');
    };
 
    $scope.doDirectPage = function (api){
      if (api == 'Upload'){
-       $state.go('upload')
+       $state.go('upload');
+       $mdSidenav('left').close();
      }
      else if (api == 'Retrieve'){
-       $state.go('retrieve')
+       $state.go('retrieve');
+       $mdSidenav('left').close();
      }
      else if (api == 'User Setting'){
-       $state.go('usersetting')
+       $state.go('usersetting');
+       $mdSidenav('left').close();
      }
      else if (api == 'login'){
-       $state.go('login')
+       $state.go('login');
+       $mdSidenav('left').close();
      }
    }
 
