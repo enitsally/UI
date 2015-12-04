@@ -7,6 +7,7 @@ from fuzzywuzzy import fuzz
 import unicodecsv
 import StringIO
 import time
+import datetime
 
 
 class detdp:
@@ -251,36 +252,6 @@ class detdp:
           comment += 'Delete conf file record from conf_file collection, # of deleted records: {} \n'.format(
             result.deleted_count)
 
-    # ------- Insert new data file into gridfs and an index file into 'data_file' collection
-    data_file_id = fs.put(data_file)
-    temp = fs.find_one(filter=data_file_id)
-    data_dict = {'doe_name': doe_name,
-                 'doe_descr': doe_descr,
-                 'comment': doe_comment,
-                 'program': program,
-                 'record_mode': record_mode,
-                 'read_only': read_only,
-                 'upload_user': user_name,
-                 'upload_date': time.strftime('%m/%d/%Y,%H:%M:%S'),
-                 'file_size': str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB',
-                 'data_file_id': data_file_id}
-    self.db.data_file.insert_one(data_dict)
-    print 'File Size:', str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB'
-
-    # -------- Insert conf file into the 'conf_file' collection
-
-    conf_file.seek(0)
-    reader = unicodecsv.reader(conf_file)
-    conf_file_cols_list = reader.next()
-    conf_file_cols_list = [x.lower().encode('ascii', 'ignore') for x in conf_file_cols_list]
-    reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
-    for row in reader:
-      row['doe_name'] = doe_name
-      row['program'] = program
-      row['record_mode'] = record_mode
-      row['read_only'] = read_only
-      self.db.conf_file.insert_one(row)
-
     # -------- Update the full columns list, in the 'system_conf' collection
     data_file.seek(0)
     reader = unicodecsv.reader(data_file)
@@ -325,8 +296,40 @@ class detdp:
         result = self.db.system_conf.replace_one({'conf_cols': old_conf_cols_list},
                                                  {'conf_cols': list(update_conf_cols_list)}, True)
 
+    # ------- Insert new data file into gridfs and an index file into 'data_file' collection
+    data_file_id = fs.put(data_file)
+    temp = fs.find_one(filter=data_file_id)
+    data_dict = {'doe_name': doe_name,
+                 'doe_descr': doe_descr,
+                 'comment': doe_comment,
+                 'program': program,
+                 'record_mode': record_mode,
+                 'read_only': read_only,
+                 'upload_user': user_name,
+                 'upload_date': time.strftime('%m/%d/%Y,%H:%M:%S'),
+                 'file_size': str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB',
+                 'data_file_id': data_file_id}
+    self.db.data_file.insert_one(data_dict)
+    print 'File Size:', str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB'
+
+    # -------- Insert conf file into the 'conf_file' collection
+    conf_file.seek(0)
+    full_conf = self.db.system_conf.find_one({})
+    if full_conf is not None:
+      full_conf_list = full_conf.get('conf_cols')
+    else:
+      full_conf_list = []
+    # get full conf cols into dictionary and set the values to '' if the record don't have the key
+    reader = unicodecsv.DictReader(conf_file, fieldnames=full_conf_list, restval='')
+    for row in reader:
+      row['doe_name'] = doe_name
+      row['program'] = program
+      row['record_mode'] = record_mode
+      row['read_only'] = read_only
+      self.db.conf_file.insert_one(row)
+
     status = 'INSERT'
-    comment += 'Upload data file and conf. file succeeded. \n'
+    comment += 'Upload data file and conf. file succeeded.'
     self.delete_temp(data_file_input)
     self.delete_temp(conf_file_input)
     return {'status': status, 'comment': comment}
@@ -409,5 +412,72 @@ class detdp:
     self.db.user.find_one_and_update({'user_name': user_name},
                                      {'$set': {'customized_cols': cus_cols, 'standard_cols': std_cols}})
 
-    return {'std_comment':std_comment, 'cus_comment':cus_comment}
+    return {'std_comment': std_comment, 'cus_comment': cus_comment}
 
+  def get_doe_summary(self, doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m,
+                      e_d):
+    str_method = 'get_doe_summary(doe_name = {}, doe_descr = {}, doe_comment = {}, program = {}, record_mode = {}, read_only = {}, s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(
+      doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m,
+      e_d)
+    print 'call method: ', str_method
+    query_dict = {}
+    if len(doe_name) > 0:
+      if query_dict.get('doe_name') is None:
+        query_dict['doe_name'] = {}
+      query_dict['doe_name']['$in'] = doe_name
+    if len(doe_descr) > 0:
+      if query_dict.get('doe_descr') is None:
+        query_dict['doe_descr'] = {}
+      query_dict['doe_descr']['$in'] = doe_descr
+    if len(doe_comment) > 0:
+      if query_dict.get('comment') is None:
+        query_dict['comment'] = {}
+      query_dict['comment']['$in'] = doe_comment
+    if len(program) > 0:
+      if query_dict.get('program') is None:
+        query_dict['program'] = {}
+      query_dict['program']['$in'] = program
+    if len(record_mode) > 0:
+      if query_dict.get('record_mode') is None:
+        query_dict['record_mode'] = {}
+      query_dict['record_mode']['$in'] = record_mode
+    if len(read_only) > 0:
+      if query_dict.get('read_only') is None:
+        query_dict['read_only'] = {}
+      query_dict['read_only']['$in'] = read_only
+    if s_y != '' and s_m != '' and s_d != '':
+      if query_dict.get('upload_date') is None:
+        query_dict['upload_date'] = {}
+      s_t = datetime.datetime(s_y, s_m, s_d, 0, 0, 1).strftime('%m/%d/%Y,%H:%M:%S')
+      query_dict['upload_date']['$gt'] = s_t
+    if e_y != '' and e_m != '' and e_d != '':
+      if query_dict.get('upload_date') is None:
+        query_dict['upload_date'] = {}
+      e_t = datetime.datetime(e_y, e_m, e_d, 23, 59, 59).strftime('%m/%d/%Y,%H:%M:%S')
+      query_dict['upload_date']['$lt'] = e_t
+    print query_dict
+    return list(self.db.data_file.find(query_dict, {'_id': False, 'data_file_id': False}))
+
+  def get_conf_overview(self):
+    tmp = self.db.conf_file.find({}, projection={'_id': False})
+    conf_tmp = self.db.system_conf.find_one({})
+    if tmp.count() > 0:
+      result = list(tmp)
+    else:
+      result = []
+
+    if conf_tmp is not None:
+      conf_col = conf_tmp.get('conf_cols')
+      if len(conf_col)>0:
+        conf_col.append('doe_name')
+        conf_col.append('program')
+        conf_col.append('record_mode')
+        conf_col.append('read_only')
+    else:
+      conf_col = []
+    return {'conf_col': conf_col, 'conf_content': result}
+
+#
+# if __name__ == '__main__':
+#   db = detdp()
+#   print db.get_conf_overview()

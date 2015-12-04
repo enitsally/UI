@@ -1,45 +1,45 @@
-<div>
+<div flex="66">
   <md-dialog aria-label="Upload Overview" ng-cloak>
     <form>
       <md-toolbar>
         <div class="md-toolbar-tools">
           <h2>Upload Overview</h2>
           <span flex></span>
-          <md-button class="md-icon-button" ng-click="cancel()">
+          <md-button class="md-icon-button" ng-click="closeDialog()">
             <md-icon md-svg-src="images/icon/close.svg" aria-label="Close dialog"></md-icon>
           </md-button>
         </div>
       </md-toolbar>
       <md-dialog-content>
-        <div class="md-dialog-content" flex>
-          <table class="table table-hover">
-            <tr>
-              <th>DOE File Name</th>
-              <th>File Description</th>
-              <th>Comment</th>
-              <th>Program</th>
-              <th>Record Mode</th>
-              <th>Read Only/Full Device</th>
-              <th>Upload Date</th>
-              <th>Upload User</th>
-              <th>File Size</th>
-            </tr>
-            <tr ng-repeat="row in uploadinfo">
-              <td>{{row.doe_name}}</td>
-              <td>{{row.doe_descr}}</td>
-              <td>{{row.comment}}</td>
-              <td>{{row.program}}</td>
-              <td>{{row.record_mode}}</td>
-              <td ng-if="row.read_only == 'Y'">Read Only</td>
-              <td ng-if="row.read_only == 'N'">Full Device</td>
-              <td>{{row.upload_date}}</td>
-              <td>{{row.upload_user}}</td>
-              <td>{{row.file_size}}</td>
-            </tr>
-          </table>
-
-
-        </div>
+        <md-content flex layout-padding>
+          <div class="md-dialog-content">
+            <table class="table table-hover">
+              <tr>
+                <th>DOE File Name</th>
+                <th>File Description</th>
+                <th>Comment</th>
+                <th>Program</th>
+                <th>Record Mode</th>
+                <th>Read Only/Full Device</th>
+                <th>Upload Date</th>
+                <th>Upload User</th>
+                <th>File Size</th>
+              </tr>
+              <tr ng-repeat="row in uploadinfo">
+                <td>{{row.doe_name}}</td>
+                <td>{{row.doe_descr}}</td>
+                <td>{{row.comment}}</td>
+                <td>{{row.program}}</td>
+                <td>{{row.record_mode}}</td>
+                <td ng-if="row.read_only == 'Y'">Read Only</td>
+                <td ng-if="row.read_only == 'N'">Full Device</td>
+                <td>{{row.upload_date}}</td>
+                <td>{{row.upload_user}}</td>
+                <td>{{row.file_size}}</td>
+              </tr>
+            </table>
+          </div>
+        </md-content>
       </md-dialog-content>
       <md-dialog-actions layout="row">
         <md-button ng-click="closeDialog()" class="md-primary">

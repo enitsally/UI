@@ -27,10 +27,23 @@
       var comment;
       var sys_std_list;
 
+      /**
+       * Create filter function for a query string
+       */
+      function createFilterFor(query) {
+        var lowercaseQuery = angular.lowercase(query);
+
+        return function filterFn(colName) {
+          // return (colName.name.toLowerCase().indexOf(lowercaseQuery) === 0) ||
+          //     (colName.type.toLowerCase().indexOf(lowercaseQuery) === 0);
+          return (colName.toLowerCase().indexOf(lowercaseQuery) === 0);
+        };
+      }
+
       $http.get('http://localhost:5000/get$system$setup').then (function (response) {
         $scope.fulllist = response.data.status.full_cols;
         sys_std_list = response.data.status.standard_cols;
-      }, function (response) {
+      }, function () {
       });
 
       $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
@@ -40,18 +53,17 @@
                        'std_comment' : response.data.status.std_comment};
         $scope.selectedStdCols = user_standard_cols;
         $scope.selectedCusCols = user_customized_cols;
-        $scope.showSimpleToast(comment)
-      }, function (response) {
+        $scope.showSimpleToast(comment);
+      }, function () {
       });
 
       $scope.doResetToUserProf = function(){
-        if ($scope.CusFlag == true){
+        if ($scope.CusFlag === true){
           $scope.selectedCusCols = null;
-        };
-        if ($scope.StdFlag == true){
+        }
+        if ($scope.StdFlag === true){
             $scope.selectedStdCols = null;
-        };
-
+        }
       };
 
       $scope.doSaveToDB = function(){
@@ -74,26 +86,26 @@
                            'std_comment' : response.data.status.std_comment};
             $scope.selectedStdCols = user_standard_cols;
             $scope.selectedCusCols = user_customized_cols;
-          }, function (response) {
+          }, function () {
           });
-        }, function (response) {
+        }, function () {
         });
       };
 
       $scope.doGetSysStd = function(){
-        if ($scope.CusFlag == true){
+        if ($scope.CusFlag === true){
           $scope.selectedCusCols = sys_std_list;
-        };
+        }
 
-        if ($scope.StdFlag == true){
+        if ($scope.StdFlag === true){
           $scope.selectedStdCols = sys_std_list;
-        };
-      }
+        }
+      };
 
       $scope.transformChip = function (chip){
         if (angular.isObject(chip)) {
           return chip;
-        };
+        }
         // Otherwise, create a new one
         // return { name: chip, type: 'new' }
       };
@@ -104,19 +116,6 @@
       $scope.querySearch = function (query) {
         var results = query ?   $scope.fulllist.filter(createFilterFor(query)) : [];
         return results;
-
-        /**
-         * Create filter function for a query string
-         */
-        function createFilterFor(query) {
-          var lowercaseQuery = angular.lowercase(query);
-
-          return function filterFn(colName) {
-            // return (colName.name.toLowerCase().indexOf(lowercaseQuery) === 0) ||
-            //     (colName.type.toLowerCase().indexOf(lowercaseQuery) === 0);
-            return (colName.toLowerCase().indexOf(lowercaseQuery) === 0);
-          };
-        };
       };
 
       $scope.showSimpleToast = function(showmgs) {
