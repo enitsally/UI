@@ -1,1 +1,198 @@
+<link rel="stylesheet" href="styles/retrieve.css" />
 
+<br>
+<div layout = "row">
+  <div flex="5"></div>
+  <form flex = "90" layout = "row">
+    <span class="md-headline">Search and Retrieve Customized Files</span>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doSearchSummary()">Search</md-button>
+
+      <div layout="row" layout-align="end center">
+        <span flex></span>
+        <md-button class="md-primary md-raised" ng-click="doRetrieveFile()">Retrieve</md-button>
+        <span flex></span>
+        <md-button ng-click="doResetSelection()">Reset</md-button>
+      </div>
+
+  </form>
+  <div flex="5"></div>
+</div>
+<div layout="column" ng-cloak="" class="chipsdemoCustomInputs">
+  <md-content class="md-padding" layout="row">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-dynamic-height md-border-bottom >
+      <md-tab label="File Summary">
+        <md-card>
+          <md-card-title>
+          </md-card-title>
+
+          <md-card-content layout="row">
+            <div layout="column" flex ="30" layout-align="left center">
+              <div layout = "row">
+                <md-input-container>
+                  <label>Record Mode</label>
+                  <md-select ng-model="search.doe_record_mode" required>
+                    <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
+                  </md-select>
+                </md-input-container>
+                <md-input-container>
+                  <label>Program</label>
+                  <md-select ng-model="search.doe_program" required>
+                    <md-option ng-repeat="f in program_list | filter: {record_mode: search.doe_record_mode }"
+                               value="{{f.program}}">{{f.program}}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+              </div>
+              <br>
+              <div layout="row">
+                <md-radio-group ng-model="search.doe_read_only" required>
+                  <md-radio-button value="Y">Read Only</md-radio-button>
+                  <md-radio-button value="N"> Full Device</md-radio-button>
+                </md-radio-group>
+              </div>
+              <br>
+              <md-input-container>
+                <label>DOE File Name</label>
+                <input ng-model="search.doe_name">
+              </md-input-container>
+              <md-input-container>
+                <label>DOE File Description</label>
+                <input ng-model="search.doe_descr" >
+              </md-input-container>
+              <md-input-container>
+                <label>DOE File Comment</label>
+                <input ng-model="search.doe_comment">
+              </md-input-container>
+              <md-datepicker ng-model="search.doe_start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
+              <md-datepicker ng-model="search.doe_end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
+
+            </div>
+            <div layout = "column" flex>
+              <!-- <div>
+                <p ng-if="search">You selected</p>
+                <p ng-if="search.doe_record_mode"><strong> record mode: </strong>"{{search.doe_record_mode}}";</p>
+                <p ng-if="search.doe_program"><strong> program: </strong>"{{search.doe_program}}";</p>
+                <p ng-if="search.doe_read_only"><strong> read_only: </strong>"{{search.doe_read_only}}";</p>
+                <p ng-if="search.doe_name"><strong> doe name: </strong>"{{search.doe_name}}";</p>
+                <p ng-if="search.doe_descr"><strong> doe description: </strong>"{{search.doe_descr}}";</p>
+                <p ng-if="search.doe_comment"><strong> comment: </strong>"{{search.doe_comment}}";</p>
+                <p ng-if="search.doe_start_date"><strong> start date: </strong>"{{search.doe_start_date}}";</p>
+                <p ng-if="search.doe_end_date"><strong> end date: </strong>"{{search.doe_end_date}}"</p>
+              </div> -->
+              <md-card style="height:80">
+                <md-card-title layout="column" layout-align="center center">
+                  <md-card-title-text>
+                    <h5><strong>Data File Summary</strong></h5>
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-content >
+                  <span flex>
+                    <table class="table table-hover">
+                      <tr>
+                        <th>DOE File Name</th>
+                        <th>File Description</th>
+                        <th>Comment</th>
+                        <th>Upload Date</th>
+                        <th>Upload User</th>
+                        <th>File Size</th>
+                      </tr>
+                      <tr ng-repeat="row in doeSearchInfo">
+                        <td>{{row.doe_name}}</td>
+                        <td>{{row.doe_descr}}</td>
+                        <td>{{row.comment}}</td>
+                        <td>{{row.upload_date}}</td>
+                        <td>{{row.upload_user}}</td>
+                        <td>{{row.file_size}}</td>
+                      </tr>
+                    </table>
+                  <span>
+                </md-card-content>
+              </md-card>
+            </div>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+      <md-tab label="File Retrieve" >
+        <md-card>
+          <md-card-title>
+          </md-card-title>
+
+          <md-card-content layout="row">
+            <div layout="column" flex ="30" layout-align="left center">
+              <div layout = "row">
+                <md-input-container>
+                  <label>Record Mode</label>
+                  <md-select ng-model="retrieve.doe_record_mode" required>
+                    <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
+                  </md-select>
+                </md-input-container>
+                <md-input-container>
+                  <label>Program</label>
+                  <md-select ng-model="retrieve.doe_program" required>
+                    <md-option ng-repeat="f in program_list | filter: {record_mode: search.doe_record_mode }"
+                               value="{{f.program}}">{{f.program}}
+                    </md-option>
+                  </md-select>
+                </md-input-container>
+              </div>
+              <br>
+              <div layout="row">
+                <md-radio-group ng-model="retrieve.doe_read_only" required>
+                  <md-radio-button value="Y">Read Only</md-radio-button>
+                  <md-radio-button value="N"> Full Device</md-radio-button>
+                </md-radio-group>
+              </div>
+              <br>
+              <md-input-container>
+                <label>DOE Number</label>
+                <input ng-model="retrieve.doe_no">
+              </md-input-container>
+              <md-input-container>
+                <label>Design Number</label>
+                <input ng-model="retrieve.design_no" >
+              </md-input-container>
+              <md-input-container>
+                <label>Conf. Param.</label>
+                <input ng-model="retrieve.param">
+              </md-input-container>
+              <md-input-container>
+                <label>Additional Email</label>
+                <input ng-model="retrieve.email">
+              </md-input-container>
+              <div layout = "row">
+                <md-checkbox ng-model="fullCol">
+                  Full File
+                </md-checkbox>
+                <md-checkbox ng-model="cusCol">
+                  Customized File
+                </md-checkbox>
+                <md-checkbox ng-model="stdCol">
+                  Standard File
+                </md-checkbox>
+              </div>
+
+            </div>
+            <div layout = "column" flex>
+              <md-card style="height:80">
+                <md-card-title layout="column" layout-align="center center" >
+                  <md-card-title-text>
+                    <h5><strong>Configuration File Summary</strong></h5>
+                    {{columnDefsRD}}
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                  <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
+                </md-card-content>
+              </md-card>
+            </div>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+    </md-tabs>
+  </form>
+  <div flex="5"></div>
+  </md-content>
+</div>

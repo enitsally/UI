@@ -182,6 +182,58 @@ def set_user_setup():
   result = db.set_user_cols(user_name, std_cols, cus_cols)
   return jsonify({'status': result})
 
+@app.route('/get$search$summary', methods=['GET', 'POST'])
+def get_search_summary():
+  print 'API: /get$search$summary, method: get_search_summary()'
+  db = detdp()
+  input_data = json.loads(request.data)
+  var_doe_name = input_data['doe_name']
+  var_doe_descr = input_data['doe_descr']
+  var_doe_comment = input_data['doe_comment']
+  var_doe_program = input_data['doe_program']
+  var_doe_record_mode = input_data['doe_record_mode']
+  var_doe_read_only = input_data['doe_read_only']
+  s_y = input_data['s_y']
+  s_m = input_data['s_m']
+  s_d = input_data['s_d']
+  e_y = input_data['e_y']
+  e_m = input_data['e_m']
+  e_d = input_data['e_d']
+  print s_y, s_m, s_d, e_y, e_m, e_d
+  if var_doe_name == '':
+    doe_name = []
+  else:
+    doe_name = var_doe_name.split(',')
+  if var_doe_descr == '':
+    doe_descr = []
+  else:
+    doe_descr = var_doe_descr.split(',')
+  if var_doe_comment == '':
+    doe_comment = []
+  else:
+    doe_comment = var_doe_comment.split(',')
+  if var_doe_program == '':
+    program = []
+  else:
+    program = var_doe_program.split(',')
+  if var_doe_record_mode == '':
+    record_mode = []
+  else:
+    record_mode = var_doe_record_mode.split(',')
+  if var_doe_read_only == '':
+    read_only = []
+  else:
+    read_only = var_doe_read_only.split(',')
+
+  result = db.get_doe_summary(doe_name,doe_descr,doe_comment,program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m, e_d)
+  return jsonify({'status': result})
+
+@app.route('/get$conf$summary',)
+def get_conf_summary():
+  print 'API: /get$conf$summary, method: get_conf_summary()'
+  db = detdp()
+  result = db.get_conf_overview()
+  return jsonify({'status': result})
 
 if __name__ == "__main__":
   app.run(debug=True)

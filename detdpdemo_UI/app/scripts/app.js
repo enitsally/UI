@@ -6,13 +6,14 @@
  * @description
  * # detdpdemoApp
  *
- * Main module of the application.
+ * Main module of the application;
  */
 angular
   .module('detdpdemoApp', [
     'ui.router',
     'ngMaterial',
-    'angularFileUpload'
+    'angularFileUpload',
+    'agGrid'
   ])
   .config(function ($urlRouterProvider) {
     $urlRouterProvider.otherwise('/login');
@@ -42,7 +43,7 @@ angular
         templateUrl: 'views/user_setting.html',
         controller: 'UserSettingCtrl',
         controllerAs: 'usersetting'
-      })
+      });
   })
 
   //.config(function ($httpProvider) {
@@ -87,6 +88,20 @@ angular
     $rootScope.userRoles = USER_ROLES;
     $rootScope.isAuthorized = AuthService.isAuthorized;
 
+    /**
+     * Build handler to open/close a SideNav; when animation finishes
+     * report completion in console
+     */
+    function buildDelayedToggler(navID) {
+      return debounce(function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      }, 200);
+    }
+
     $scope.setCurrentUser = function (user) {
       $rootScope.currentUser = user;
     };
@@ -119,23 +134,23 @@ angular
    };
 
    $scope.doDirectPage = function (api){
-     if (api == 'Upload'){
+     if (api === 'Upload'){
        $state.go('upload');
        $mdSidenav('left').close();
      }
-     else if (api == 'Retrieve'){
+     else if (api === 'Retrieve'){
        $state.go('retrieve');
        $mdSidenav('left').close();
      }
-     else if (api == 'User Setting'){
+     else if (api === 'User Setting'){
        $state.go('usersetting');
        $mdSidenav('left').close();
      }
-     else if (api == 'login'){
+     else if (api === 'login'){
        $state.go('login');
        $mdSidenav('left').close();
      }
-   }
+   };
 
    $scope.showSimpleToast = function(showmgs) {
      $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
@@ -156,31 +171,8 @@ angular
           func.apply(context, args);
         }, wait || 10);
       };
-    };
+    }
 
-    /**
-     * Build handler to open/close a SideNav; when animation finishes
-     * report completion in console
-     */
-    function buildDelayedToggler(navID) {
-      return debounce(function() {
-        $mdSidenav(navID)
-          .toggle()
-          .then(function () {
-            $log.debug("toggle " + navID + " is done");
-          });
-      }, 200);
-    };
-
-    function buildToggler(navID) {
-      return function() {
-        $mdSidenav(navID)
-          .toggle()
-          .then(function () {
-            $log.debug("toggle " + navID + " is done");
-          });
-      }
-    };
 
     $scope.menu = [
           {

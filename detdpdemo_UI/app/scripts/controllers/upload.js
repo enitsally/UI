@@ -45,82 +45,82 @@ angular.module('detdpdemoApp')
     $scope.doUploadChk = function(){
 
         console.log("Test starting");
-        if ( angular.element("input[name='dFile']").val() == "" || angular.element("input[name='cFile']").val() == ""){
+        if ( angular.element("input[name='dFile']").val() === "" || angular.element("input[name='cFile']").val() === ""){
             $scope.pass = 'N';
             $scope.mgs = ' No files are selected for uploading!';
+            return;
         }
 
-        else if ($scope.file.doe_name == '' || $scope.file.prgram == '' || $scope.file.record_mode == '' || $scope.file.read_only == ''){
+        if ($scope.file.doe_name === '' || $scope.file.doe_prgram === '' || $scope.file.doe_record_mode === '' || $scope.file.doe_read_only === ''){
             $scope.pass = 'N';
             $scope.mgs = ' Required fields need to have values!';
+            return;
         }
-        else{
-          $http.post('http://localhost:5000/get$exist$chk',$scope.file).then(function (r) {
-              if (r.data.status.status == 'EXIST'){
-                $scope.pass = 'N';
-                $scope.mgs = '\n' + r.data.status.comment;
-              }
-              else{
-                $scope.pass = 'Y';
-              }
-              if ( $scope.pass== 'N' && $scope.file.flag == 1){
-                var confirm = $mdDialog.confirm()
-                  .title('Would you replace the existing files?')
-                  .ok('Please replace it!')
-                  .cancel('NO, try it again after modification!');
-                $mdDialog.show(confirm).then(function () {
-                  $scope.file.flag = 2;
-                  $scope.mgs = $scope.mgs + " You confirmed to replace them."
-                }, function(){
 
-                });
-                $scope.uploader.cancelAll();
-              }
-              else{
-                $scope.mgs = $scope.mgs + " You confirmed to replace them."
-                $scope.uploader.uploadAll();
-              }
-
-          }),function(){
+        $http.post('http://localhost:5000/get$exist$chk',$scope.file).then(function (r) {
+            if (r.data.status.status === 'EXIST'){
+              $scope.pass = 'N';
+              $scope.mgs = '\n' + r.data.status.comment;
             }
-        };
+            else{
+              $scope.pass = 'Y';
+            }
+            if ( $scope.pass=== 'N' && $scope.file.flag === 1){
+              var confirm = $mdDialog.confirm()
+                .title('Would you replace the existing files?')
+                .ok('Please replace it!')
+                .cancel('NO, try it again after modification!');
+              $mdDialog.show(confirm).then(function () {
+                $scope.file.flag = 2;
+                $scope.mgs = $scope.mgs + " You confirmed to replace them.";
+              }, function(){
 
+              });
+              $scope.uploader.cancelAll();
+            }
+            else{
+              $scope.mgs = $scope.mgs + " You confirmed to replace them.";
+              $scope.uploader.uploadAll();
+            }
+
+        },function(){
+        });
     };
 
-    $scope.uploader.onSuccessItem = function (fileItem, response, status, headers) {
+    $scope.uploader.onSuccessItem = function (fileItem, response) {
       var result = response.status;
-      if (result['new_conf'] != undefined) {
-        $scope.chkCols.new_conf = result['new_conf']
+      if (result['new_conf'] !== undefined) {
+        $scope.chkCols.new_conf = result['new_conf'];
       }
 
-      if (result['dup_conf'] != undefined) {
-        $scope.chkCols.dup_conf = result['dup_conf']
+      if (result['dup_conf'] !== undefined) {
+        $scope.chkCols.dup_conf = result['dup_conf'];
       }
 
-      if (result['conf_cols_ratio'] != undefined) {
-        $scope.chkCols.conf_cols_ratio = result['conf_cols_ratio']
+      if (result['conf_cols_ratio'] !== undefined) {
+        $scope.chkCols.conf_cols_ratio = result['conf_cols_ratio'];
       }
-      if (result['new_conf_ratio'] != undefined) {
-        $scope.chkCols.new_conf_ratio = result['new_conf_ratio']
+      if (result['new_conf_ratio'] !== undefined) {
+        $scope.chkCols.new_conf_ratio = result['new_conf_ratio'];
       }
-      if (result['new_data'] != undefined) {
-        $scope.chkCols.new_data = result['new_data']
+      if (result['new_data'] !== undefined) {
+        $scope.chkCols.new_data = result['new_data'];
       }
-      if (result['dup_data'] != undefined) {
-        $scope.chkCols.dup_data = result['dup_data']
+      if (result['dup_data'] !== undefined) {
+        $scope.chkCols.dup_data = result['dup_data'];
       }
-      if (result['data_cols_ratio'] != undefined) {
-        $scope.chkCols.data_cols_ratio = result['data_cols_ratio']
+      if (result['data_cols_ratio'] !== undefined) {
+        $scope.chkCols.data_cols_ratio = result['data_cols_ratio'];
       }
-      if (result['new_data_ratio'] != undefined) {
-        $scope.chkCols.new_data_ratio = result['new_data_ratio']
+      if (result['new_data_ratio'] !== undefined) {
+        $scope.chkCols.new_data_ratio = result['new_data_ratio'];
       }
 
-      if (fileItem.alias == 'conf') {
+      if (fileItem.alias === 'conf') {
         $scope.file.conf_file = result['temp_file_id'];
       }
 
-      if (fileItem.alias == 'data') {
+      if (fileItem.alias === 'data') {
         $scope.file.data_file = result['temp_file_id'];
       }
     };
@@ -139,7 +139,7 @@ angular.module('detdpdemoApp')
         controller: DialogController
       });
 
-      function DialogController($scope, $mdDialog, result, arg, parent) {
+      function DialogController($scope, $mdDialog, result, arg) {
         $scope.items = result;
         $scope.closeDialog = function () {
           $mdDialog.hide();
@@ -149,15 +149,15 @@ angular.module('detdpdemoApp')
             var result = resp.data.status;
             $mdDialog.hide();
             $scope.doClearAll();
-            console.log(result)
-            if (result.status == 'INSERT'){
-              $scope.showSimpleToast("INSERT DONE!")
+            console.log(result);
+            if (result.status === 'INSERT'){
+              $scope.showSimpleToast("INSERT DONE!");
             }
             else {
-              $scope.showSimpleToast("INSERT FAILED!")
+              $scope.showSimpleToast("INSERT FAILED!");
             }
 
-          }, function (response) {
+          }, function () {
             });
         };
         $scope.doDelTemp = function () {
@@ -168,32 +168,32 @@ angular.module('detdpdemoApp')
             $scope.doClearAll();
             console.log(doneDel);
             if ( response.data.status.data_status && response.data.status.conf_status){
-              $scope.showSimpleToast("TEMP DELETE DONE!")
+              $scope.showSimpleToast("TEMP DELETE DONE!");
             }
             else{
-              $scope.showSimpleToast("TEMP DELETE FAILED!")
+              $scope.showSimpleToast("TEMP DELETE FAILED!");
             }
 
-          }, function (response) {
+          }, function () {
           });
         };
 
         $scope.showSimpleToastMgs = function(showmgs) {
           $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
         };
-      };
+      }
 
       $scope.uploader.clearQueue();
     };
 
     $http.get('http://localhost:5000/get$record$mode').then (function (response) {
       $scope.recordmode_list = response.data.status;
-    }, function (response) {
+    }, function () {
     });
 
     $http.get('http://localhost:5000/get$program').then (function (response) {
       $scope.program_list = response.data.status;
-    }, function (response) {
+    }, function () {
     });
 
 
@@ -206,7 +206,7 @@ angular.module('detdpdemoApp')
       $scope.file.doe_program = '';
       $scope.file.doe_record_mode = '';
       $scope.file.doe_read_only = '';
-      $scope.file.flag = 1
+      $scope.file.flag = 1;
       $scope.pass = '';
       $scope.mgs = '';
       angular.element("input[type='file']").val(null);
@@ -226,7 +226,7 @@ angular.module('detdpdemoApp')
           $scope.closeDialog = function () {
             $mdDialog.hide();
           };
-        };
+        }
     };
     $scope.doOverview = function (ev) {
       $http.get('http://localhost:5000/get$upload$overview').then (function (response) {
@@ -245,9 +245,9 @@ angular.module('detdpdemoApp')
             $scope.closeDialog = function () {
               $mdDialog.hide();
             };
-          };
+          }
 
-      }, function (response) {
+      }, function () {
       });
     };
 
