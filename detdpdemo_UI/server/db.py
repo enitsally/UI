@@ -475,6 +475,7 @@ class detdp:
         conf_col.append('read_only')
     else:
       conf_col = []
+    print type(conf_col)
     return {'conf_col': conf_col, 'conf_content': result}
 
 #

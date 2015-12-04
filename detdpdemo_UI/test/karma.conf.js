@@ -30,6 +30,7 @@ module.exports = function(config) {
       'bower_components/angular-material/angular-material.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-file-upload/dist/angular-file-upload.min.js',
+      'bower_components/ag-grid/dist/ag-grid.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",
