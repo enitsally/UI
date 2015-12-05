@@ -183,7 +183,19 @@
                   </md-card-title-text>
                 </md-card-title>
                 <md-card-content>
-                  <div ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"></div>
+                  <div style="height: 6%;">
+                    Page Size:
+                    <select ng-model="pageSize" ng-change="onPageSizeChanged()">
+                        <option value="10">10</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                        <option value="1000">1000</option>
+                        <option value="{{totalSize}}">All</option>
+                    </select>
+                  </div>
+                  <div class="ag-row ag-row-even" row="0" style="top: 0px;">
+                    <div ng-if="gridOptions.rowData.length" ag-grid="gridOptions" class="ag-fresh" style="height: 500px"></div>
+                  </div>
                 </md-card-content>
               </md-card>
             </div>

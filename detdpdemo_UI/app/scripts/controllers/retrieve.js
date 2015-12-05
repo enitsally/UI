@@ -87,74 +87,116 @@ angular.module('detdpdemoApp')
       });
     };
 
-    // var columnDefs = [
-    //   {headerName: "Athlete", field: "athlete", width: 150,
-    //       filter: 'text',
-    //       filterParams: { apply: true }
-    //   },
-    //   {headerName: "Age", field: "age", width: 90,
-    //       filter: 'number',
-    //       filterParams: { apply: true }
-    //   },
-    //   {headerName: "Country", field: "country", width: 120,
-    //       filter: 'set',
-    //       filterParams: { apply: true }
-    //   },
-    //   {headerName: "Year", field: "year", width: 90},
-    //   {headerName: "Date", field: "date", width: 110},
-    //   {headerName: "Sport", field: "sport", width: 110},
-    //   {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    //   {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    //   {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    //   {headerName: "Total", field: "total", width: 100, filter: 'number'}
-    // ];
+
+
+    $scope.pageSize = '100';
+    $scope.totalSize = 0;
+    var content;
+    var gridOptions;
+
     $http.get("http://localhost:5000/get$conf$summary")
       .then(function (res) {
-        var content = res.data.status.conf_content;
+        content = res.data.status.conf_content;
         var colslist = res.data.status.conf_col;
-
+        $scope.totalSize = content.length;
         var colHead = [];
         for (var i = 0; i < colslist.length; i++) {
           var tmp = {
             headerName: colslist[i],
-            field: i.toString(),
+            field: colslist[i],
             filter: 'text',
             filterParams: {apply: true}
           };
           colHead.push(tmp);
         }
 
-        $scope.gridOptions.columnDefs = colHead;
-        $scope.gridOptions.rowData = content;
+        gridOptions = {
+          rowData: content,
+          columnDefs: colHead,
+          enableFilter: true,
+          enableSorting: true,
+          enableColResize: true
+        };
 
+        var dataSource = {
+            //rowCount: ???, - not setting the row count, infinite paging will be used
+            pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
+            getRows: function (params) {
+                // this code should contact the server for rows. however for the purposes of the demo,
+                // the data is generated locally, a timer is used to give the experience of
+                // an asynchronous call
+                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                setTimeout( function() {
+                    // take a chunk of the array, matching the start and finish times
+                    var rowsThisPage = content.slice(params.startRow, params.endRow);
+                    // see if we have come to the last page. if we have, set lastRow to
+                    // the very last row of the last page. if you are getting data from
+                    // a server, lastRow could be returned separately if the lastRow
+                    // is not in the current page.
+                    var lastRow = -1;
+                    if (content.length <= params.endRow) {
+                        lastRow = content.length;
+                    }
+                    params.successCallback(rowsThisPage, lastRow);
+                }, 500);
+            }
+        };
+        gridOptions.datasource = dataSource;
+        // gridOptions.api.setDatasource (datasource);
+        // gridOptions.columnApi.sizeColumnsToFit();
+
+        $scope.gridOptions = gridOptions;
       });
-    $scope.gridOptions = {
-      columnDefs: [],
-      rowData: null,
-      enableFilter: true
-    };
 
-    var columnDefs = [
-      {
-        headerName: "Make", field: "make",
-        filter: 'text',
-        filterParams: {apply: true}
-      },
-      {
-        headerName: "Model", field: "model",
-        filter: 'text',
-        filterParams: {apply: true}
-      },
-      {
-        headerName: "Price", field: "price",
-        filter: 'text',
-        filterParams: {apply: true}
-      }
-    ];
-    var rowData = [
-      {make: "Toyota", model: "Celica", price: 35000},
-      {make: "Ford", model: "Mondeo", price: 32000},
-      {make: "Porsche", model: "Boxter", price: 72000}
-    ];
+    // function showTable( head, body){
+    //   $scope.gridOptions = {
+    //     columnDefs: head,
+    //     rowData: body,
+    //     enableFilter: true,
+    //     enableSorting: true,
+    //     enableColResize: true
+    //   };
+    //   return $scope.gridOptions;
+    // }
+    function createNewDatasource() {
+        if (!content) {
+            // in case user selected 'onPageSizeChanged()' before the json was loaded
+            return;
+        }
+
+        var dataSource = {
+            //rowCount: ???, - not setting the row count, infinite paging will be used
+            pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
+            getRows: function (params) {
+                // this code should contact the server for rows. however for the purposes of the demo,
+                // the data is generated locally, a timer is used to give the experience of
+                // an asynchronous call
+                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                setTimeout( function() {
+                    // take a chunk of the array, matching the start and finish times
+                    var rowsThisPage = content.slice(params.startRow, params.endRow);
+                    // see if we have come to the last page. if we have, set lastRow to
+                    // the very last row of the last page. if you are getting data from
+                    // a server, lastRow could be returned separately if the lastRow
+                    // is not in the current page.
+                    var lastRow = -1;
+                    if (content.length <= params.endRow) {
+                        lastRow = content.length;
+                    }
+                    params.successCallback(rowsThisPage, lastRow);
+                }, 500);
+            }
+        };
+
+        $scope.gridOptions.api.setDatasource(dataSource);
+        // return dataSource;
+    }
+
+
+
+    $scope.onPageSizeChanged = function() {
+        createNewDatasource();
+    }
+
 
   });
