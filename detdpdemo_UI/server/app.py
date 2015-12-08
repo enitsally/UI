@@ -260,5 +260,19 @@ def set_program_recordmode_pair():
   result = db.set_program_recordmode(old_pair)
   return jsonify({'status': result})
 
+@app.route('/get$save$system$setup', methods=['GET', 'POST'])
+def set_system_setup():
+  print 'API: /get$save$setup, method: set_user_setup()'
+  input_data = json.loads(request.data)
+  user_name = input_data['admin_name']
+  std_cols = input_data['std_cols']
+  db = detdp()
+  if user_name == 'admin':
+    result = db.set_system_cols(std_cols)
+  else:
+    result = 'Permission denied!'
+  return jsonify({'status': result})
+
+
 if __name__ == "__main__":
   app.run(debug=True)

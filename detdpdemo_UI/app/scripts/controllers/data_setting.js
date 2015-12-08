@@ -13,10 +13,9 @@ angular.module('detdpdemoApp')
 
     $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
       var tmp = response.data.status;
-      $scope.dataPair = response.data.status;
-      for (var i = 0; i < tmp.length; i++){
-        originalDataPair.push(tmp[i]);
-      }
+      $scope.dataPair = tmp.slice(0);
+      originalDataPair = tmp.slice(0);
+
     }, function () {
     });
 
@@ -45,6 +44,8 @@ angular.module('detdpdemoApp')
         };
         $scope.dataPair.splice(index, 1);
         $scope.dataPair.splice(index, 0 , tmp);
+        //$scope.dataPair[index].program = $scope.currentSelection.program;
+        //$scope.dataPair[index].record_mode = $scope.currentSelection.record_mode;
       }
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.program = '';
@@ -66,10 +67,7 @@ angular.module('detdpdemoApp')
     }
 
     $scope.doResetData = function (){
-      $scope.dataPair = [];
-      for (var j = 0; j < originalDataPair.length; j++){
-        $scope.dataPair.push(originalDataPair[j]);
-      }
+      $scope.dataPair = originalDataPair.slice(0);
 
       $scope.edit = true;
       $scope.error = false;

@@ -395,7 +395,7 @@ class detdp:
     return result
 
   def set_user_cols(self, user_name, std_cols, cus_cols):
-    str_method = 'get_user_cols( user_name = {}, std_cols = {}, cus_cols = {})'.format(user_name, std_cols, cus_cols)
+    str_method = 'set_user_cols( user_name = {}, std_cols = {}, cus_cols = {})'.format(user_name, std_cols, cus_cols)
     print 'call method: ', str_method
 
     user_column = self.db.user.find_one({'user_name': user_name})
@@ -499,6 +499,21 @@ class detdp:
       add_no = len(result.inserted_ids)
 
     return {'del_no': del_no, 'add_no':add_no}
+
+  def set_system_cols(self, std_cols):
+    str_method = 'set_system_cols( std_cols = {})'.format(std_cols)
+    print 'call method: ', str_method
+
+    sys_column = self.db.system_conf.find_one({})
+    old_std_cols_list = sys_column.get('standard_cols')
+    if old_std_cols_list is None:
+      std_comment = "No system standard setup"
+    else:
+      std_comment = "System standard setup replaced"
+    self.db.system_conf.find_one_and_update({},
+                                     {'$set': {'standard_cols': std_cols}})
+
+    return std_comment
 
 # if __name__ == '__main__':
 #   db = detdp()
