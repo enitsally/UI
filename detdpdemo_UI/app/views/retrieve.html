@@ -141,65 +141,14 @@
       <md-tab label="File Retrieve" >
         <md-card>
           <md-card-title>
+            <md-checkbox ng-model="showFlag">
+              Show Conf. File Summary
+            </md-checkbox>
           </md-card-title>
 
-          <md-card-content layout="row">
-            <div layout="column" flex ="30" layout-align="left center">
-              <div layout = "row">
-                <md-input-container>
-                  <label>Record Mode</label>
-                  <md-select ng-model="retrieve.doe_record_mode" required>
-                    <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
-                  </md-select>
-                </md-input-container>
-                <md-input-container>
-                  <label>Program</label>
-                  <md-select ng-model="retrieve.doe_program" required>
-                    <md-option ng-repeat="f in program_list | filter: {record_mode: search.doe_record_mode }"
-                               value="{{f.program}}">{{f.program}}
-                    </md-option>
-                  </md-select>
-                </md-input-container>
-              </div>
-              <br>
-              <div layout="row">
-                <md-radio-group ng-model="retrieve.doe_read_only" required>
-                  <md-radio-button value="Y">Read Only</md-radio-button>
-                  <md-radio-button value="N"> Full Device</md-radio-button>
-                </md-radio-group>
-              </div>
-              <br>
-              <md-input-container>
-                <label>DOE Number</label>
-                <input ng-model="retrieve.doe_no">
-              </md-input-container>
-              <md-input-container>
-                <label>Design Number</label>
-                <input ng-model="retrieve.design_no" >
-              </md-input-container>
-              <md-input-container>
-                <label>Conf. Param.</label>
-                <input ng-model="retrieve.param">
-              </md-input-container>
-              <md-input-container>
-                <label>Additional Email</label>
-                <input ng-model="retrieve.email">
-              </md-input-container>
-              <div layout = "row">
-                <md-checkbox ng-model="fullCol">
-                  Full File
-                </md-checkbox>
-                <md-checkbox ng-model="cusCol">
-                  Customized File
-                </md-checkbox>
-                <md-checkbox ng-model="stdCol">
-                  Standard File
-                </md-checkbox>
-              </div>
-
-            </div>
+          <md-card-content >
             <div layout = "column" flex>
-              <md-card>
+              <md-card ng-show = "showFlag">
                 <md-card-title layout="column" layout-align="center center" >
                   <md-card-title-text>
                     <h5><strong>Configuration File Summary ({{totalSize}})</strong></h5>
@@ -222,6 +171,64 @@
                 </md-card-content>
               </md-card>
             </div>
+            <md-divider></md-divider>
+            <div layout = "row" layout-align = "center center"><h4><strong>File Retrieve</strong></h4></div>
+            <span flex></span>
+            <div layout = "row">
+              <md-checkbox ng-model="retrieve.fullCol">
+                Full File
+              </md-checkbox>
+              <md-checkbox ng-model="retrieve.cusCol">
+                Customized File
+              </md-checkbox>
+              <md-checkbox ng-model="retrieve.stdCol">
+                Standard File
+              </md-checkbox>
+            </div>
+            <div layout="row" >
+              <md-card>
+                <md-card-content>
+                  <md-content layout = "column" flex layout-padding style="height: 550px; width: 350px">
+                    <md-input-container>
+                      <label>Program</label>
+                      <input ng-model="retrieve.program">
+                    </md-input-container>
+                    <md-input-container>
+                      <label>Record Mode</label>
+                      <input ng-model="retrieve.record_mode" >
+                    </md-input-container>
+                    <md-checkbox ng-model="retrieve.read_only">
+                      Read Only
+                    </md-checkbox>
+                    <md-checkbox ng-model="retrieve.full_device">
+                      Full Device
+                    </md-checkbox>
+                    <md-input-container>
+                      <label>DOE Number</label>
+                      <input ng-model="retrieve.doe_no">
+                    </md-input-container>
+                    <md-input-container>
+                      <label>Design Number</label>
+                      <input ng-model="retrieve.design_no" >
+                    </md-input-container>
+                    <md-input-container>
+                      <label>Additional Email</label>
+                      <input ng-model="retrieve.email">
+                    </md-input-container>
+                  </md-content>
+                </md-card-content>
+              </md-card>
+              <md-card>
+              <div layout = "row" flex = "70">
+                <label><strong>Parameter Selection</strong></lable>
+                <md-input-container ng-repeat = "p in paramsList">
+                  <label><strong>Parameter: </strong>{{p}}</label>
+                  <input ng-model="retrieve.params[p]">
+                </md-input-container>
+              </div>
+              </md-card>
+            </div>
+
           </md-card-content>
         </md-card>
       </md-tab>

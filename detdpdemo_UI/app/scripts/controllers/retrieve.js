@@ -25,6 +25,26 @@ angular.module('detdpdemoApp')
       'e_m': '',
       'e_d': ''
     };
+
+
+    $scope.retrieve = {
+      'fullCol' : false,
+      'cusCol' : false,
+      'stdCol': true,
+      'record_mode': '',
+      'program' : '',
+      'read_only' : '',
+      'full_device' : '',
+      'doe_no': '',
+      'design_no' : '',
+      'email' : '',
+      'params': ''
+    };
+    $scope.showFlag = true;
+    $scope.currentParam;
+    $scope.paramsList;
+
+
     var todayDate = new Date();
     $scope.maxDate = new Date(
       todayDate.getFullYear(),
@@ -98,6 +118,7 @@ angular.module('detdpdemoApp')
       .then(function (res) {
         content = res.data.status.conf_content;
         var colslist = res.data.status.conf_col;
+        $scope.paramsList = colslist.slice(0);
         $scope.totalSize = content.length;
         var colHead = [];
         for (var i = 0; i < colslist.length; i++) {
@@ -148,16 +169,6 @@ angular.module('detdpdemoApp')
         $scope.gridOptions = gridOptions;
       });
 
-    // function showTable( head, body){
-    //   $scope.gridOptions = {
-    //     columnDefs: head,
-    //     rowData: body,
-    //     enableFilter: true,
-    //     enableSorting: true,
-    //     enableColResize: true
-    //   };
-    //   return $scope.gridOptions;
-    // }
     function createNewDatasource() {
         if (!content) {
             // in case user selected 'onPageSizeChanged()' before the json was loaded
