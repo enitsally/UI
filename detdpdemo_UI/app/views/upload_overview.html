@@ -1,4 +1,19 @@
-<div flex="66">
+
+<style>
+         table, th , td {
+            border-collapse: collapse;
+            padding: 5px;
+         }
+
+         table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+         }
+
+         table tr:nth-child(even) {
+            background-color: #ffffff;
+         }
+</style>
+
   <md-dialog aria-label="Upload Overview" ng-cloak>
     <form>
       <md-toolbar>
@@ -11,7 +26,6 @@
         </div>
       </md-toolbar>
       <md-dialog-content>
-        <md-content flex layout-padding>
           <div class="md-dialog-content">
             <table class="table table-hover">
               <tr>
@@ -39,7 +53,6 @@
               </tr>
             </table>
           </div>
-        </md-content>
       </md-dialog-content>
       <md-dialog-actions layout="row">
         <md-button ng-click="closeDialog()" class="md-primary">
@@ -48,4 +61,3 @@
       </md-dialog-actions>
     </form>
   </md-dialog>
-</div>

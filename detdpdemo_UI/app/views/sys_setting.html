@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="styles/user_setting.css" />
+<br>
+<div layout = "row">
+  <div flex="5"></div>
+  <form flex = "90" layout = "row">
+    <span class="md-headline">Search and Build System's Columns Setup</span>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doSaveToDB()">Save</md-button>
+    <md-button ng-click="doGetSysStd()">Reset</md-button>
+
+  </form>
+  <div flex="5"></div>
+</div>
+<div layout="column" ng-cloak="" class="chipsdemoCustomInputs">
+  <md-content class="md-padding" layout="row">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-dynamic-height md-border-bottom >
+      <md-tab label="Standard Setup ({{selectedStdCols.length}})">
+        <md-card>
+          <md-card-title>
+          </md-card-title>
+
+          <md-card-content>
+            <md-chips ng-model="selectedStdCols" md-autocomplete-snap="" md-transform-chip="transformChip($chip)" md-require-match="true">
+              <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item" placeholder="Search for a column name">
+                <span md-highlight-text="searchText">{{item}}</span>
+              </md-autocomplete>
+              <md-chip-template>
+                <span>
+                  <strong>{{$chip}}</strong>
+                </span>
+              </md-chip-template>
+            </md-chips>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+      <md-tab label="More">
+      </md-tab>
+    </md-tabs>
+    <md-card>
+      <md-card-title>
+        <md-checkbox ng-model="showFlag">
+          Show Full System Columns List
+        </md-checkbox>
+      </md-card-title>
+      <md-card-content>
+        <md-list ng-show = "showFlag">
+          <md-list-item class="md-2-line veggie-option" ng-repeat="col in fulllist" layout="row" layout-wrap="">
+            <div class="md-item-text md-whiteframe-z1" flex="">
+              <h5>{{col}}</h5>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-card-content>
+      <md-divider ng-if="!$last"></md-divider>
+    </md-card>
+  </form>
+  <div flex="5"></div>
+  </md-content>
+</div>

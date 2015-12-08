@@ -228,11 +228,36 @@ def get_search_summary():
   result = db.get_doe_summary(doe_name,doe_descr,doe_comment,program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m, e_d)
   return jsonify({'status': result})
 
-@app.route('/get$conf$summary',)
+@app.route('/get$conf$summary')
 def get_conf_summary():
   print 'API: /get$conf$summary, method: get_conf_summary()'
   db = detdp()
   result = db.get_conf_overview()
+  return jsonify({'status': result})
+
+@app.route('/get$program$recordmode$pair')
+def get_program_recordmode_pair():
+  print 'API: /get$program$recordmode$pair, method: get_program_recordmode_pair()'
+  db = detdp()
+  result = db.get_program_recordmode()
+  return jsonify({'status': result})
+
+
+@app.route('/set$program$recordmode$pair', methods=['GET', 'POST'])
+def set_program_recordmode_pair():
+  print 'API: /set$program$recordmode$pair, method: set_program_recordmode_pair()'
+  db = detdp()
+  input_data = json.loads(request.data)
+  print input_data
+  old_pair = []
+
+  for row in input_data:
+    tmp = {
+      'program': row['program'],
+      'record_mode' : row['record_mode']
+    }
+    old_pair.append(tmp)
+  result = db.set_program_recordmode(old_pair)
   return jsonify({'status': result})
 
 if __name__ == "__main__":

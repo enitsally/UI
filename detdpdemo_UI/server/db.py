@@ -468,7 +468,7 @@ class detdp:
 
     if conf_tmp is not None:
       conf_col = conf_tmp.get('conf_cols')
-      if len(conf_col)>0:
+      if len(conf_col) > 0:
         conf_col.append('doe_name')
         conf_col.append('program')
         conf_col.append('record_mode')
@@ -477,7 +477,34 @@ class detdp:
       conf_col = []
     return {'conf_col': conf_col, 'conf_content': result}
 
-#
+  def get_program_recordmode(self):
+    tmp = self.db.data_conf.find({})
+    result = []
+    for t in tmp:
+      row = {
+        'program': t['program'],
+        'record_mode': t['record_mode'],
+        'row_id': str(t['_id'])
+      }
+      result.append(row)
+    return result
+
+  def set_program_recordmode(self, input):
+    result = self.db.data_conf.delete_many({})
+    del_no = result.deleted_count
+    if len(input) == 0:
+      add_no = 0;
+    else:
+      result = self.db.data_conf.insert_many([x for x in input])
+      add_no = len(result.inserted_ids)
+
+    return {'del_no': del_no, 'add_no':add_no}
+
 # if __name__ == '__main__':
 #   db = detdp()
-#   print db.get_conf_overview()
+#   result = db.get_program_recordmode_pair()
+#   for row in result:
+#     print row
+#
+#   newResult = db.set_program_recordmode_pair(result)
+#   print newResult

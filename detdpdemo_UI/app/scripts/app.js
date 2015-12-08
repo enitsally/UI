@@ -38,6 +38,18 @@ angular
         controller: 'RetrieveCtrl',
         controllerAs: 'retrieve'
       })
+      .state('sysSetting', {
+        url: '/sysSetting',
+        templateUrl: 'views/sys_setting.html',
+        controller: 'sysSettingCtrl',
+        controllerAs: 'sysSetting'
+      })
+      .state('dataSetting', {
+        url: '/dataSetting',
+        templateUrl: 'views/data_setting.html',
+        controller: 'dataSettingCtrl',
+        controllerAs: 'dataSetting'
+      })
       .state('usersetting', {
         url: '/usersetting',
         templateUrl: 'views/user_setting.html',
@@ -146,8 +158,12 @@ angular
        $state.go('usersetting');
        $mdSidenav('left').close();
      }
-     else if (api === 'login'){
-       $state.go('login');
+     else if (api === 'System Setting'){
+       $state.go('sysSetting');
+       $mdSidenav('left').close();
+     }
+     else if (api === 'Data Setting'){
+       $state.go('dataSetting');
        $mdSidenav('left').close();
      }
    };
@@ -194,13 +210,13 @@ angular
     $scope.admin = [
           {
             link : '',
-            title: 'Trash',
-            icon: 'delete'
+            title: 'System Setting',
+            icon: 'images/icon/ssy_setting.svg'
           },
           {
             link : 'showListBottomSheet($event)',
-            title: 'Settings',
-            icon: 'settings'
+            title: 'Data Setting',
+            icon: 'images/icon/data_setting.svg'
           }
     ];
   })

@@ -58,8 +58,7 @@
             <div class="inset">
               <ng-md-icon icon="item.icon"></ng-md-icon>
             </div>
-            <div class="inset">{{item.title}}
-            </div>
+            <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
           </md-item-content>
         </a>
       </md-item>
@@ -127,6 +126,8 @@
 <script src="scripts/controllers/upload.js"></script>
 <script src="scripts/controllers/retrieve.js"></script>
 <script src="scripts/controllers/user_setting.js"></script>
+<script src="scripts/controllers/sys_setting.js"></script>
+<script src="scripts/controllers/data_setting.js"></script>
 
 
 <!-- endbuild -->

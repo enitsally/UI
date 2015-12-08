@@ -48,13 +48,17 @@ angular.module('detdpdemoApp')
       AuthService.login(credentials).then(function (user) {
         $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
         $scope.setCurrentUser(user);
-        if (user.role === 'retriever' || user.role === 'admin'){
+        if (user.role === 'retriever'){
           $state.go('retrieve');
           $scope.message = user.id + ", You are logged in.";
         }
         else if(user.role === 'uploader'){
           $state.go('upload');
           $scope.message = user.id + ", You are logged in.";
+        }
+        else if(user.role === 'admin'){
+          $state.go('dataSetting');
+          $scope.message = user.id + ", Admin, You are logged in!";
         }
         else{
           $scope.message = "Login failed, please try again.";
