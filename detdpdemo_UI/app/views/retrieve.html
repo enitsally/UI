@@ -188,7 +188,7 @@
             <div layout="row" >
               <md-card>
                 <md-card-content>
-                  <md-content layout = "column" flex layout-padding style="height: 550px; width: 350px">
+                  <md-content layout = "column" flex layout-padding style="height: 550px; width: 400px">
                     <md-input-container>
                       <label>Program</label>
                       <input ng-model="retrieve.program">
@@ -219,13 +219,24 @@
                 </md-card-content>
               </md-card>
               <md-card>
-              <div layout = "row" flex = "70">
-                <label><strong>Parameter Selection</strong></lable>
-                <md-input-container ng-repeat = "p in paramsList">
-                  <label><strong>Parameter: </strong>{{p}}</label>
-                  <input ng-model="retrieve.params[p]">
-                </md-input-container>
-              </div>
+                <md-card-title  flex layout-padding style="width: 700px">
+                  <lable><strong>Parameter Selection: </strong></lable>
+                  <md-input-container>
+                    <md-select ng-model="currentParam">
+                      <md-option ng-repeat="p in paramsList" value="{{p}}">{{p}}</md-option>
+                    </md-select>
+                  </md-input-container>
+                  <span flex></span>
+                  <md-button class="md-primary md-raised" ng-click="doAddParam()">Add</md-button>
+                </md-card-title>
+                <md-card-content ng-show = "paramsSelection.length">
+                  <md-content layout = "column"  flex layout-padding style="height: 550px; width: 700px">
+                    <md-input-container ng-repeat = "param in paramsSelection">
+                      <label><strong></strong>{{param.key}}</label>
+                      <input ng-model="param.value">
+                    </md-input-container>
+                  </md-content>
+                </md-card-content>
               </md-card>
             </div>
 

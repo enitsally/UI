@@ -40,9 +40,10 @@ angular.module('detdpdemoApp')
       'email' : '',
       'params': ''
     };
-    $scope.showFlag = true;
+    $scope.showFlag = false;
     $scope.currentParam;
     $scope.paramsList;
+    $scope.paramsSelection=[];
 
 
     var todayDate = new Date();
@@ -56,6 +57,16 @@ angular.module('detdpdemoApp')
       var day = date;
       return day > $scope.search.doe_start_date;
     };
+
+    $scope.doAddParam = function (){
+      var tmp = {
+        'key': $scope.currentParam,
+        'value' : ''
+      };
+
+      $scope.paramsSelection.push(tmp);
+      $scope.currentParam = '';
+    }
 
 
     $http.get('http://localhost:5000/get$record$mode').then (function (response) {
