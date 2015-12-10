@@ -17,7 +17,7 @@
 <div layout = "row">
   <div flex="5"></div>
   <form flex = "90" layout = "row">
-    <span class="md-headline">Setup Data Configuration</span>
+    <span class="md-headline">Setup Column Mapping</span>
     <span flex></span>
     <md-button class="md-primary md-raised" ng-click="doSaveMappingToDB()">Save</md-button>
     <div layout="row" layout-align="end center">
@@ -89,7 +89,7 @@
                         <td>{{row.old_cols}}</td>
                         <td>{{row.new_cols}}</td>
                         <td>
-                          <button class="btn" ng-click="editRow($index,row.old, row.new)">
+                          <button class="btn" ng-click="editRow($index,row.old_cols,row.new_cols)">
                           <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
                           </button>
                         </td>

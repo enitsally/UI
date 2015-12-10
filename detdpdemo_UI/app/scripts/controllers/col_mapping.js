@@ -43,8 +43,8 @@ angular.module('detdpdemoApp')
     $scope.saveEdit = function (index){
       if (index > -1) {
         var tmp = {
-          'oldCol':$scope.currentSelection.oldCOl,
-          'newCol':$scope.currentSelection.newCol
+          'old_cols':$scope.currentSelection.oldCol,
+          'new_cols':$scope.currentSelection.newCol
         };
         $scope.mappingPair.splice(index, 1);
         $scope.mappingPair.splice(index, 0 , tmp);
@@ -53,24 +53,22 @@ angular.module('detdpdemoApp')
       }
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.oldCol = '';
-      $scope.currentSelection.newCOl = '';
-      console.log (originalMappingPair.length);
+      $scope.currentSelection.newCol = '';
     };
 
     $scope.saveNew = function () {
       var tmp = {
-        'oldCol':$scope.currentSelection.oldCOl,
-        'newCol':$scope.currentSelection.newCol
+        'old_cols':$scope.currentSelection.oldCol,
+        'new_cols':$scope.currentSelection.newCol
       };
       $scope.mappingPair.push(tmp);
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.oldCol = '';
-      $scope.currentSelection.newCOl = '';
-      console.log (originalDataPair.length);
+      $scope.currentSelection.newCol = '';
     };
 
     $scope.doResetData = function (){
-      $scope.dataPair = originalDataPair.slice(0);
+      $scope.mappingPair = originalMappingPair.slice(0);
 
       $scope.edit = true;
       $scope.hideform = true;
@@ -79,18 +77,16 @@ angular.module('detdpdemoApp')
       $scope.currentSelection.newCOl = '';
     };
 
-    $scope.deleteRow = function (id){
-      var index = get_index(id);
+    $scope.deleteRow = function (index){
       if (index > -1) {
-          $scope.dataPair.splice(index, 1);
+          $scope.mappingPair.splice(index, 1);
       }
     };
 
     $scope.doSaveMappingToDB = function (){
-      $http.post('http://localhost:5000/set$colmn$mapping$pair', $scope.dataPair).then (function (response) {
-        var tmp = response.data.status;
-
-        $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
+      $http.post('http://localhost:5000/set$colmn$mapping$pair', $scope.mappingPair).then (function (response) {
+        var mgs = response.data.status;
+        $http.get('http://localhost:5000/get$colmn$mapping$pair').then (function (response) {
           var tmp = response.data.status;
           $scope.mappingPair = [];
           originalMappingPair = [];
@@ -101,7 +97,7 @@ angular.module('detdpdemoApp')
         }, function () {
         });
 
-        $scope.showSimpleToast(tmp);
+        $scope.showSimpleToast(mgs);
       }, function () {
       });
     };

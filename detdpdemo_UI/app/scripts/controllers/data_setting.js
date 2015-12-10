@@ -96,7 +96,7 @@ angular.module('detdpdemoApp')
 
     $scope.doSaveDataToDB = function (){
       $http.post('http://localhost:5000/set$program$recordmode$pair', $scope.dataPair).then (function (response) {
-        var tmp = response.data.status;
+        var msg = response.data.status;
 
         $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
           var tmp = response.data.status;
@@ -109,7 +109,7 @@ angular.module('detdpdemoApp')
         }, function () {
         });
 
-        $scope.showSimpleToast(tmp);
+        $scope.showSimpleToast(msg);
       }, function () {
       });
     };

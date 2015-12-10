@@ -253,7 +253,6 @@ def set_program_recordmode_pair():
   print 'API: /set$program$recordmode$pair, method: set_program_recordmode_pair()'
   db = detdp()
   input_data = json.loads(request.data)
-  print input_data
   old_pair = []
 
   for row in input_data:
@@ -284,7 +283,6 @@ def set_system_setup():
 def get_file_retrieve():
   print 'API: /get$file$retrieve, method: get_file_retrieve()'
   input_data = json.loads(request.data)
-  print input_data
   user_name = input_data['user_name']
   var_flag = input_data['flag']
   var_record_mode = input_data['record_mode']
@@ -347,6 +345,30 @@ def get_file_retrieve():
   result = db.get_file_retrieve(user_name,program, record_mode, read_only, doe_no, design_no, param, email, flag)
   print result
   return jsonify({'status': result})
+
+
+@app.route('/get$colmn$mapping$pair')
+def get_colmapping_pair():
+  print 'API: /get$colmn$mapping$pair, method: get_colmapping_pair()'
+  db = detdp()
+  result = db.get_col_mapping()
+  return jsonify({'status': result})
+
+@app.route('/set$colmn$mapping$pair', methods=['GET', 'POST'])
+def set_colmapping_pair():
+  print 'API: /set$colmn$mapping$pair, method: set_colmapping_pair()'
+  input_data = json.loads(request.data)
+  new_pair = []
+  for row in input_data:
+    tmp = {
+      'old_cols': row['old_cols'],
+      'new_cols': row['new_cols']
+    }
+    new_pair.append(tmp)
+  db = detdp()
+  result = db.set_col_mapping(new_pair)
+  return jsonify({'status': result})
+
 
 
 if __name__ == "__main__":

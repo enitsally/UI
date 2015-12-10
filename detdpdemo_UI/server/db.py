@@ -156,8 +156,8 @@ class detdp:
     for t in data_file_cols_list:
       if t not in sys_cols_full:
         new_data_cols_list.append(t)
-    if t not in dup_data_cols_set:
-      dup_data_cols_set.add(t)
+      if t not in dup_data_cols_set:
+        dup_data_cols_set.add(t)
     else:
       dup_data_cols_list.append(t)
 
@@ -467,6 +467,8 @@ class detdp:
     return list(self.db.data_file.find(query_dict, {'_id': False, 'data_file_id': False}))
 
   def get_conf_overview(self):
+    str_method = 'get_conf_overview()'
+    print 'call method: ', str_method
     tmp = self.db.conf_file.find({}, projection={'_id': False})
     conf_tmp = self.db.system_conf.find_one({})
     if tmp.count() > 0:
@@ -486,6 +488,8 @@ class detdp:
     return {'conf_col': conf_col, 'conf_content': result}
 
   def get_program_recordmode(self):
+    str_method = 'get_program_recordmode()'
+    print 'call method: ', str_method
     tmp = self.db.data_conf.find({})
     result = []
     for t in tmp:
@@ -498,6 +502,8 @@ class detdp:
     return result
 
   def set_program_recordmode(self, input):
+    str_method = 'set_program_recordmode( input = {})'.format(input)
+    print 'call method: ', str_method
     result = self.db.data_conf.delete_many({})
     del_no = result.deleted_count
     if len(input) == 0:
@@ -736,6 +742,32 @@ class detdp:
       comment = "Aggregated file not found."
 
     return comment
+
+  def get_col_mapping(self):
+    str_method = 'get_col_mapping()'
+    print 'call method: ', str_method
+    tmp = self.db.column_mapping.find({})
+    result = []
+    for t in tmp:
+      row = {
+        'old_cols': t['old_cols'],
+        'new_cols': t['new_cols']
+      }
+      result.append(row)
+    return result
+
+  def set_col_mapping(self, input):
+    str_method = 'set_col_mapping( input = {})'.format(input)
+    print 'call method: ', str_method
+    result = self.db.column_mapping.delete_many({})
+    del_no = result.deleted_count
+    if len(input) == 0:
+      add_no = 0;
+    else:
+      result = self.db.column_mapping.insert_many([x for x in input])
+      add_no = len(result.inserted_ids)
+
+    return {'del_no': del_no, 'add_no': add_no}
 
 # if __name__ == '__main__':
 #   db = detdp()
