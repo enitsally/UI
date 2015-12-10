@@ -171,6 +171,7 @@ def get_user_setup():
   result = db.get_user_cols(user_name)
   return jsonify({'status': result})
 
+
 @app.route('/get$save$setup', methods=['GET', 'POST'])
 def set_user_setup():
   print 'API: /get$save$setup, method: set_user_setup()'
@@ -181,6 +182,7 @@ def set_user_setup():
   db = detdp()
   result = db.set_user_cols(user_name, std_cols, cus_cols)
   return jsonify({'status': result})
+
 
 @app.route('/get$search$summary', methods=['GET', 'POST'])
 def get_search_summary():
@@ -225,8 +227,10 @@ def get_search_summary():
   else:
     read_only = var_doe_read_only.split(',')
 
-  result = db.get_doe_summary(doe_name,doe_descr,doe_comment,program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m, e_d)
+  result = db.get_doe_summary(doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y,
+                              e_m, e_d)
   return jsonify({'status': result})
+
 
 @app.route('/get$conf$summary')
 def get_conf_summary():
@@ -234,6 +238,7 @@ def get_conf_summary():
   db = detdp()
   result = db.get_conf_overview()
   return jsonify({'status': result})
+
 
 @app.route('/get$program$recordmode$pair')
 def get_program_recordmode_pair():
@@ -254,11 +259,12 @@ def set_program_recordmode_pair():
   for row in input_data:
     tmp = {
       'program': row['program'],
-      'record_mode' : row['record_mode']
+      'record_mode': row['record_mode']
     }
     old_pair.append(tmp)
   result = db.set_program_recordmode(old_pair)
   return jsonify({'status': result})
+
 
 @app.route('/get$save$system$setup', methods=['GET', 'POST'])
 def set_system_setup():
@@ -271,6 +277,75 @@ def set_system_setup():
     result = db.set_system_cols(std_cols)
   else:
     result = 'Permission denied!'
+  return jsonify({'status': result})
+
+
+@app.route('/get$file$retrieve', methods=['GET', 'POST'])
+def get_file_retrieve():
+  print 'API: /get$file$retrieve, method: get_file_retrieve()'
+  input_data = json.loads(request.data)
+  print input_data
+  user_name = input_data['user_name']
+  var_flag = input_data['flag']
+  var_record_mode = input_data['record_mode']
+  var_program = input_data['program']
+  var_read_only = input_data['read_only']
+  var_doe_no = input_data['doe_no']
+  var_design_no = input_data['design_no']
+  var_email = input_data['email']
+  var_param = input_data['params']
+
+  print input_data
+
+  if var_record_mode == '':
+    record_mode = []
+  else:
+    record_mode = [str(x) for x in var_record_mode.split(',')]
+
+  if var_program == '':
+    program = []
+  else:
+    program = [str(x) for x in var_program.split(',')]
+
+  if len(var_read_only) == 0:
+    read_only = ''
+  else:
+    read_only = [str(x) for x in var_read_only]
+
+  if var_doe_no == '':
+    doe_no = []
+  else:
+    doe_no = [str(x) for x in var_doe_no.split(',')]
+
+  if var_design_no == '':
+    design_no = []
+  else:
+    design_no = [str(x) for x in var_design_no.split(',')]
+
+  if var_email == '':
+    email = []
+  else:
+    email = [str(x) for x in var_email.split(',')]
+
+  if len(var_param) == 0:
+    param = {}
+  else:
+    param = {}
+    for p in var_param:
+      for k, v in p.iteritems():
+        if v == '':
+          param[str(k)] = []
+        else:
+          param[str(k)] = [str(x) for x in v.split(',')]
+
+  if len(var_flag) == 0:
+    flag = ['S']
+  else:
+    flag = var_flag
+
+  db = detdp()
+  result = db.get_file_retrieve(user_name,program, record_mode, read_only, doe_no, design_no, param, email, flag)
+  print result
   return jsonify({'status': result})
 
 

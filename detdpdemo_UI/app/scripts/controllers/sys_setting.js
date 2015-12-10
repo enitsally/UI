@@ -1,3 +1,13 @@
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name detdpdemoApp.controller:AboutCtrl
+ * @description
+ * # AboutCtrl
+ * Controller of the detdpdemoApp
+ */
+
 angular.module('detdpdemoApp')
   .controller('sysSettingCtrl', function ($scope, $http, $mdToast) {
     $scope.admin_setup = {
@@ -8,8 +18,7 @@ angular.module('detdpdemoApp')
     $scope.showFlag = false;
     $scope.selectedItem = null;
     $scope.searchText = null;
-
-    var admin_standard_cols;
+    
     var comment;
     var sys_std_list;
 

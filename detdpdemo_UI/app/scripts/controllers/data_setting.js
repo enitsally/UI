@@ -1,3 +1,13 @@
+'use strict';
+
+/**
+ * @ngdoc function
+ * @name detdpdemoApp.controller:AboutCtrl
+ * @description
+ * # AboutCtrl
+ * Controller of the detdpdemoApp
+ */
+
 angular.module('detdpdemoApp')
   .controller('dataSettingCtrl', function ($scope, $http, $mdToast) {
     $scope.edit = true;
@@ -8,7 +18,7 @@ angular.module('detdpdemoApp')
       'row_id':'',
       'program':'',
       'record_mode':''
-    }
+    };
     var originalDataPair =[];
 
     $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
@@ -21,7 +31,7 @@ angular.module('detdpdemoApp')
 
     $scope.editRow = function(id, program, record_mode) {
       $scope.hideform = false;
-      if (id == 'new') {
+      if (id === 'new') {
         $scope.edit = true;
         $scope.incomplete = true;
         }
@@ -51,20 +61,20 @@ angular.module('detdpdemoApp')
       $scope.currentSelection.program = '';
       $scope.currentSelection.record_mode = '';
       console.log (originalDataPair.length);
-    }
+    };
 
     $scope.saveNew = function () {
       var tmp = {
         'row_id':$scope.currentSelection.row_id,
         'program':$scope.currentSelection.program,
         'record_mode':$scope.currentSelection.record_mode
-      }
+      };
       $scope.dataPair.push(tmp);
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.program = '';
       $scope.currentSelection.record_mode = '';
       console.log (originalDataPair.length);
-    }
+    };
 
     $scope.doResetData = function (){
       $scope.dataPair = originalDataPair.slice(0);
@@ -76,14 +86,13 @@ angular.module('detdpdemoApp')
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.program = '';
       $scope.currentSelection.record_mode = '';
-    }
+    };
 
-    $scope.deleteRow = function (id){
-      var index = get_index(id);
+    $scope.deleteRow = function (index){
       if (index > -1) {
           $scope.dataPair.splice(index, 1);
       }
-    }
+    };
 
     $scope.doSaveDataToDB = function (){
       $http.post('http://localhost:5000/set$program$recordmode$pair', $scope.dataPair).then (function (response) {
@@ -103,20 +112,11 @@ angular.module('detdpdemoApp')
         $scope.showSimpleToast(tmp);
       }, function () {
       });
-    }
+    };
 
     $scope.showSimpleToast = function(showmgs) {
       $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(3000));
     };
-
-    function get_index (id) {
-      for (var i = 0; i < $scope.dataPair.length; i++){
-        if ( $scope.dataPair[i].row_id === id){
-          return i;
-        }
-      }
-      return -1;
-    }
 
 
   });

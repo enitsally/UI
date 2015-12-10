@@ -4,12 +4,15 @@
            <md-tab label="Data File Analysis">
              <div layout="row" flex>
                  <md-card flex="50">
+                  <md-card-title>
                      <p><strong>New Data File Columns</strong></p>
-                     <md-card-content ng-hide="items.new_data.length">
+                   </md-card-title>
+                   <md-card-content ng-hide="items.new_data.length">
                          <p>No new columns from data file that beyond existing columns in database</p>
-                       </md-card-content>
+                    </md-card-content>
                      <md-card-content ng-show="items.new_data.length">
-                         <table class="table table-hover">
+                       <md-content flex layout-padding style="height: 400px; width = 400px">
+                          <table class="table table-hover">
                              <tr>
                                  <th>New Column Name</th>
                              </tr>
@@ -17,14 +20,18 @@
                                  <td>{{item}}</td>
                              </tr>
                            </table>
+                         </md-content >
                        </md-card-content>
                    </md-card>
                  <md-card flex="50">
+                   <md-card-title>
                      <p><strong>Duplicated Data File Columns</strong></p>
+                   </md-card-title>
                      <md-card-content ng-hide="items.dup_data.length">
                          <p>No duplicated columns from data file</p>
                        </md-card-content>
                      <md-card-content ng-show="items.dup_data.length">
+                       <md-content flex layout-padding style="height: 400px; width = 400px">
                          <table class="table table-hover">
                              <tr>
                                  <th>Duplicated Column Name</th>
@@ -33,16 +40,20 @@
                                  <td>{{item}}</td>
                              </tr>
                            </table>
+                         </md-content>
                        </md-card-content>
                    </md-card>
                </div>
              <div layout="column" flex>
                  <md-card>
+                   <md-card-title>
                      <p><strong>New Data Columns Comparison Ratio</strong></p>
+                   </md-card-title>
                      <md-card-content ng-hide="items.new_data_ratio.length">
                          <p>No new columns from data file that beyond existing columns in database</p>
                        </md-card-content>
                      <md-card-content ng-show="items.new_data_ratio.length">
+                       <md-content flex layout-padding style="height: 400px; width = 800px">
                           <table class="table table-hover">
                                <tr>
                                    <th>New Cols Name</th>
@@ -55,6 +66,7 @@
                                    <td>{{item[2]}}</td>
                                  </tr>
                            </table>
+                        </md-content>
                        </md-card-content>
                    </md-card>
                </div>
@@ -62,27 +74,34 @@
            <md-tab label="Conf File Analysis">
                <div layout="row" flex>
                  <md-card flex="50">
+                   <md-card-title>
                      <p><strong>New Conf. File Columns</strong></p>
+                   </md-card-title>
                      <md-card-content ng-hide="items.new_conf.length">
                          <p>No new columns from conf. file that beyond existing columns in database</p>
                        </md-card-content>
                      <md-card-content ng-show="items.new_conf.length">
+                       <md-content flex layout-padding style="height: 400px; width = 400px">
                          <table class="table table-hover">
                              <tr>
                                  <th>New Column Name</th>
                                </tr>
                              <tr ng-repeat="item in items.new_conf">
                                  <td>{{item}}</td>
-                               </tr>
+                              </tr>
                            </table>
+                        </md-content>
                        </md-card-content>
                    </md-card>
                  <md-card flex="50">
+                   <md-card-title>
                      <p><strong>Duplicated Conf. File Columns</strong></p>
+                   </md-card-title>
                      <md-card-content ng-hide="items.dup_conf.length">
                          <p>No duplicated columns from conf. file</p>
                        </md-card-content>
                      <md-card-content ng-show="items.dup_conf.length">
+                       <md-content flex layout-padding style="height: 400px; width = 400px">
                          <table class="table table-hover">
                              <tr>
                                  <th>Duplicated Column Name</th>
@@ -91,16 +110,20 @@
                                  <td>{{item}}</td>
                                </tr>
                            </table>
+                        </md-content>
                        </md-card-content>
                    </md-card>
                </div>
              <div layout="column" flex>
                  <md-card>
+                   <md-card-title>
                      <p><strong>New Conf.Columns Comparison Ratio</strong></p>
+                   </md-card-title>
                      <md-card-content ng-hide="items.new_conf_ratio.length">
                          <p>No new columns from conf. file that beyond existing columns in database</p>
                        </md-card-content>
                      <md-card-content ng-show="items.new_conf_ratio.length">
+                       <md-content flex layout-padding style="height: 400px; width = 800px">
                           <table class="table table-hover">
                                <tr>
                                    <th>New Cols Name</th>
@@ -113,6 +136,7 @@
                                    <td>{{item[2]}}</td>
                                  </tr>
                            </table>
+                        </md-content>
                        </md-card-content>
                    </md-card>
                </div>

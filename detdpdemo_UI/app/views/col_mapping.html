@@ -19,7 +19,7 @@
   <form flex = "90" layout = "row">
     <span class="md-headline">Setup Data Configuration</span>
     <span flex></span>
-    <md-button class="md-primary md-raised" ng-click="doSaveDataToDB()">Save</md-button>
+    <md-button class="md-primary md-raised" ng-click="doSaveMappingToDB()">Save</md-button>
     <div layout="row" layout-align="end center">
       <span flex></span>
       <md-button ng-click="doResetData()">Reset</md-button>
@@ -32,13 +32,13 @@
   <div flex="5"></div>
   <form flex="90">
     <md-tabs md-dynamic-height md-border-bottom >
-      <md-tab label="Program/Record">
+      <md-tab label="New/Old Mapping">
         <div layout = "row" flex>
           <div flex = "20">
             <md-card>
               <md-card-title>
                 <br>
-                <button class="btn btn-success" ng-click="editRow('new', '', '')">
+                <button class="btn btn-success" ng-click="editRow('N', '', '')">
                   <span class="glyphicon glyphicon-user"></span> Create New Row
                 </button>
               </md-card-title>
@@ -47,19 +47,19 @@
                   <h4 ng-show="edit">Create New Row:</h4>
                   <h4 ng-hide="edit">Edit Row:</h4>
                   <md-input-container>
-                    <label>Program:</label>
-                    <input ng-model="currentSelection.program" >
+                    <label>Old Column:</label>
+                    <input ng-model="currentSelection.oldCol" >
                   </md-input-container>
 
                   <md-input-container>
-                    <label>Record Mode:</label>
-                    <input ng-model="currentSelection.record_mode" >
+                    <label>New Column:</label>
+                    <input ng-model="currentSelection.newCol" >
                   </md-input-container>
                   <hr>
                   <button class="btn btn-success"  ng-click="saveNew()" ng-show="edit">
                     <span class="glyphicon glyphicon-save"></span> Add Row
                   </button>
-                  <button class="btn btn-success"  ng-click="saveEdit()" ng-hide="edit">
+                  <button class="btn btn-success"  ng-click="saveEdit(currentSelection.row_id)" ng-hide="edit">
                     <span class="glyphicon glyphicon-save"></span> Save change
                   </button>
                 </div>
@@ -70,7 +70,7 @@
         <div flex = "70">
           <md-card>
             <md-card-title layout="row" layout-align="center center">
-              <h5><strong>Program / Record Mode Pairs </strong></h5><div ng-show= "dataPair.length"><h5><strong>({{dataPair.length}})</strong></h5></div>
+              <h5><strong>Old / New Column Pairs </strong></h5><div ng-show= "mappingPair.length"><h5><strong>({{mappingPair.length}})</strong></h5></div>
             </md-card-title>
             <md-card-content>
               <md-content flex layout-padding style="height: 500px">
@@ -78,18 +78,18 @@
                   <table class="table table-striped">
                     <thead>
                       <tr>
-                        <th>Program Name</th>
-                        <th>Record Mode</th>
+                        <th>Old Name</th>
+                        <th>New Name</th>
                         <th>Edit</th>
                         <th>Delete</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr ng-repeat="row in dataPair">
-                        <td>{{row.program}}</td>
-                        <td>{{row.record_mode}}</td>
+                      <tr ng-repeat="row in mappingPair">
+                        <td>{{row.old_cols}}</td>
+                        <td>{{row.new_cols}}</td>
                         <td>
-                          <button class="btn" ng-click="editRow(row.row_id, row.program, row.record_mode)">
+                          <button class="btn" ng-click="editRow($index,row.old, row.new)">
                           <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
                           </button>
                         </td>

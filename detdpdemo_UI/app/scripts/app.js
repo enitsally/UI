@@ -50,6 +50,12 @@ angular
         controller: 'dataSettingCtrl',
         controllerAs: 'dataSetting'
       })
+      .state('colMapping', {
+        url: '/colMapping',
+        templateUrl: 'views/col_mapping.html',
+        controller: 'colMappingCtrl',
+        controllerAs: 'colMapping'
+      })
       .state('usersetting', {
         url: '/usersetting',
         templateUrl: 'views/user_setting.html',
@@ -166,6 +172,10 @@ angular
        $state.go('dataSetting');
        $mdSidenav('left').close();
      }
+     else if (api === 'Column Mapping'){
+       $state.go('colMapping');
+       $mdSidenav('left').close();
+     }
    };
 
    $scope.showSimpleToast = function(showmgs) {
@@ -214,8 +224,13 @@ angular
             icon: 'images/icon/ssy_setting.svg'
           },
           {
-            link : 'showListBottomSheet($event)',
+            link : '',
             title: 'Data Setting',
+            icon: 'images/icon/data_setting.svg'
+          },
+          {
+            link : '',
+            title: 'Column Mapping',
             icon: 'images/icon/data_setting.svg'
           }
     ];

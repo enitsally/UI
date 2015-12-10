@@ -171,17 +171,16 @@
                 </md-card-content>
               </md-card>
             </div>
-            <md-divider></md-divider>
             <div layout = "row" layout-align = "center center"><h4><strong>File Retrieve</strong></h4></div>
             <span flex></span>
             <div layout = "row">
-              <md-checkbox ng-model="retrieve.fullCol">
+              <md-checkbox ng-model="criteria.fullCol">
                 Full File
               </md-checkbox>
-              <md-checkbox ng-model="retrieve.cusCol">
+              <md-checkbox ng-model="criteria.cusCol">
                 Customized File
               </md-checkbox>
-              <md-checkbox ng-model="retrieve.stdCol">
+              <md-checkbox ng-model="criteria.stdCol">
                 Standard File
               </md-checkbox>
             </div>
@@ -191,29 +190,29 @@
                   <md-content layout = "column" flex layout-padding style="height: 550px; width: 400px">
                     <md-input-container>
                       <label>Program</label>
-                      <input ng-model="retrieve.program">
+                      <input ng-model="criteria.program">
                     </md-input-container>
                     <md-input-container>
                       <label>Record Mode</label>
-                      <input ng-model="retrieve.record_mode" >
+                      <input ng-model="criteria.record_mode" >
                     </md-input-container>
-                    <md-checkbox ng-model="retrieve.read_only">
+                    <md-checkbox ng-model="criteria.readonly">
                       Read Only
                     </md-checkbox>
-                    <md-checkbox ng-model="retrieve.full_device">
+                    <md-checkbox ng-model="criteria.fulldevice">
                       Full Device
                     </md-checkbox>
                     <md-input-container>
                       <label>DOE Number</label>
-                      <input ng-model="retrieve.doe_no">
+                      <input ng-model="criteria.doe_no">
                     </md-input-container>
                     <md-input-container>
                       <label>Design Number</label>
-                      <input ng-model="retrieve.design_no" >
+                      <input ng-model="criteria.design_no" >
                     </md-input-container>
                     <md-input-container>
                       <label>Additional Email</label>
-                      <input ng-model="retrieve.email">
+                      <input ng-model="criteria.email">
                     </md-input-container>
                   </md-content>
                 </md-card-content>
@@ -222,7 +221,7 @@
                 <md-card-title  flex layout-padding style="width: 700px">
                   <lable><strong>Parameter Selection: </strong></lable>
                   <md-input-container>
-                    <md-select ng-model="currentParam">
+                    <md-select aria-label="selectParam" ng-model="currentParam">
                       <md-option ng-repeat="p in paramsList" value="{{p}}">{{p}}</md-option>
                     </md-select>
                   </md-input-container>
@@ -231,15 +230,17 @@
                 </md-card-title>
                 <md-card-content ng-show = "paramsSelection.length">
                   <md-content layout = "column"  flex layout-padding style="height: 550px; width: 700px">
-                    <md-input-container ng-repeat = "param in paramsSelection">
-                      <label><strong></strong>{{param.key}}</label>
-                      <input ng-model="param.value">
+                    <md-input-container ng-repeat="param in paramsSelection">
+                        <label><strong>{{param.key}}</strong></label>
+                        <input ng-model="param.value">
+                        <button class="btn" ng-click="doDelParam($index)">
+                          <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
+                        </button>
                     </md-input-container>
                   </md-content>
                 </md-card-content>
               </md-card>
             </div>
-
           </md-card-content>
         </md-card>
       </md-tab>

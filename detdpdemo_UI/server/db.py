@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 import gridfs
+import pandas as pd
 from bson.code import Code
 import operator
 from fuzzywuzzy import fuzz
@@ -88,6 +89,8 @@ class detdp:
     temp_file_id = self.upload_temp(conf_file)
     sys_cols = self.db.system_conf.find_one({})
     sys_cols_conf = sys_cols.get('conf_cols')
+    if sys_cols_conf == None:
+      sys_cols_conf = []
 
     conf_file.seek(0)
     reader = unicodecsv.reader(conf_file)
@@ -122,11 +125,12 @@ class detdp:
 
     lst = []
     for t in new_conf_cols_list:
-      for tt in conf_file_cols_list:
-        rate = fuzz.ratio(t, tt)
-        if rate > 80:
-          r = [t, tt, rate]
-          lst.append(t)
+      for tt in sys_cols_conf:
+        if (t != tt):
+          rate = fuzz.ratio(t, tt)
+          if rate > 80:
+            r = [t, tt, rate]
+            lst.append(r)
     result['new_conf_ratio'] = lst
     result['temp_file_id'] = str(temp_file_id)
     return result
@@ -138,7 +142,8 @@ class detdp:
     temp_file_id = self.upload_temp(data_file)
     sys_cols = self.db.system_conf.find_one({})
     sys_cols_full = sys_cols.get('full_cols')
-
+    if sys_cols_full == None:
+      sys_cols_full = []
     data_file.seek(0)
     reader = unicodecsv.reader(data_file)
     data_file_cols_list = reader.next()
@@ -172,11 +177,12 @@ class detdp:
 
     lst = []
     for t in new_data_cols_list:
-      for tt in data_file_cols_list:
-        rate = fuzz.ratio(t, tt)
-        if rate > 80:
-          r = [t, tt, rate]
-          lst.append(r)
+      for tt in sys_cols_full:
+        if (t != tt):
+          rate = fuzz.ratio(t, tt)
+          if rate > 80:
+            r = [t, tt, rate]
+            lst.append(r)
     result['new_data_ratio'] = lst
     result['temp_file_id'] = str(temp_file_id)
     return result
@@ -297,6 +303,7 @@ class detdp:
                                                  {'conf_cols': list(update_conf_cols_list)}, True)
 
     # ------- Insert new data file into gridfs and an index file into 'data_file' collection
+    data_file.seek(0)
     data_file_id = fs.put(data_file)
     temp = fs.find_one(filter=data_file_id)
     data_dict = {'doe_name': doe_name,
@@ -321,6 +328,7 @@ class detdp:
       full_conf_list = []
     # get full conf cols into dictionary and set the values to '' if the record don't have the key
     reader = unicodecsv.DictReader(conf_file, fieldnames=full_conf_list, restval='')
+    reader.next()
     for row in reader:
       row['doe_name'] = doe_name
       row['program'] = program
@@ -468,7 +476,7 @@ class detdp:
 
     if conf_tmp is not None:
       conf_col = conf_tmp.get('conf_cols')
-      if len(conf_col) > 0:
+      if conf_col is not None:
         conf_col.append('doe_name')
         conf_col.append('program')
         conf_col.append('record_mode')
@@ -498,7 +506,7 @@ class detdp:
       result = self.db.data_conf.insert_many([x for x in input])
       add_no = len(result.inserted_ids)
 
-    return {'del_no': del_no, 'add_no':add_no}
+    return {'del_no': del_no, 'add_no': add_no}
 
   def set_system_cols(self, std_cols):
     str_method = 'set_system_cols( std_cols = {})'.format(std_cols)
@@ -511,9 +519,223 @@ class detdp:
     else:
       std_comment = "System standard setup replaced"
     self.db.system_conf.find_one_and_update({},
-                                     {'$set': {'standard_cols': std_cols}})
-
+                                            {'$set': {'standard_cols': std_cols}})
     return std_comment
+
+  def get_file_retrieve(self, user_name,program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag):
+    str_method = 'get_file_retrieve( user_name = {}, program = {}, record_mode = {}, read_only = {}, doe_no = {}, design_no = {}, parameter = {}, addition_email = {}, flag = {})'.format(user_name,program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag)
+    print 'call method: ', str_method
+
+    fs = gridfs.GridFS(self.db)
+    # flag = ['S']  ##-----------------##
+
+    key_list = ['doe#', 'design', 'wafer']
+    query_dict = {}
+    if len(program) > 0:
+      query_dict['program'] = {}
+      query_dict['program']['$in'] = program
+    if len(record_mode) > 0:
+      query_dict['record_mode'] = {}
+      query_dict['record_mode']['$in'] = record_mode
+    if len(read_only) > 0:
+      query_dict['read_only'] = {}
+      query_dict['read_only']['$in'] = read_only
+    if len(doe_no) > 0:
+      query_dict['doe#'] = {}
+      query_dict['doe#']['$in'] = doe_no
+    if len(design_no) > 0:
+      query_dict['design'] = {}
+      query_dict['design']['$in'] = design_no
+    if len(parameter) > 0:
+      for key, value in parameter.iteritems():
+        query_dict[key] = {}
+        query_dict[key]['$in'] = value
+    print query_dict
+    conf_file = self.db.conf_file.find(query_dict, {'_id': False})
+    if conf_file.count() > 0:
+      comment = 'Find Files'
+      # searched file exist--------------------
+      conf = self.db.system_conf.find_one({}, {'conf_cols': True}).get('conf_cols')
+      if conf is not None:
+        conf_head = [x for x in conf]
+      else:
+        conf_head = []
+      mapping = self.db.column_mapping.find({}, {'_id': False})
+      mapping_head = {}
+      for m in mapping:
+        for k, v in m.iteritems():
+          mapping_head[k.lower()] = v.lower()
+
+      final_header_list = []
+      final_header_list_full = []
+      final_header_list_cust = []
+
+      # -----------Flag is 'S', using standard columns list
+      if 'S' in flag:
+        file_name_stand = 'output/{}_STANDARD_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        data = self.db.user.find_one({'user_name': user_name}, {'standard_cols': True}).get(
+          'standard_cols')
+        if data is None:
+          print "User don't have standard columns list, use the system standard column list"
+          data = self.db.system_conf.find_one({}).get('standard_cols')
+        if data is not None:
+          data_header = [x for x in data]
+        else:
+          comment = 'No system standard column list'
+          return comment
+
+        # print 'mapping_head:', mapping_head
+
+        for head in data_header:
+          if head not in final_header_list:
+            final_header_list.append(head)
+        for head in conf_head:
+          if head in key_list:
+            if head not in final_header_list:
+              final_header_list.append(head)
+          else:
+            if head + '_conf' not in final_header_list:
+              final_header_list.append(head + '_conf')
+
+      if 'F' in flag:
+        file_name_full = 'output/{}_FULL_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        data_full = self.db.user.find_one({'user_name': user_name}, {'full_cols': True}).get(
+          'full_cols')
+        if data_full is None:
+          print "User don't have full columns list, use the system full column list"
+          data_full = self.db.system_conf.find_one({}).get('full_cols')
+        if data_full is not None:
+          data_header_full = [x for x in data_full]
+        else:
+          data_header_full = []
+
+        # print 'mapping_head:', mapping_head
+        for head in data_header_full:
+          if head not in final_header_list_full:
+            final_header_list_full.append(head)
+        for head in conf_head:
+          if head in key_list:
+            if head not in final_header_list_full:
+              final_header_list_full.append(head)
+          else:
+            if head + '_conf' not in final_header_list_full:
+              final_header_list_full.append(head + '_conf')
+
+      if 'C' in flag:
+        file_name_cust = 'output/{}_CUSTOMIZED_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        data_cust = self.db.user.find_one({'user_name': user_name}, {'customized_cols': True}).get(
+          'customized_cols')
+        if data_cust is None:
+          print "User don't have customized columns list, use the system standard column list"
+          data_cust = self.db.system_conf.find_one({}).get('standard_cols')
+        if data_cust is not None:
+          data_header_cust = [x for x in data_cust]
+        else:
+          data_header_cust = []
+        # print 'mapping_head:', mapping_head
+        for head in data_header_cust:
+          if head not in final_header_list_cust:
+            final_header_list_cust.append(head)
+        for head in conf_head:
+          if head in key_list:
+            if head not in final_header_list_cust:
+              final_header_list_cust.append(head)
+          else:
+            if head + '_conf' not in final_header_list_cust:
+              final_header_list_cust.append(head + '_conf')
+
+      final = []
+      final_cust = []
+      final_full = []
+
+      for f in conf_file:
+        conf_pf = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in f.iteritems()]))
+        doe_name_search = f.get('doe_name')
+        doe_program_search = f.get('program')
+        doe_recordmode_search = f.get('record_mode')
+        doe_readonly_search = f.get('read_only')
+        if doe_name_search is not None:
+          print 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search, doe_program_search, doe_recordmode_search, doe_readonly_search)
+          data_file_id = self.db.data_file.find_one(
+            {'doe_name': doe_name_search, 'program': doe_program_search, 'record_mode': doe_recordmode_search,
+             'read_only': doe_readonly_search},
+            {'data_file_id': True})
+          if data_file_id is None:
+            comment = "data file not found."
+            return comment
+          else:
+            data_file_id = data_file_id.get('data_file_id')
+          if data_file_id is not None:
+            with fs.get(data_file_id) as data_file:
+              data_pf = pd.read_csv(data_file, encoding='utf-8-sig')
+              data_pf = data_pf.rename(columns=lambda x: mapping_head[x] if x in mapping_head else x)
+              data_pf.columns = [x.lower() for x in data_pf.columns]
+
+              result = pd.merge(data_pf, conf_pf, on=key_list, how='inner',
+                                suffixes=['', '_conf'])
+              result_header = result.columns.values
+
+              if len(final_header_list) > 0:
+                for h in final_header_list:
+                  if h not in result_header:
+                    result[h] = ''
+                temp = result[final_header_list]
+                temp.is_copy = False
+                temp['doe_name'] = doe_name_search
+                temp['program'] = doe_program_search
+                temp['record_mode'] = doe_recordmode_search
+                temp['read_only'] = doe_readonly_search
+                final.append(temp)
+                print 'standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(doe_name_search,
+                                                                                                     doe_program_search,
+                                                                                                     doe_recordmode_search,
+                                                                                                     doe_readonly_search)
+              if len(final_header_list_cust) > 0:
+                for h in final_header_list_cust:
+                  if h not in result_header:
+                    result[h] = ''
+                temp = result[final_header_list_cust]
+                temp.is_copy = False
+                temp['doe_name'] = doe_name_search
+                temp['program'] = doe_program_search
+                temp['record_mode'] = doe_recordmode_search
+                temp['read_only'] = doe_readonly_search
+                final_cust.append(temp)
+                print 'customized doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(doe_name_search,
+                                                                                                       doe_program_search,
+                                                                                                       doe_recordmode_search,
+                                                                                                       doe_readonly_search)
+
+              if len(final_header_list_full) > 0:
+                for h in final_header_list_full:
+                  if h not in result_header:
+                    result[h] = ''
+                temp = result[final_header_list_full]
+                temp.is_copy = False
+                temp['doe_name'] = doe_name_search
+                temp['program'] = doe_program_search
+                temp['record_mode'] = doe_recordmode_search
+                temp['read_only'] = doe_readonly_search
+                final_full.append(temp)
+                print 'full doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(doe_name_search,
+                                                                                                 doe_program_search,
+                                                                                                 doe_recordmode_search,
+                                                                                                 doe_readonly_search)
+      if len(final_header_list) > 0:
+        final_pf = pd.concat(final)
+        final_pf.to_csv(file_name_stand, index=False)
+      if len(final_header_list_cust) > 0:
+        final_cust_pf = pd.concat(final_cust)
+        final_cust_pf.to_csv(file_name_cust, index=False)
+      if len(final_header_list_full) > 0:
+        final_full_pf = pd.concat(final_full)
+        final_full_pf.to_csv(file_name_full, index=False)
+
+      comment = "File Aggregation succeed!"
+    else:
+      comment = "Aggregated file not found."
+
+    return comment
 
 # if __name__ == '__main__':
 #   db = detdp()

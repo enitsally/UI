@@ -8,41 +8,42 @@
  * Controller of the detdpdemoApp
  */
 angular.module('detdpdemoApp')
-  .controller('RetrieveCtrl', function ($scope, $http) {
+  .controller('RetrieveCtrl', function ($scope, $http, $mdToast) {
+
+    $scope.criteria = {
+      fullCol : false,
+      cusCol : false,
+      stdCol: true,
+      record_mode: '',
+      program : '',
+      readonly : true,
+      fulldevice : false,
+      doe_no: '',
+      design_no : '',
+      email : '',
+      user_name: $scope.currentUser ? $scope.currentUser.id : ''
+    };
+
     $scope.search = {
-      'doe_name': '',
-      'doe_descr': '',
-      'doe_comment': '',
-      'doe_program': '',
-      'doe_record_mode': '',
-      'doe_read_only': '',
-      'doe_start_date': '',
-      'doe_end_date': '',
-      's_y': '',
-      's_m': '',
-      's_d': '',
-      'e_y': '',
-      'e_m': '',
-      'e_d': ''
+      doe_name: '',
+      doe_descr: '',
+      doe_comment: '',
+      doe_program: '',
+      doe_record_mode: '',
+      doe_read_only: '',
+      doe_start_date: '',
+      doe_end_date: '',
+      s_y: '',
+      s_m: '',
+      s_d: '',
+      e_y: '',
+      e_m: '',
+      e_d: ''
     };
 
-
-    $scope.retrieve = {
-      'fullCol' : false,
-      'cusCol' : false,
-      'stdCol': true,
-      'record_mode': '',
-      'program' : '',
-      'read_only' : '',
-      'full_device' : '',
-      'doe_no': '',
-      'design_no' : '',
-      'email' : '',
-      'params': ''
-    };
     $scope.showFlag = false;
-    $scope.currentParam;
-    $scope.paramsList;
+    $scope.currentParam = '';
+    $scope.paramsList = [];
     $scope.paramsSelection=[];
 
 
@@ -62,11 +63,18 @@ angular.module('detdpdemoApp')
       var tmp = {
         'key': $scope.currentParam,
         'value' : ''
+
       };
 
       $scope.paramsSelection.push(tmp);
       $scope.currentParam = '';
-    }
+    };
+
+    $scope.doDelParam = function(index){
+      if (index >=-1){
+        $scope.paramsSelection.splice(index, 1);
+      }
+    };
 
 
     $http.get('http://localhost:5000/get$record$mode').then (function (response) {
@@ -118,6 +126,45 @@ angular.module('detdpdemoApp')
       });
     };
 
+    $scope.doRetrieveFile = function (){
+      $scope.criteria['params'] = [];
+      $scope.criteria['read_only'] = [];
+      $scope.criteria['flag'] = [];
+
+      if ($scope.criteria.fullCol == true){
+        $scope.criteria.flag.push('F');
+      }
+
+      if ($scope.criteria.cusCol == true){
+        $scope.criteria.flag.push('C');
+      }
+
+      if ($scope.criteria.stdCol == true){
+        $scope.criteria.flag.push('S');
+      }
+      if ($scope.paramsSelection.length > 0){
+        for (var i = 0; i < $scope.paramsSelection.length; i++){
+          var obj = {};
+            obj[$scope.paramsSelection[i].key] = $scope.paramsSelection[i].value;
+            $scope.criteria.params.push(obj);
+        }
+      }
+
+      if ($scope.criteria.readonly){
+        $scope.criteria.read_only.push('Y');
+      }
+
+      if ($scope.criteria.fulldevice){
+        $scope.criteria.read_only.push('N');
+      }
+
+      $http.post('http://localhost:5000/get$file$retrieve', $scope.criteria).then (function (response) {
+        var retrieveResult = response.data.status;
+        $scope.showSimpleToast(retrieveResult);
+      }, function () {
+      });
+    };
+
 
 
     $scope.pageSize = '100';
@@ -129,7 +176,9 @@ angular.module('detdpdemoApp')
       .then(function (res) {
         content = res.data.status.conf_content;
         var colslist = res.data.status.conf_col;
-        $scope.paramsList = colslist.slice(0);
+        var noparam = ['program', 'record_mode', 'read_only', 'doe_name','doe#', 'design', 'wafer'];
+        var diff = $(colslist).not(noparam).get();
+        $scope.paramsList = diff.slice(0);
         $scope.totalSize = content.length;
         var colHead = [];
         for (var i = 0; i < colslist.length; i++) {
@@ -147,7 +196,8 @@ angular.module('detdpdemoApp')
           columnDefs: colHead,
           enableFilter: true,
           enableSorting: true,
-          enableColResize: true
+          enableColResize: true,
+          rowSelection: 'single'
         };
 
         var dataSource = {
@@ -157,7 +207,7 @@ angular.module('detdpdemoApp')
                 // this code should contact the server for rows. however for the purposes of the demo,
                 // the data is generated locally, a timer is used to give the experience of
                 // an asynchronous call
-                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                //console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                 setTimeout( function() {
                     // take a chunk of the array, matching the start and finish times
                     var rowsThisPage = content.slice(params.startRow, params.endRow);
@@ -174,11 +224,12 @@ angular.module('detdpdemoApp')
             }
         };
         gridOptions.datasource = dataSource;
-        // gridOptions.api.setDatasource (datasource);
-        // gridOptions.columnApi.sizeColumnsToFit();
-
         $scope.gridOptions = gridOptions;
       });
+
+      $scope.showSimpleToast = function(showmgs) {
+        $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
+      };
 
     function createNewDatasource() {
         if (!content) {
@@ -211,14 +262,23 @@ angular.module('detdpdemoApp')
         };
 
         $scope.gridOptions.api.setDatasource(dataSource);
-        // return dataSource;
     }
 
-
+    function get_index (k, v){
+      for (var i = 0; i<$scope.paramsSelection.length; i++){
+        if ($scope.paramsSelection[i].key === k && $scope.paramsSelection[i].value === v){
+          return i;
+        }
+        else{
+          return -1;
+        }
+      }
+      $scope.paramsSelection
+    }
 
     $scope.onPageSizeChanged = function() {
         createNewDatasource();
-    }
+    };
 
 
   });
