@@ -150,7 +150,7 @@ def get_delete_temp():
   conf_file = var_input['conf_file']
   data_status = db.delete_temp(data_file)
   conf_status = db.delete_temp(conf_file)
-  result = {'data_status': data_status, 'conf_status': conf_status}
+  result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
   return jsonify({'status': result})
 
 
@@ -343,7 +343,6 @@ def get_file_retrieve():
 
   db = detdp()
   result = db.get_file_retrieve(user_name,program, record_mode, read_only, doe_no, design_no, param, email, flag)
-  print result
   return jsonify({'status': result})
 
 

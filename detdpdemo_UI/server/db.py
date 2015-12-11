@@ -158,8 +158,8 @@ class detdp:
         new_data_cols_list.append(t)
       if t not in dup_data_cols_set:
         dup_data_cols_set.add(t)
-    else:
-      dup_data_cols_list.append(t)
+      else:
+        dup_data_cols_list.append(t)
 
     result = {'new_data': new_data_cols_list,
               'dup_data': dup_data_cols_list}
@@ -228,7 +228,6 @@ class detdp:
     conf_id = ObjectId(conf_file_input)
     data_file = StringIO.StringIO(fs.get(data_id).read())
     conf_file = StringIO.StringIO(fs.get(conf_id).read())
-    status = ''
     comment = ''
     # ------ Check if the DOE name is already stored in database, if exist, delete, for both data file and conf file
     exist_data_file = self.db.data_file.find(
@@ -317,7 +316,6 @@ class detdp:
                  'file_size': str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB',
                  'data_file_id': data_file_id}
     self.db.data_file.insert_one(data_dict)
-    print 'File Size:', str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB'
 
     # -------- Insert conf file into the 'conf_file' collection
     conf_file.seek(0)
@@ -340,7 +338,7 @@ class detdp:
     comment += 'Upload data file and conf. file succeeded.'
     self.delete_temp(data_file_input)
     self.delete_temp(conf_file_input)
-    return {'status': status, 'comment': comment}
+    return status + '\n' + comment
 
   def upload_temp(self, tempFile):
     str_method = 'upload_temp( tempFile = {})'.format(tempFile)
@@ -388,14 +386,14 @@ class detdp:
     else:
       tmp = r[0]
       if tmp.get('standard_cols') == None:
-        std_comment = "User have no standard setup, use system setup"
+        std_comment = "User have no standard setup, use system setup.\n"
       else:
-        std_comment = 'Get user standard setup'
+        std_comment = "Get user standard setup.\n"
         result['standard_cols'] = tmp.get('standard_cols')
       if tmp.get('customized_cols') == None:
-        cus_comment = "User have no customized setup, use system setup"
+        cus_comment = "User have no customized setup, use system setup.\n"
       else:
-        cus_comment = 'Get user customized setup'
+        cus_comment = 'Get user customized setup.\n'
         result['customized_cols'] = tmp.get('customized_cols')
 
     result['cus_comment'] = cus_comment
@@ -410,17 +408,18 @@ class detdp:
     old_std_cols_list = user_column.get('standard_cols')
     old_cus_cols_list = user_column.get('customized_cols')
     if old_std_cols_list is None:
-      std_comment = "No user standard setup, add new setup"
+      std_comment = "No user standard setup, add new setup.\n"
     else:
-      std_comment = "User standard setup replaced"
+      std_comment = "User standard setup replaced.\n"
     if old_cus_cols_list is None:
-      cus_comment = "No user customized setup, add new setup"
+      cus_comment = "No user customized setup, add new setup.\n"
     else:
-      cus_comment = "User customized setup replaced"
+      cus_comment = "User customized setup replaced.\n"
     self.db.user.find_one_and_update({'user_name': user_name},
                                      {'$set': {'customized_cols': cus_cols, 'standard_cols': std_cols}})
 
-    return {'std_comment': std_comment, 'cus_comment': cus_comment}
+    # return {'std_comment': std_comment, 'cus_comment': cus_comment}
+    return std_comment + '\n' + cus_comment
 
   def get_doe_summary(self, doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m,
                       e_d):
@@ -507,12 +506,12 @@ class detdp:
     result = self.db.data_conf.delete_many({})
     del_no = result.deleted_count
     if len(input) == 0:
-      add_no = 0;
+      add_no = 0
     else:
       result = self.db.data_conf.insert_many([x for x in input])
       add_no = len(result.inserted_ids)
 
-    return {'del_no': del_no, 'add_no': add_no}
+    return 'Delete {} records \n Add {} records'.format(del_no, add_no)
 
   def set_system_cols(self, std_cols):
     str_method = 'set_system_cols( std_cols = {})'.format(std_cols)
@@ -521,15 +520,17 @@ class detdp:
     sys_column = self.db.system_conf.find_one({})
     old_std_cols_list = sys_column.get('standard_cols')
     if old_std_cols_list is None:
-      std_comment = "No system standard setup"
+      std_comment = "No system standard setup."
     else:
-      std_comment = "System standard setup replaced"
+      std_comment = "System standard setup replaced."
     self.db.system_conf.find_one_and_update({},
                                             {'$set': {'standard_cols': std_cols}})
     return std_comment
 
-  def get_file_retrieve(self, user_name,program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag):
-    str_method = 'get_file_retrieve( user_name = {}, program = {}, record_mode = {}, read_only = {}, doe_no = {}, design_no = {}, parameter = {}, addition_email = {}, flag = {})'.format(user_name,program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag)
+  def get_file_retrieve(self, user_name, program, record_mode, read_only, doe_no, design_no, parameter, addition_email,
+                        flag):
+    str_method = 'get_file_retrieve( user_name = {}, program = {}, record_mode = {}, read_only = {}, doe_no = {}, design_no = {}, parameter = {}, addition_email = {}, flag = {})'.format(
+      user_name, program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag)
     print 'call method: ', str_method
 
     fs = gridfs.GridFS(self.db)
@@ -559,7 +560,6 @@ class detdp:
     print query_dict
     conf_file = self.db.conf_file.find(query_dict, {'_id': False})
     if conf_file.count() > 0:
-      comment = 'Find Files'
       # searched file exist--------------------
       conf = self.db.system_conf.find_one({}, {'conf_cols': True}).get('conf_cols')
       if conf is not None:
@@ -587,7 +587,7 @@ class detdp:
         if data is not None:
           data_header = [x for x in data]
         else:
-          comment = 'No system standard column list'
+          comment = 'No system standard column list.'
           return comment
 
         # print 'mapping_head:', mapping_head
@@ -661,7 +661,10 @@ class detdp:
         doe_recordmode_search = f.get('record_mode')
         doe_readonly_search = f.get('read_only')
         if doe_name_search is not None:
-          print 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search, doe_program_search, doe_recordmode_search, doe_readonly_search)
+          print 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search,
+                                                                                     doe_program_search,
+                                                                                     doe_recordmode_search,
+                                                                                     doe_readonly_search)
           data_file_id = self.db.data_file.find_one(
             {'doe_name': doe_name_search, 'program': doe_program_search, 'record_mode': doe_recordmode_search,
              'read_only': doe_readonly_search},
@@ -767,7 +770,7 @@ class detdp:
       result = self.db.column_mapping.insert_many([x for x in input])
       add_no = len(result.inserted_ids)
 
-    return {'del_no': del_no, 'add_no': add_no}
+    return 'Delete {} records \n Add {} records.'.format(del_no, add_no)
 
 # if __name__ == '__main__':
 #   db = detdp()

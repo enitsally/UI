@@ -131,15 +131,15 @@ angular.module('detdpdemoApp')
       $scope.criteria['read_only'] = [];
       $scope.criteria['flag'] = [];
 
-      if ($scope.criteria.fullCol == true){
+      if ($scope.criteria.fullCol === true){
         $scope.criteria.flag.push('F');
       }
 
-      if ($scope.criteria.cusCol == true){
+      if ($scope.criteria.cusCol === true){
         $scope.criteria.flag.push('C');
       }
 
-      if ($scope.criteria.stdCol == true){
+      if ($scope.criteria.stdCol === true){
         $scope.criteria.flag.push('S');
       }
       if ($scope.paramsSelection.length > 0){
@@ -262,18 +262,6 @@ angular.module('detdpdemoApp')
         };
 
         $scope.gridOptions.api.setDatasource(dataSource);
-    }
-
-    function get_index (k, v){
-      for (var i = 0; i<$scope.paramsSelection.length; i++){
-        if ($scope.paramsSelection[i].key === k && $scope.paramsSelection[i].value === v){
-          return i;
-        }
-        else{
-          return -1;
-        }
-      }
-      $scope.paramsSelection
     }
 
     $scope.onPageSizeChanged = function() {

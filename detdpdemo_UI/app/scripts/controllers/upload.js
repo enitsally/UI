@@ -90,6 +90,8 @@ angular.module('detdpdemoApp')
     $scope.uploader.onSuccessItem = function (fileItem, response) {
       var result = {};
       result = response.status;
+      console.log(result);
+
       if (result['new_conf'] !== undefined) {
         $scope.chkCols.new_conf = result['new_conf'];
       }
@@ -124,6 +126,8 @@ angular.module('detdpdemoApp')
       if (fileItem.alias === 'data') {
         $scope.file.data_file = result['temp_file_id'];
       }
+
+      console.log($scope.chkCols);
     };
 
     $scope.uploader.onCompleteAll = function () {

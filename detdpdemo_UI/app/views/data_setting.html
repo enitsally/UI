@@ -59,7 +59,7 @@
                   <button class="btn btn-success"  ng-click="saveNew()" ng-show="edit">
                     <span class="glyphicon glyphicon-save"></span> Add Row
                   </button>
-                  <button class="btn btn-success"  ng-click="saveEdit()" ng-hide="edit">
+                  <button class="btn btn-success"  ng-click="saveEdit(currentSelection.row_id)" ng-hide="edit">
                     <span class="glyphicon glyphicon-save"></span> Save change
                   </button>
                 </div>
@@ -89,7 +89,7 @@
                         <td>{{row.program}}</td>
                         <td>{{row.record_mode}}</td>
                         <td>
-                          <button class="btn" ng-click="editRow(row.row_id, row.program, row.record_mode)">
+                          <button class="btn" ng-click="editRow($index, row.program, row.record_mode)">
                           <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
                           </button>
                         </td>

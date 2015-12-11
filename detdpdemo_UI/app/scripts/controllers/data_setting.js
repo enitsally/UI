@@ -11,8 +11,6 @@
 angular.module('detdpdemoApp')
   .controller('dataSettingCtrl', function ($scope, $http, $mdToast) {
     $scope.edit = true;
-    $scope.error = false;
-    $scope.incomplete = false;
     $scope.hideform = true;
     $scope.currentSelection = {
       'row_id':'',
@@ -33,7 +31,6 @@ angular.module('detdpdemoApp')
       $scope.hideform = false;
       if (id === 'new') {
         $scope.edit = true;
-        $scope.incomplete = true;
         }
       else {
         $scope.edit = false;
@@ -44,11 +41,9 @@ angular.module('detdpdemoApp')
       }
     };
 
-    $scope.saveEdit = function (){
-      var index = get_index($scope.currentSelection.row_id);
+    $scope.saveEdit = function (index){
       if (index > -1) {
         var tmp = {
-          'row_id':$scope.currentSelection.row_id,
           'program':$scope.currentSelection.program,
           'record_mode':$scope.currentSelection.record_mode
         };
@@ -73,15 +68,12 @@ angular.module('detdpdemoApp')
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.program = '';
       $scope.currentSelection.record_mode = '';
-      console.log (originalDataPair.length);
     };
 
     $scope.doResetData = function (){
       $scope.dataPair = originalDataPair.slice(0);
 
       $scope.edit = true;
-      $scope.error = false;
-      $scope.incomplete = false;
       $scope.hideform = true;
       $scope.currentSelection.row_id = '';
       $scope.currentSelection.program = '';

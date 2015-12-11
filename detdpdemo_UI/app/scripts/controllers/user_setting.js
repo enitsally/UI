@@ -49,8 +49,7 @@
       $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
         user_standard_cols = response.data.status.standard_cols;
         user_customized_cols = response.data.status.customized_cols;
-        comment = {'cus_comment' : response.data.status.cus_comment,
-                       'std_comment' : response.data.status.std_comment};
+        comment = response.data.status.cus_comment + response.data.status.std_comment;
         $scope.selectedStdCols = user_standard_cols;
         $scope.selectedCusCols = user_customized_cols;
         $scope.showSimpleToast(comment);
@@ -70,11 +69,11 @@
         $scope.user_setup.std_cols = $scope.selectedStdCols;
         $scope.user_setup.cus_cols = $scope.selectedCusCols;
 
-        console.log($scope.user_setup);
-
         $http.post('http://localhost:5000/get$save$setup', $scope.user_setup).then (function (response) {
-          comment = {'cus_comment' : response.data.status.cus_comment,
-                         'std_comment' : response.data.status.std_comment};
+          // comment = {'cus_comment' : response.data.status.cus_comment,
+          //                'std_comment' : response.data.status.std_comment};
+
+          comment = response.data.status;
           $scope.selectedStdCols = user_standard_cols;
           $scope.selectedCusCols = user_customized_cols;
           $scope.showSimpleToast(comment);
@@ -82,8 +81,9 @@
           $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
             user_standard_cols = response.data.status.standard_cols;
             user_customized_cols = response.data.status.customized_cols;
-            comment = {'cus_comment' : response.data.status.cus_comment,
-                           'std_comment' : response.data.status.std_comment};
+            // comment = {'cus_comment' : response.data.status.cus_comment,
+            //                'std_comment' : response.data.status.std_comment};
+            // comment = response.data.status
             $scope.selectedStdCols = user_standard_cols;
             $scope.selectedCusCols = user_customized_cols;
           }, function () {
