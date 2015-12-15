@@ -42,16 +42,16 @@
 
       $http.get('http://localhost:5000/get$system$setup').then (function (response) {
         $scope.fulllist = response.data.status.full_cols;
-        sys_std_list = response.data.status.standard_cols;
+        sys_std_list = response.data.status.standard_cols.slice(0);
       }, function () {
       });
 
       $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
-        user_standard_cols = response.data.status.standard_cols;
-        user_customized_cols = response.data.status.customized_cols;
+        $scope.selectedStdCols = response.data.status.standard_cols.slice(0);
+        $scope.selectedCusCols = response.data.status.customized_cols.slice(0);
         comment = response.data.status.cus_comment + response.data.status.std_comment;
-        $scope.selectedStdCols = user_standard_cols;
-        $scope.selectedCusCols = user_customized_cols;
+        // $scope.selectedStdCols = user_standard_cols;
+        // $scope.selectedCusCols = user_customized_cols;
         $scope.showSimpleToast(comment);
       }, function () {
       });
@@ -66,26 +66,20 @@
       };
 
       $scope.doSaveToDB = function(){
-        $scope.user_setup.std_cols = $scope.selectedStdCols;
-        $scope.user_setup.cus_cols = $scope.selectedCusCols;
+        $scope.user_setup.std_cols = $scope.selectedStdCols.slice(0);
+        $scope.user_setup.cus_cols = $scope.selectedCusCols.slice(0);
 
         $http.post('http://localhost:5000/get$save$setup', $scope.user_setup).then (function (response) {
-          // comment = {'cus_comment' : response.data.status.cus_comment,
-          //                'std_comment' : response.data.status.std_comment};
-
-          comment = response.data.status;
-          $scope.selectedStdCols = user_standard_cols;
-          $scope.selectedCusCols = user_customized_cols;
+          comment = response.data.status.cus_comment + '\n' +  response.data.status.std_comment;
           $scope.showSimpleToast(comment);
 
           $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
-            user_standard_cols = response.data.status.standard_cols;
-            user_customized_cols = response.data.status.customized_cols;
-            // comment = {'cus_comment' : response.data.status.cus_comment,
-            //                'std_comment' : response.data.status.std_comment};
-            // comment = response.data.status
-            $scope.selectedStdCols = user_standard_cols;
-            $scope.selectedCusCols = user_customized_cols;
+            $scope.selectedStdCols = response.data.status.standard_cols.slice(0);
+            $scope.selectedCusCols = response.data.status.customized_cols.slice(0);
+            comment = response.data.status.cus_comment + '\n' +  response.data.status.std_comment;
+            console.log(comment);
+            // $scope.selectedStdCols = user_standard_cols;
+            // $scope.selectedCusCols = user_customized_cols;
           }, function () {
           });
         }, function () {
@@ -94,11 +88,11 @@
 
       $scope.doGetSysStd = function(){
         if ($scope.CusFlag === true){
-          $scope.selectedCusCols = sys_std_list;
+          $scope.selectedCusCols = sys_std_list.slice(0);
         }
 
         if ($scope.StdFlag === true){
-          $scope.selectedStdCols = sys_std_list;
+          $scope.selectedStdCols = sys_std_list.slice(0);
         }
       };
 
@@ -106,8 +100,7 @@
         if (angular.isObject(chip)) {
           return chip;
         }
-        // Otherwise, create a new one
-        // return { name: chip, type: 'new' }
+
       };
 
       /**

@@ -20,7 +20,7 @@ angular.module('detdpdemoApp')
     $scope.searchText = null;
     
     var comment;
-    var sys_std_list;
+    var sys_std_list=[];
 
     /**
      * Create filter function for a query string
@@ -36,7 +36,9 @@ angular.module('detdpdemoApp')
     $http.get('http://localhost:5000/get$system$setup').then (function (response) {
       $scope.fulllist = response.data.status.full_cols;
       sys_std_list = response.data.status.standard_cols;
-      $scope.selectedStdCols = sys_std_list.slice(0);
+	  $scope.selectedStdCols = sys_std_list.slice(0);
+	  
+      
     }, function () {
     });
 

@@ -44,7 +44,6 @@ angular.module('detdpdemoApp')
 
     $scope.doUploadChk = function(){
 
-        console.log("Test starting");
         if ( angular.element("input[name='dFile']").val() === "" || angular.element("input[name='cFile']").val() === ""){
             $scope.pass = 'N';
             $scope.mgs = ' No files are selected for uploading!';
@@ -90,7 +89,6 @@ angular.module('detdpdemoApp')
     $scope.uploader.onSuccessItem = function (fileItem, response) {
       var result = {};
       result = response.status;
-      console.log(result);
 
       if (result['new_conf'] !== undefined) {
         $scope.chkCols.new_conf = result['new_conf'];
@@ -127,7 +125,6 @@ angular.module('detdpdemoApp')
         $scope.file.data_file = result['temp_file_id'];
       }
 
-      console.log($scope.chkCols);
     };
 
     $scope.uploader.onCompleteAll = function () {
@@ -154,14 +151,13 @@ angular.module('detdpdemoApp')
             var result = resp.data.status;
             $mdDialog.hide();
             $scope.doClearAll();
-            console.log(result);
             if (result.status === 'INSERT'){
               $scope.showSimpleToast("INSERT DONE!");
             }
             else {
               $scope.showSimpleToast("INSERT FAILED!");
             }
-
+            console.log(result.comment);
           }, function () {
             });
         };

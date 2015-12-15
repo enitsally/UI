@@ -2,21 +2,21 @@
 <br>
 <div layout = "row">
   <div flex="5"></div>
-  <form flex = "90" layout = "row">
-    <span class="md-headline">Search and Build User's Columns Setup</span>
-    <span flex></span>
-    <md-button class="md-primary md-raised" ng-click="doSaveToDB()">Save</md-button>
-    <md-card>
-      <div layout="row" layout-align="end center">
-        <span flex></span>
-        <md-checkbox ng-model="StdFlag">Standard</md-checkbox>
-        <md-checkbox ng-model="CusFlag">customized</md-checkbox>
-        <md-button class="md-primary md-raised" ng-click="doGetSysStd()"><strong>Get Sys.Standard</strong></md-button>
-        <span flex></span>
-        <md-button ng-click="doResetToUserProf()">Reset</md-button>
-      </div>
-    <md-card>
-  </form>
+    <form flex = "90" layout = "row">
+      <span class="md-headline">Search and Build User's Columns Setup</span>
+      <span flex></span>
+      <md-button class="md-primary md-raised" ng-click="doSaveToDB()">Save</md-button>
+      <md-card>
+        <div layout="row" layout-align="end center">
+          <span flex></span>
+          <md-checkbox ng-model="StdFlag">Standard</md-checkbox>
+          <md-checkbox ng-model="CusFlag">customized</md-checkbox>
+          <md-button class="md-primary md-raised" ng-click="doGetSysStd()"><strong>Get Sys.Standard</strong></md-button>
+          <span flex></span>
+          <md-button ng-click="doResetToUserProf()">Reset</md-button>
+        </div>
+      <md-card>
+    </form>
   <div flex="5"></div>
 </div>
 <div layout="column" ng-cloak="" class="chipsdemoCustomInputs">

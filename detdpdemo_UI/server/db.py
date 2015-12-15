@@ -270,14 +270,9 @@ class detdp:
     else:
       old_full_cols_list = old_full_cols.get('full_cols')
       if old_full_cols_list is None:
-        update_full_cols_list = old_full_cols
-        update_full_cols_list['full_cols'] = new_full_cols_list
-        self.db.system_conf.delete_one({})
-        self.db.system_conf.insert_one(update_full_cols_list)
-      else:
-        update_full_cols_list = set(old_full_cols_list).union(set(new_full_cols_list))
-        result = self.db.system_conf.replace_one({'full_cols': old_full_cols_list},
-                                                 {'full_cols': list(update_full_cols_list)}, True)
+        old_full_cols_list = []
+      update_full_cols_list = set(old_full_cols_list).union(set(new_full_cols_list))
+      self.db.system_conf.find_one_and_update({}, {"$set": {"full_cols": list(update_full_cols_list)}})
 
     # ----------- Update the conf columns list, in the 'system_conf' collection
     conf_file.seek(0)
@@ -292,14 +287,19 @@ class detdp:
     else:
       old_conf_cols_list = old_conf_cols.get('conf_cols')
       if old_conf_cols_list is None:
-        update_conf_cols_list = old_conf_cols
-        update_conf_cols_list['conf_cols'] = new_conf_cols_list
-        self.db.system_conf.delete_one({})
-        self.db.system_conf.insert_one(update_conf_cols_list)
-      else:
-        update_conf_cols_list = set(old_conf_cols_list).union(set(new_conf_cols_list))
-        result = self.db.system_conf.replace_one({'conf_cols': old_conf_cols_list},
-                                                 {'conf_cols': list(update_conf_cols_list)}, True)
+        old_conf_cols_list = []
+      update_conf_cols_list = set(old_conf_cols_list).union(set(new_conf_cols_list))
+      self.db.system_conf.find_one_and_update({}, {"$set": {"conf_cols": list(update_conf_cols_list)}})
+
+      # --------update all the existing document to add new keys
+      print "Update conf col len:", len(update_conf_cols_list)
+      print "Old conf col len:", len(old_conf_cols_list)
+      if len(update_conf_cols_list) > len(old_conf_cols_list) and len(old_conf_cols_list) != 0:
+        for col in update_conf_cols_list:
+          if col not in old_conf_cols_list:
+            print "New Col Name", col
+            self.db.conf_file.update_many({}, {"$set": {col: ""}})
+            print "Update many here"
 
     # ------- Insert new data file into gridfs and an index file into 'data_file' collection
     data_file.seek(0)
@@ -319,14 +319,10 @@ class detdp:
 
     # -------- Insert conf file into the 'conf_file' collection
     conf_file.seek(0)
-    full_conf = self.db.system_conf.find_one({})
-    if full_conf is not None:
-      full_conf_list = full_conf.get('conf_cols')
-    else:
-      full_conf_list = []
-    # get full conf cols into dictionary and set the values to '' if the record don't have the key
-    reader = unicodecsv.DictReader(conf_file, fieldnames=full_conf_list, restval='')
-    reader.next()
+    reader = unicodecsv.reader(conf_file)
+    conf_file_cols_list = reader.next()
+    conf_file_cols_list = [x.lower().encode('ascii', 'ignore') for x in conf_file_cols_list]
+    reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
     for row in reader:
       row['doe_name'] = doe_name
       row['program'] = program
@@ -338,7 +334,7 @@ class detdp:
     comment += 'Upload data file and conf. file succeeded.'
     self.delete_temp(data_file_input)
     self.delete_temp(conf_file_input)
-    return status + '\n' + comment
+    return {'status': status, 'comment': comment}
 
   def upload_temp(self, tempFile):
     str_method = 'upload_temp( tempFile = {})'.format(tempFile)
@@ -364,8 +360,8 @@ class detdp:
     print 'call method: ', str_method
     tmp = self.db.system_conf.find_one({})
     if tmp is not None:
-      result = {'standard_cols': tmp.get('standard_cols'),
-                'full_cols': tmp.get('full_cols')
+      result = {'standard_cols': ([] if tmp.get('standard_cols') is None else tmp.get('standard_cols')),
+                'full_cols': ([] if tmp.get('full_cols') is None else tmp.get('full_cols'))
                 }
     else:
       result = {'standard_cols': [],
@@ -380,18 +376,19 @@ class detdp:
     result = {'standard_cols': [],
               'customized_cols': []}
     r = self.db.user.find({'user_name': user_name})
-    sys = self.get_system_cols()
     if r.count() != 1:
       print "System error, no user or multiple user"
     else:
       tmp = r[0]
       if tmp.get('standard_cols') == None:
         std_comment = "User have no standard setup, use system setup.\n"
+        result['standard_cols'] = []
       else:
         std_comment = "Get user standard setup.\n"
         result['standard_cols'] = tmp.get('standard_cols')
       if tmp.get('customized_cols') == None:
         cus_comment = "User have no customized setup, use system setup.\n"
+        result['customized_cols'] = []
       else:
         cus_comment = 'Get user customized setup.\n'
         result['customized_cols'] = tmp.get('customized_cols')
@@ -418,8 +415,8 @@ class detdp:
     self.db.user.find_one_and_update({'user_name': user_name},
                                      {'$set': {'customized_cols': cus_cols, 'standard_cols': std_cols}})
 
-    # return {'std_comment': std_comment, 'cus_comment': cus_comment}
-    return std_comment + '\n' + cus_comment
+    return {'std_comment': std_comment, 'cus_comment': cus_comment}
+    # return std_comment + '\n' + cus_comment
 
   def get_doe_summary(self, doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m,
                       e_d):
@@ -569,7 +566,9 @@ class detdp:
       mapping = self.db.column_mapping.find({}, {'_id': False})
       mapping_head = {}
       for m in mapping:
-        for k, v in m.iteritems():
+        v = m.get('new_cols')
+        k = m.get('old_cols')
+        if k is not None and v is not None:
           mapping_head[k.lower()] = v.lower()
 
       final_header_list = []
@@ -594,14 +593,21 @@ class detdp:
 
         for head in data_header:
           if head not in final_header_list:
-            final_header_list.append(head)
+            tmp = mapping_head.get(head)
+            if tmp is not None and tmp not in data_header:
+              final_header_list.append(tmp)
+            elif tmp is None:
+              final_header_list.append(head)
+
         for head in conf_head:
           if head in key_list:
             if head not in final_header_list:
               final_header_list.append(head)
           else:
-            if head + '_conf' not in final_header_list:
+            if head in final_header_list:
               final_header_list.append(head + '_conf')
+            else:
+              final_header_list.append(head)
 
       if 'F' in flag:
         file_name_full = 'output/{}_FULL_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
@@ -618,14 +624,20 @@ class detdp:
         # print 'mapping_head:', mapping_head
         for head in data_header_full:
           if head not in final_header_list_full:
-            final_header_list_full.append(head)
+            tmp = mapping_head.get(head)
+            if tmp is not None and tmp not in data_header_full:
+              final_header_list_full.append(tmp)
+            elif tmp is None:
+              final_header_list_full.append(head)
         for head in conf_head:
           if head in key_list:
             if head not in final_header_list_full:
               final_header_list_full.append(head)
           else:
-            if head + '_conf' not in final_header_list_full:
+            if head in final_header_list_full:
               final_header_list_full.append(head + '_conf')
+            else:
+              final_header_list_full.append(head)
 
       if 'C' in flag:
         file_name_cust = 'output/{}_CUSTOMIZED_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
@@ -641,14 +653,20 @@ class detdp:
         # print 'mapping_head:', mapping_head
         for head in data_header_cust:
           if head not in final_header_list_cust:
-            final_header_list_cust.append(head)
+            tmp = mapping_head.get(head)
+            if tmp is not None and tmp not in final_header_list_cust:
+              final_header_list_cust.append(tmp)
+            elif tmp is None:
+              final_header_list_cust.append(head)
         for head in conf_head:
           if head in key_list:
             if head not in final_header_list_cust:
               final_header_list_cust.append(head)
           else:
-            if head + '_conf' not in final_header_list_cust:
+            if head in final_header_list_cust:
               final_header_list_cust.append(head + '_conf')
+            else:
+              final_header_list_cust.append(head)
 
       final = []
       final_cust = []
@@ -677,13 +695,12 @@ class detdp:
           if data_file_id is not None:
             with fs.get(data_file_id) as data_file:
               data_pf = pd.read_csv(data_file, encoding='utf-8-sig')
-              data_pf = data_pf.rename(columns=lambda x: mapping_head[x] if x in mapping_head else x)
               data_pf.columns = [x.lower() for x in data_pf.columns]
-
+              # data_pf = data_pf.rename(columns=lambda x: mapping_head[x] if x in mapping_head else x)
+              data_pf.columns = [x if mapping_head.get(x) is None else mapping_head.get(x) for x in data_pf.columns]
               result = pd.merge(data_pf, conf_pf, on=key_list, how='inner',
                                 suffixes=['', '_conf'])
               result_header = result.columns.values
-
               if len(final_header_list) > 0:
                 for h in final_header_list:
                   if h not in result_header:
@@ -694,6 +711,7 @@ class detdp:
                 temp['program'] = doe_program_search
                 temp['record_mode'] = doe_recordmode_search
                 temp['read_only'] = doe_readonly_search
+
                 final.append(temp)
                 print 'standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(doe_name_search,
                                                                                                      doe_program_search,
@@ -774,9 +792,3 @@ class detdp:
 
 # if __name__ == '__main__':
 #   db = detdp()
-#   result = db.get_program_recordmode_pair()
-#   for row in result:
-#     print row
-#
-#   newResult = db.set_program_recordmode_pair(result)
-#   print newResult

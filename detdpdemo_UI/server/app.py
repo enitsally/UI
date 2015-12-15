@@ -150,7 +150,8 @@ def get_delete_temp():
   conf_file = var_input['conf_file']
   data_status = db.delete_temp(data_file)
   conf_status = db.delete_temp(conf_file)
-  result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
+  # result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
+  result = {'data_status': data_status, 'conf_status':conf_status}
   return jsonify({'status': result})
 
 
@@ -205,23 +206,23 @@ def get_search_summary():
   if var_doe_name == '':
     doe_name = []
   else:
-    doe_name = var_doe_name.split(',')
+    doe_name = [str(x).strip() for x in var_doe_name.split(',')]
   if var_doe_descr == '':
     doe_descr = []
   else:
-    doe_descr = var_doe_descr.split(',')
+    doe_descr = [str(x).strip() for x in var_doe_descr.split(',')]
   if var_doe_comment == '':
     doe_comment = []
   else:
-    doe_comment = var_doe_comment.split(',')
+    doe_comment = [str(x).strip() for x in var_doe_comment.split(',')]
   if var_doe_program == '':
     program = []
   else:
-    program = var_doe_program.split(',')
+    program = [str(x).strip() for x in var_doe_program.split(',')]
   if var_doe_record_mode == '':
     record_mode = []
   else:
-    record_mode = var_doe_record_mode.split(',')
+    record_mode = [str(x).strip() for x in var_doe_record_mode.split(',')]
   if var_doe_read_only == '':
     read_only = []
   else:
@@ -298,32 +299,32 @@ def get_file_retrieve():
   if var_record_mode == '':
     record_mode = []
   else:
-    record_mode = [str(x) for x in var_record_mode.split(',')]
+    record_mode = [str(x).strip() for x in var_record_mode.split(',')]
 
   if var_program == '':
     program = []
   else:
-    program = [str(x) for x in var_program.split(',')]
+    program = [str(x).strip() for x in var_program.split(',')]
 
   if len(var_read_only) == 0:
     read_only = ''
   else:
-    read_only = [str(x) for x in var_read_only]
+    read_only = [str(x).strip() for x in var_read_only]
 
   if var_doe_no == '':
     doe_no = []
   else:
-    doe_no = [str(x) for x in var_doe_no.split(',')]
+    doe_no = [str(x).strip() for x in var_doe_no.split(',')]
 
   if var_design_no == '':
     design_no = []
   else:
-    design_no = [str(x) for x in var_design_no.split(',')]
+    design_no = [str(x).strip() for x in var_design_no.split(',')]
 
   if var_email == '':
     email = []
   else:
-    email = [str(x) for x in var_email.split(',')]
+    email = [str(x).strip() for x in var_email.split(',')]
 
   if len(var_param) == 0:
     param = {}
@@ -334,7 +335,7 @@ def get_file_retrieve():
         if v == '':
           param[str(k)] = []
         else:
-          param[str(k)] = [str(x) for x in v.split(',')]
+          param[str(k)] = [str(x).strip() for x in v.split(',')]
 
   if len(var_flag) == 0:
     flag = ['S']
