@@ -22,8 +22,6 @@
       $scope.selectedItem = null;
       $scope.searchText = null;
 
-      var user_standard_cols;
-      var user_customized_cols;
       var comment;
       var sys_std_list;
 

@@ -64,11 +64,12 @@ class detdp:
                             return total;
                         }
                     """)
+    if "conf_file" not in self.db.collection_names():
+      self.db.create_collection("conf_file")
     conf_info = self.db.conf_file.map_reduce(mapper, reducer, "myresult")
     conf_list = []
     for row in conf_info.find():
       conf_list.append(row.get('_id'))
-
     data_info = self.db.data_file.find({}, projection={'doe_name': True, 'doe_descr': True, 'comment': True,
                                                        'upload_date': True, 'upload_user': True, 'file_size': True,
                                                        '_id': False})
@@ -77,7 +78,6 @@ class detdp:
       if row.get('upload_date') is not None:
         row['upload_date'] = str(row['upload_date'])
       data_list.append(row)
-
     sorting_key = operator.itemgetter("doe_name")
     for i, j in zip(sorted(conf_list, key=sorting_key), sorted(data_list, key=sorting_key)):
       i.update(j)

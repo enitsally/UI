@@ -8,7 +8,7 @@
  * Controller of the detdpdemoApp
  */
 angular.module('detdpdemoApp')
-  .controller('RetrieveCtrl', function ($scope, $http, $mdToast) {
+  .controller('RetrieveCtrl', function ($scope, $http, $mdToast, usSpinnerService) {
 
     $scope.criteria = {
       fullCol : false,
@@ -89,22 +89,38 @@ angular.module('detdpdemoApp')
 
     $scope.doResetSelection = function () {
       $scope.search = {
-        'doe_name': '',
-        'doe_descr': '',
-        'doe_comment': '',
-        'doe_program': '',
-        'doe_record_mode': '',
-        'doe_read_only': '',
-        'doe_start_date': '',
-        'doe_end_date': '',
-        's_y': '',
-        's_m': '',
-        's_d': '',
-        'e_y': '',
-        'e_m': '',
-        'e_d': ''
+        doe_name: '',
+        doe_descr: '',
+        doe_comment: '',
+        doe_program: '',
+        doe_record_mode: '',
+        doe_read_only: '',
+        doe_start_date: '',
+        doe_end_date: '',
+        s_y: '',
+        s_m: '',
+        s_d: '',
+        e_y: '',
+        e_m: '',
+        e_d: ''
       };
       $scope.doeSearchInfo = [];
+
+      $scope.criteria = {
+        fullCol : false,
+        cusCol : false,
+        stdCol: true,
+        record_mode: '',
+        program : '',
+        readonly : true,
+        fulldevice : false,
+        doe_no: '',
+        design_no : '',
+        email : '',
+        user_name: $scope.currentUser ? $scope.currentUser.id : ''
+      };
+      $scope.currentParam = '';
+      $scope.paramsSelection = [];
     };
 
     $scope.doSearchSummary = function () {
@@ -127,6 +143,7 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doRetrieveFile = function (){
+      usSpinnerService.spin('retrievingSpinner');
       $scope.criteria['params'] = [];
       $scope.criteria['read_only'] = [];
       $scope.criteria['flag'] = [];
@@ -159,6 +176,7 @@ angular.module('detdpdemoApp')
       }
 
       $http.post('http://localhost:5000/get$file$retrieve', $scope.criteria).then (function (response) {
+        usSpinnerService.stop('retrievingSpinner');
         var retrieveResult = response.data.status;
         $scope.showSimpleToast(retrieveResult);
       }, function () {

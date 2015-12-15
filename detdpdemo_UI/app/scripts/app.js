@@ -13,8 +13,12 @@ angular
     'ui.router',
     'ngMaterial',
     'angularFileUpload',
-    'agGrid'
+    'agGrid',
+    'angularSpinner'
   ])
+  .config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
+    usSpinnerConfigProvider.setDefaults({radius:30, width:8, length: 16});
+  }])
   .config(function ($urlRouterProvider) {
     $urlRouterProvider.otherwise('/login');
   })
