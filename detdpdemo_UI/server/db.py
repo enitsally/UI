@@ -533,7 +533,12 @@ class detdp:
     fs = gridfs.GridFS(self.db)
     # flag = ['S']  ##-----------------##
 
-    key_list = ['doe#', 'design', 'wafer']
+    key_list = self.db.system_conf.find_one({}).get('link_list')
+    if key_list is None:
+      key_list = []
+    else:
+      key_list = [str(x) for x in key_list]
+    # key_list = ['doe#', 'design', 'wafer']
     query_dict = {}
     if len(program) > 0:
       query_dict['program'] = {}

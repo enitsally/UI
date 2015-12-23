@@ -258,8 +258,8 @@ def set_program_recordmode_pair():
 
   for row in input_data:
     tmp = {
-      'program': row['program'],
-      'record_mode': row['record_mode']
+      'program': str(row['program']).lower(),
+      'record_mode': str(row['record_mode']).lower()
     }
     old_pair.append(tmp)
   result = db.set_program_recordmode(old_pair)
@@ -361,8 +361,8 @@ def set_colmapping_pair():
   new_pair = []
   for row in input_data:
     tmp = {
-      'old_cols': row['old_cols'],
-      'new_cols': row['new_cols']
+      'old_cols': str(row['old_cols']).lower(),
+      'new_cols': str(row['new_cols']).lower()
     }
     new_pair.append(tmp)
   db = detdp()
