@@ -60,6 +60,12 @@ angular
         controller: 'colMappingCtrl',
         controllerAs: 'colMapping'
       })
+      .state('sysUploadLog', {
+        url: '/sysUploadLog',
+        templateUrl: 'views/sys_upload_log.html',
+        controller: 'sysUploadLogCtrl',
+        controllerAs: 'sysUploadLog'
+      })
       .state('usersetting', {
         url: '/usersetting',
         templateUrl: 'views/user_setting.html',
@@ -180,6 +186,10 @@ angular
        $state.go('colMapping');
        $mdSidenav('left').close();
      }
+     else if (api === 'System Upload Log'){
+       $state.go('sysUploadLog');
+       $mdSidenav('left').close();
+     }
    };
 
    $scope.showSimpleToast = function(showmgs) {
@@ -218,6 +228,11 @@ angular
           {
             link : '',
             title: 'User Setting',
+            icon: 'images/icon/setting.svg'
+          },
+          {
+            link : '',
+            title: 'System Upload Log',
             icon: 'images/icon/setting.svg'
           }
     ];

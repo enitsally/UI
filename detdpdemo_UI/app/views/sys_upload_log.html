@@ -1,0 +1,126 @@
+<link rel="stylesheet" href="styles/retrieve.css" />
+<style>
+         table, th , td {
+            border-collapse: collapse;
+            padding: 5px;
+         }
+
+         table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+         }
+
+         table tr:nth-child(even) {
+            background-color: #ffffff;
+         }
+</style>
+
+<br>
+<div layout = "row">
+  <div flex="5"></div>
+  <form flex = "90" layout = "row">
+    <span class="md-headline">System Upload Log</span>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doSearchSummary()">Search</md-button>
+
+      <div layout="row" layout-align="end center">
+        <span flex></span>
+        <md-button class="md-primary md-raised" ng-click="doRetrieveFile()">Get All</md-button>
+        <span flex></span>
+        <md-button ng-click="doResetSelection()">Reset</md-button>
+      </div>
+
+  </form>
+  <div flex="5"></div>
+</div>
+<div layout="column" ng-cloak="" class="chipsdemoCustomInputs">
+  <md-content class="md-padding" layout="row">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-dynamic-height md-border-bottom >
+      <md-tab label="Log Information">
+        <md-card>
+          <md-card-title>
+          </md-card-title>
+
+          <md-card-content layout="row">
+            <div layout="column" flex ="20" layout-align="left center">
+              <div layout="row">
+                <md-checkbox ng-model="search.uploaded" layout = "row">Uploaded</md-checkbox>
+                <md-checkbox ng-model="search.failed" layout = "row">Failed</md-checkbox>
+              </div>
+              <br>
+              <div layout = "column">
+                <md-input-container>
+                  <label>Record Mode</label>
+                  <input ng-model="search.doe_record_mode">
+                </md-input-container>
+                <md-input-container>
+                  <label>Program</label>
+                  <input ng-model="search.doe_program">
+                </md-input-container>
+              </div>
+              <br>
+              <div layout="row">
+                <md-radio-group ng-model="search.read_only" required>
+                  <md-radio-button value="Y">Read Only</md-radio-button>
+                  <md-radio-button value="N">Full Device</md-radio-button>
+                </md-radio-group>
+              </div>
+              <br>
+              <md-datepicker ng-model="search.doe_start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
+              <md-datepicker ng-model="search.doe_end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
+
+            </div>
+            <div layout = "column" flex>
+              <md-card>
+                <md-card-title layout="column" layout-align="center center">
+                  <md-card-title-text layout = "row">
+                    <h5><strong>Data File Summary</strong></h5><div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                  <md-content flex layout-padding style="height: 500px">
+                  <span flex>
+                    <table class="table table-hover">
+                      <tr>
+                        <th>Data File Name</th>
+                        <th>Conf File Name</th>
+                        <th>Program/Record Mode</th>
+                        <th>Read Only/Full Device</th>
+                        <th>Column Info</th>
+                        <th>CheckIn Date</th>
+                        <th>Upload Date</th>
+                        <th>Duplicates</th>
+                        <th>Upload Status</th>
+                        <th>Upload User</th>
+                        <th>Comment</th>
+                      </tr>
+                      <tr ng-repeat="row in doeSearchInfo">
+                        <td>{{row.data_file}}</td>
+                        <td>{{row.conf_file}}</td>
+                        <td>{{row.program}}</td>
+                        <td>{{row.read_only}}</td>
+                        <td>{{row.column_check}}</td>
+                        <td>{{row.checkIn_date}}</td>
+                        <td>{{row.upload_date}}</td>
+                        <td>{{row.number_of_check}}</td>
+                        <td>{{row.status}}</td>
+                        <td>{{row.upload_user}}</td>
+                        <td>{{row.comment}}</td>
+                      </tr>
+                    </table>
+                  <span>
+                  </md-content>
+                </md-card-content>
+              </md-card>
+            </div>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+      <md-tab label="More" >
+      </md-tab>
+    </md-tabs>
+  </form>
+  <div flex="5"></div>
+  </md-content>
+</div>

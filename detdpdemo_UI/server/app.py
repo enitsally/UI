@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, session, render_template, redirect
 from flask.ext.cors import CORS, cross_origin
 from db import detdp
+from autoupload import detdpautoupload
 import json
 import os
 import pymongo
