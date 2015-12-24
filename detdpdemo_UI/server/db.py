@@ -795,5 +795,23 @@ class detdp:
 
     return 'Delete {} records \n Add {} records.'.format(del_no, add_no)
 
+  def get_upload_log(self, s_y, s_m, s_d, e_y, e_m, e_d):
+
+    str_method = 'get_upload_log(s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(s_y, s_m, s_d, e_y, e_m, e_d)
+    print 'call method: ', str_method
+    query_dict = {}
+    if s_y != '' and s_m != '' and s_d != '':
+      if query_dict.get('log.status_date') is None:
+        query_dict['log.status_date'] = {}
+      s_t = datetime.datetime(s_y, s_m, s_d, 0, 0, 1).strftime('%m/%d/%Y,%H:%M:%S')
+      query_dict['log.status_date']['$gt'] = s_t
+    if e_y != '' and e_m != '' and e_d != '':
+      if query_dict.get('log.status_date') is None:
+        query_dict['log.status_date'] = {}
+      e_t = datetime.datetime(e_y, e_m, e_d, 23, 59, 59).strftime('%m/%d/%Y,%H:%M:%S')
+      query_dict['log.status_date']['$lt'] = e_t
+    print query_dict
+    return list(self.db.auto_upload_log.find(query_dict, {'_id': False}))
+
 # if __name__ == '__main__':
 #   db = detdp()

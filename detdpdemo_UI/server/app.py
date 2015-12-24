@@ -370,6 +370,19 @@ def set_colmapping_pair():
   result = db.set_col_mapping(new_pair)
   return jsonify({'status': result})
 
+@app.route('/get$upload$log', methods=['GET', 'POST'])
+def get_upload_log():
+  print 'API: /get$upload$log, method: get_upload_log()'
+  input_data = json.loads(request.data)
+  s_y = input_data['s_y']
+  s_m = input_data['s_m']
+  s_d = input_data['s_d']
+  e_y = input_data['e_y']
+  e_m = input_data['e_m']
+  e_d = input_data['e_d']
+  db = detdp()
+  result = db.get_upload_log(s_y, s_m, s_d, e_y, e_m, e_d)
+  return jsonify({'status': result})
 
 
 if __name__ == "__main__":

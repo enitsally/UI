@@ -92,20 +92,20 @@ class detdpautoupload:
         readonly = features[3].lower()
         doename = features[4]
 
-      chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
-      if chk_program is not None:
-        log_dict[key]['program'] = 'Match'
-      else:
-        log_dict[key]['program'] = None
-        comment += '''No matched program and record mode. '''
-        log_dict[key]['ready_upload'] = 'N'
+        chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
+        if chk_program is not None:
+          log_dict[key]['program'] = 'Match'
+        else:
+          log_dict[key]['program'] = None
+          comment += '''No matched program and record mode. '''
+          log_dict[key]['ready_upload'] = 'N'
 
-      if readonly in ('y', 'n'):
-        log_dict[key]['read_only'] = 'Match'
-      else:
-        log_dict[key]['read_only'] = None
-        comment += '''No matched format for read only/full device. '''
-        log_dict[key]['ready_upload'] = 'N'
+        if readonly in ('y', 'n'):
+          log_dict[key]['read_only'] = 'Match'
+        else:
+          log_dict[key]['read_only'] = None
+          comment += '''No matched format for read only/full device. '''
+          log_dict[key]['ready_upload'] = 'N'
 
       if log_dict[key]['ready_upload'] == 'Y':
         # ------Open files--------------------------------------------------------
@@ -236,6 +236,8 @@ class detdpautoupload:
       else:
         log_dict[key]['upload_date'] = None
         log_dict[key]['status'] = 'Check Failed'
+
+      log_dict[key]['status_date'] = timestamp
 
       if log_dict[key]['number_of_check'] == 1:
         self.db.auto_upload_log.insert_one({'key': key, 'log': log_dict[key]})

@@ -20,19 +20,19 @@
   <form flex = "90" layout = "row">
     <span class="md-headline">System Upload Log</span>
     <span flex></span>
-    <md-button class="md-primary md-raised" ng-click="doSearchSummary()">Search</md-button>
+    <md-button class="md-primary md-raised" ng-click="doSearchLog('S')">Search</md-button>
 
       <div layout="row" layout-align="end center">
         <span flex></span>
-        <md-button class="md-primary md-raised" ng-click="doRetrieveFile()">Get All</md-button>
+        <md-button class="md-primary md-raised" ng-click="doSearchLog('A')">Get All</md-button>
         <span flex></span>
-        <md-button ng-click="doResetSelection()">Reset</md-button>
+        <md-button ng-click="doReset()">Reset</md-button>
       </div>
 
   </form>
   <div flex="5"></div>
 </div>
-<div layout="column" ng-cloak="" class="chipsdemoCustomInputs">
+<div layout="column" ng-cloak="">
   <md-content class="md-padding" layout="row">
   <div flex="5"></div>
   <form flex="90">
@@ -42,9 +42,9 @@
           <md-card-title>
           </md-card-title>
 
-          <md-card-content layout="row">
+          <md-card-content layout="column">
             <div layout="column" flex ="20" layout-align="left center">
-              <div layout="row">
+              <!-- <div layout="row">
                 <md-checkbox ng-model="search.uploaded" layout = "row">Uploaded</md-checkbox>
                 <md-checkbox ng-model="search.failed" layout = "row">Failed</md-checkbox>
               </div>
@@ -52,30 +52,29 @@
               <div layout = "column">
                 <md-input-container>
                   <label>Record Mode</label>
-                  <input ng-model="search.doe_record_mode">
+                  <input ng-model="search.record_mode">
                 </md-input-container>
                 <md-input-container>
                   <label>Program</label>
-                  <input ng-model="search.doe_program">
+                  <input ng-model="search.program">
                 </md-input-container>
               </div>
               <br>
-              <div layout="row">
-                <md-radio-group ng-model="search.read_only" required>
-                  <md-radio-button value="Y">Read Only</md-radio-button>
-                  <md-radio-button value="N">Full Device</md-radio-button>
-                </md-radio-group>
+              <div layout="column">
+                <md-checkbox ng-model="search.read_only" layout = "row">Read Only</md-checkbox>
+                <md-checkbox ng-model="search.Full_device" layout = "row">Full Device</md-checkbox>
               </div>
-              <br>
-              <md-datepicker ng-model="search.doe_start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
-              <md-datepicker ng-model="search.doe_end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
-
+              <br> -->
+              <div layout = "row">
+                <md-datepicker ng-model="search.start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
+                <md-datepicker ng-model="search.end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
+              </div>
             </div>
             <div layout = "column" flex>
               <md-card>
                 <md-card-title layout="column" layout-align="center center">
                   <md-card-title-text layout = "row">
-                    <h5><strong>Data File Summary</strong></h5><div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
+                    <h5><strong>System Upload Log Overview</strong></h5><div ng-show= "logSearchInfo.length"><h5><strong>({{logSearchInfo.length}})</strong></h5></div>
                   </md-card-title-text>
                 </md-card-title>
                 <md-card-content>
@@ -95,18 +94,18 @@
                         <th>Upload User</th>
                         <th>Comment</th>
                       </tr>
-                      <tr ng-repeat="row in doeSearchInfo">
-                        <td>{{row.data_file}}</td>
-                        <td>{{row.conf_file}}</td>
-                        <td>{{row.program}}</td>
-                        <td>{{row.read_only}}</td>
-                        <td>{{row.column_check}}</td>
-                        <td>{{row.checkIn_date}}</td>
-                        <td>{{row.upload_date}}</td>
-                        <td>{{row.number_of_check}}</td>
-                        <td>{{row.status}}</td>
-                        <td>{{row.upload_user}}</td>
-                        <td>{{row.comment}}</td>
+                      <tr ng-repeat="row in logSearchInfo">
+                        <td>{{row.log.data_file}}</td>
+                        <td>{{row.log.conf_file}}</td>
+                        <td>{{row.log.program}}</td>
+                        <td>{{row.log.read_only}}</td>
+                        <td>{{row.log.column_check}}</td>
+                        <td>{{row.log.checkIn_date}}</td>
+                        <td>{{row.log.upload_date}}</td>
+                        <td>{{row.log.number_of_check}}</td>
+                        <td>{{row.log.status}}</td>
+                        <td>{{row.log.upload_user}}</td>
+                        <td>{{row.log.comment}}</td>
                       </tr>
                     </table>
                   <span>
@@ -117,7 +116,12 @@
           </md-card-content>
         </md-card>
       </md-tab>
-      <md-tab label="More" >
+      <md-tab label="Manual Operation" >
+        <form flex = "90" layout = "row">
+          <br>
+          <span flex></span>
+          <md-button class="md-primary md-raised" ng-click="doManualUpload()">Manual Upload</md-button>
+        </form>
       </md-tab>
     </md-tabs>
   </form>
