@@ -384,6 +384,13 @@ def get_upload_log():
   result = db.get_upload_log(s_y, s_m, s_d, e_y, e_m, e_d)
   return jsonify({'status': result})
 
+@app.route('/get$manual$upload', methods=['GET', 'POST'])
+def get_manual_upload():
+  print 'API: /get$manual$upload, method: get_manual_upload()'
+  auto_upload = detdpautoupload()
+  auto_upload.get_file('Admin_manual')
+  return jsonify({'status':'Upload finished, go to log for information.'})
+
 
 if __name__ == "__main__":
   app.run(debug=True)

@@ -228,12 +228,12 @@ angular
           {
             link : '',
             title: 'User Setting',
-            icon: 'images/icon/setting.svg'
+            icon: 'images/icon/settings.svg'
           },
           {
             link : '',
             title: 'System Upload Log',
-            icon: 'images/icon/setting.svg'
+            icon: 'images/icon/settings.svg'
           }
     ];
     $scope.admin = [

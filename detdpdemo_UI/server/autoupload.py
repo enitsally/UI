@@ -256,9 +256,9 @@ def chk_dup(value, lst):
   return False
 
 
-if __name__ == '__main__':
-  dp = detdpautoupload()
-  dp.get_file('SysAuto')
+# if __name__ == '__main__':
+#   dp = detdpautoupload()
+#   dp.get_file('SysAuto')
 
   # std = dp.db.system_conf.find_one({}).get('standard_cols')
   # new_std = [x.lower() for x in std]
