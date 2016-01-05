@@ -66,6 +66,12 @@ angular
         controller: 'sysUploadLogCtrl',
         controllerAs: 'sysUploadLog'
       })
+      .state('fileUploadSetting', {
+        url: '/fileUploadSetting',
+        templateUrl: 'views/file_upload_setting.html',
+        controller: 'fileUploadSettingCtrl',
+        controllerAs: 'fileUploadSetting'
+      })
       .state('usersetting', {
         url: '/usersetting',
         templateUrl: 'views/user_setting.html',
@@ -174,7 +180,7 @@ angular
        $state.go('usersetting');
        $mdSidenav('left').close();
      }
-     else if (api === 'System Setting'){
+     else if (api === 'Standard Setting'){
        $state.go('sysSetting');
        $mdSidenav('left').close();
      }
@@ -186,8 +192,12 @@ angular
        $state.go('colMapping');
        $mdSidenav('left').close();
      }
-     else if (api === 'System Upload Log'){
-       $state.go('sysUploadLog');
+     else if (api === 'File Upload Setting'){
+       $state.go('fileUploadSetting');
+       $mdSidenav('left').close();
+     }
+     else if (api === 'File linkage Setting'){
+       $state.go('fileLinkSetting');
        $mdSidenav('left').close();
      }
    };
@@ -239,7 +249,7 @@ angular
     $scope.admin = [
           {
             link : '',
-            title: 'System Setting',
+            title: 'Standard Setting',
             icon: 'images/icon/ssy_setting.svg'
           },
           {
@@ -250,6 +260,11 @@ angular
           {
             link : '',
             title: 'Column Mapping',
+            icon: 'images/icon/data_setting.svg'
+          },
+          {
+            link : '',
+            title: 'File Upload Setting',
             icon: 'images/icon/data_setting.svg'
           }
     ];

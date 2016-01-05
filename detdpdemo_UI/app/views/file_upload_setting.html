@@ -1,0 +1,131 @@
+<style>
+         table, th , td {
+            border-collapse: collapse;
+            padding: 5px;
+         }
+
+         table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+         }
+
+         table tr:nth-child(even) {
+            background-color: #ffffff;
+         }
+</style>
+
+<br>
+<div layout = "row">
+  <div flex="5"></div>
+  <form flex = "90" layout = "row">
+    <span class="md-headline">Setup Auto-upload Configuration</span>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doSaveAutoUploadConfToDB()">Save</md-button>
+    <div layout="row" layout-align="end center">
+      <span flex></span>
+      <md-button ng-click="doResetConf()">Reset</md-button>
+    </div>
+  </form>
+  <div flex="5"></div>
+</div>
+<div layout="column" ng-cloak>
+  <md-content class="md-padding" layout="row">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-dynamic-height md-border-bottom >
+      <md-tab label="Linkage/Prefix">
+        <md-card flex>
+          <md-card-title>
+          </md-card-title>
+          <md-card-content layout="row">
+            <div layout = "row" flex>
+              <div flex = "20">
+                <br>
+                <h4> Upload File Prefix</h4>
+                <br>
+                <md-input-container>
+                  <label>Data File Prefix:</label>
+                  <input ng-model="dPrefix" >
+                </md-input-container>
+                <md-input-container>
+                  <label>COnf. File Prefix:</label>
+                  <input ng-model="cPrefix" >
+                </md-input-container>
+              </div>
+              <div flex layout = "row">
+                <div flex="25">
+                  <md-card>
+                    <md-card-title>
+                      <br>
+                      <button class="btn btn-success" ng-click="editRow('N', '', '')">
+                        <span class="glyphicon glyphicon-user"></span> Create New Row
+                      </button>
+                    </md-card-title>
+                    <md-card-content>
+                      <div ng-hide = "hideform" flex>
+                        <h4 ng-show="edit">Create New Row:</h4>
+                        <h4 ng-hide="edit">Edit Row:</h4>
+                        <md-input-container>
+                          <label>Column Name:</label>
+                          <input ng-model="currentSelection.ColName" >
+                        </md-input-container>
+                        <hr>
+                        <button class="btn btn-success"  ng-click="saveNew()" ng-show="edit">
+                          <span class="glyphicon glyphicon-save"></span> Add Row
+                        </button>
+                        <button class="btn btn-success"  ng-click="saveEdit(currentSelection.row_id)" ng-hide="edit">
+                          <span class="glyphicon glyphicon-save"></span> Save change
+                        </button>
+                      </div>
+                    </md-card-content>
+                  </md-card>
+                </div>
+                <div flex="75">
+                  <md-card>
+                    <md-card-title layout="row" layout-align="center center">
+                      <h5><strong>Linkage Columns</strong></h5><div ng-show= "linkCols.length"><h5><strong>({{linkCols.length}})</strong></h5></div>
+                    </md-card-title>
+                    <md-card-content>
+                      <md-content flex layout-padding style="height: 500px">
+                        <span flex>
+                          <table class="table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Column Name</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr ng-repeat="row in mappingPair">
+                                <td>{{row.colName}}</td>
+                                <td>
+                                  <button class="btn" ng-click="editRow($index,row.colName)">
+                                  <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                                  </button>
+                                </td>
+                                <td>
+                                  <button class="btn" ng-click="deleteRow($index)">
+                                  <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        <span>
+                      </md-content>
+                    </md-card-content>
+                  </md-card>
+                </div>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+      </md-tab>
+      <md-tab label="More" >
+
+      </md-tab>
+    </md-tabs>
+  </form>
+  <div flex="5"></div>
+  </md-content>
+</div>

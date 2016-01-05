@@ -111,6 +111,6 @@ angular.module('detdpdemoApp')
     };
 
     $scope.showSimpleToast = function(showmgs) {
-      $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
+      $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(3000));
     };
   });
