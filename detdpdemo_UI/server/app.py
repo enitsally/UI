@@ -42,9 +42,7 @@ def login():
     if var_user_group == 'A':
       role = 'admin'
     elif var_user_group == 'U':
-      role = 'uploader'
-    elif var_user_group == 'R':
-      role = 'retriever'
+      role = 'public'
     else:
       role = ''
     user = {'id': var_username, 'role': role}

@@ -17,7 +17,7 @@
 //   });
 
 angular.module('detdpdemoApp')
-  .controller('LoginCtrl', function ($scope, $rootScope, $http, $state, $mdToast, AUTH_EVENTS, AuthService) {
+  .controller('LoginCtrl', function ($scope, $rootScope, $http, $state, $mdToast, AUTH_EVENTS, AuthService, IdleService) {
     $scope.credentials = {
       username: '',
       password: ''
@@ -48,17 +48,15 @@ angular.module('detdpdemoApp')
       AuthService.login(credentials).then(function (user) {
         $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
         $scope.setCurrentUser(user);
-        if (user.role === 'retriever'){
-          $state.go('retrieve');
-          $scope.message = user.id + ", You are logged in.";
-        }
-        else if(user.role === 'uploader'){
+        if (user.role === 'public'){
           $state.go('upload');
           $scope.message = user.id + ", You are logged in.";
+          IdleService.start();
         }
         else if(user.role === 'admin'){
           $state.go('dataSetting');
           $scope.message = user.id + ", Admin, You are logged in!";
+          IdleService.start();
         }
         else{
           $scope.message = "Login failed, please try again.";
@@ -67,16 +65,16 @@ angular.module('detdpdemoApp')
         }
         $scope.showSimpleToast($scope.message);
       }, function () {
+        $scope.setCurrentUser(null);
+        $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
       });
     };
   })
-  .factory('AuthService', function ($http, Session) {
+  .factory('AuthService', function ($http) {
     var authService = {};
     authService.login = function (credentials) {
       return $http.post('http://localhost:5000/login', credentials)
         .then(function (response) {
-          Session.create(response.data.id, response.data.user.id,
-            response.data.user.role);
           return response.data.user;
         });
     };
@@ -106,18 +104,5 @@ angular.module('detdpdemoApp')
   .constant('USER_ROLES', {
     all: '*',
     admin: 'admin',
-    uploader: 'uploader',
-    retriever: 'retriever'
-  })
-  .service('Session', function () {
-    this.create = function (sessionId, userId, userRole) {
-      this.id = sessionId;
-      this.userId = userId;
-      this.userRole = userRole;
-    };
-    this.destroy = function () {
-      this.id = null;
-      this.userId = null;
-      this.userRole = null;
-    };
+    public: 'public user'
   });

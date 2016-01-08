@@ -14,13 +14,37 @@ angular
     'ngMaterial',
     'angularFileUpload',
     'agGrid',
-    'angularSpinner'
+    'angularSpinner',
+    'ngIdle'
   ])
   .config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:30, width:8, length: 16});
   }])
+  .config(['KeepaliveProvider', 'IdleProvider', function(KeepaliveProvider, IdleProvider) {
+    IdleProvider.idle(1800);//45mins
+    IdleProvider.timeout(5);
+    KeepaliveProvider.interval(10);
+  }])
+  .factory('IdleService', function (Idle, Keepalive) {
+    //Here start setting the sidle function
+    //--------------------------------------------
+    var idleservice = {};
+    idleservice.started = false;
+
+    idleservice.start = function() {
+      Idle.watch();
+      idleservice.started = true;
+    }
+
+    idleservice.stop = function() {
+      Idle.unwatch();
+      idleservice.started = false;
+
+    }
+    return idleservice;
+  })
   .config(function ($urlRouterProvider) {
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/login');
   })
   .config(function ($stateProvider) {
     $stateProvider
@@ -118,12 +142,9 @@ angular
   //    }
   //  };
   // })
-
-  .controller('ApplicationController', function ($rootScope, $scope, $mdSidenav, $mdToast, $http, $state, USER_ROLES, AuthService, Session) {
+  .controller('ApplicationController', function ($rootScope, $scope, $mdSidenav, $mdToast, $http, $state, USER_ROLES, IdleService) {
     $rootScope.currentUser = null;
     $rootScope.userRoles = USER_ROLES;
-    $rootScope.isAuthorized = AuthService.isAuthorized;
-
     /**
      * Build handler to open/close a SideNav; when animation finishes
      * report completion in console
@@ -154,65 +175,65 @@ angular
      $mdSidenav('left').close()
        .then(function () {
        });
-   };
-   $scope.doLogout = function(){
+     };
+     $scope.doLogout = function(){
 
-     $http.get('http://localhost:5000/logout').then(function(req){
-       $scope.showSimpleToast(req.data.status);
-     });
-      $rootScope.currentUser = null;
-      Session.destroy()
-      $state.go('login');
-   };
+       $http.get('http://localhost:5000/logout').then(function(req){
+         $scope.showSimpleToast(req.data.status);
+       });
+        $rootScope.currentUser = null;
+        $state.go('login');
+        IdleService.stop();
+     };
 
-   $scope.doDirectLogin = function(){
-     $rootScope.currentUser = null;
-     $state.go('login');
-   };
+     $scope.doDirectLogin = function(){
+       $rootScope.currentUser = null;
+       $state.go('login');
+     };
 
-   $scope.doDirectPage = function (api){
-     if (api === 'Upload'){
-       $state.go('upload');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'Retrieve'){
-       $state.go('retrieve');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'User Setting'){
-       $state.go('usersetting');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'Standard Setting'){
-       $state.go('sysSetting');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'Data Setting'){
-       $state.go('dataSetting');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'Column Mapping'){
-       $state.go('colMapping');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'File Upload Setting'){
-       $state.go('fileUploadSetting');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'File linkage Setting'){
-       $state.go('fileLinkSetting');
-       $mdSidenav('left').close();
-     }
-     else if (api === 'System Upload Log'){
-       $state.go('sysUploadLog');
-       $mdSidenav('left').close();
-     }
-   };
+     $scope.doDirectPage = function (api){
+       if (api === 'Upload'){
+         $state.go('upload');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'Retrieve'){
+         $state.go('retrieve');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'User Setting'){
+         $state.go('usersetting');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'Standard Setting'){
+         $state.go('sysSetting');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'Data Setting'){
+         $state.go('dataSetting');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'Column Mapping'){
+         $state.go('colMapping');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'File Upload Setting'){
+         $state.go('fileUploadSetting');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'File linkage Setting'){
+         $state.go('fileLinkSetting');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'System Upload Log'){
+         $state.go('sysUploadLog');
+         $mdSidenav('left').close();
+       }
+     };
 
-   $scope.showSimpleToast = function(showmgs) {
-     $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
- };
-   /**
+     $scope.showSimpleToast = function(showmgs) {
+       $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
+     };
+     /**
      * Supplies a function that will continue to operate until the
      * time is up.
      */
@@ -229,7 +250,6 @@ angular
         }, wait || 10);
       };
     }
-
 
     $scope.menu = [
           {
@@ -284,4 +304,32 @@ angular
         });
 
     };
-  });
+  })
+  .run(function($rootScope, $location, $state, $mdDialog) {
+    $rootScope.$on( '$stateChangeStart', function(e, toState  , toParams
+                                                  , fromState, fromParams) {
+
+       var isLogin = toState.name === "login";
+       if(isLogin){
+          return; // no need to redirect
+       }
+
+       // now, redirect only not authenticated
+
+       if($rootScope.currentUser === null) {
+           e.preventDefault(); // stop current execution
+           $state.go('login'); // go to login
+       }
+     });
+
+     $rootScope.$on('IdleTimeout', function() {
+       var alert =  $mdDialog.alert()
+                    .parent(angular.element(document.querySelector('#popupContainer')))
+                    .clickOutsideToClose(true)
+                    .title('Time out, Session Expired!.')
+                    .ok('Got it!');
+        $mdDialog.show(alert);
+        $state.go('login');
+     });
+  })
+  ;
