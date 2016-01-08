@@ -20,7 +20,7 @@ angular
     usSpinnerConfigProvider.setDefaults({radius:30, width:8, length: 16});
   }])
   .config(function ($urlRouterProvider) {
-    $urlRouterProvider.otherwise('/login');
+    $urlRouterProvider.otherwise('/');
   })
   .config(function ($stateProvider) {
     $stateProvider
@@ -80,15 +80,15 @@ angular
       });
   })
 
-  //.config(function ($httpProvider) {
+  // .config(function ($httpProvider) {
   //  $httpProvider.interceptors.push([
   //    '$injector',
   //    function ($injector) {
   //      return $injector.get('AuthInterceptor');
   //    }
   //  ]);
-  //})
-  //.factory('AuthInterceptor', function ($rootScope, $q,
+  // })
+  // .factory('AuthInterceptor', function ($rootScope, $q,
   //                                      AUTH_EVENTS) {
   //  return {
   //    responseError: function (response) {
@@ -101,11 +101,12 @@ angular
   //      return $q.reject(response);
   //    }
   //  };
-  //})
-  //.directive('loginDialog', function (AUTH_EVENTS) {
+  // })
+  // .directive('loginDialog', function (AUTH_EVENTS) {
   //  return {
   //    restrict: 'A',
-  //    template: '<div ng-if="visible" ng-include="\'login.html\'">',
+  //   //  template: '<div ng-if="visible" ng-include="\'login.html\'">',
+  //    templateUrl: 'views/login.html',
   //    link: function (scope) {
   //      var showDialog = function () {
   //        scope.visible = true;
@@ -116,8 +117,9 @@ angular
   //      scope.$on(AUTH_EVENTS.sessionTimeout, showDialog)
   //    }
   //  };
-  //})
-  .controller('ApplicationController', function ($rootScope, $scope, $mdSidenav, $mdToast, $http, $state, USER_ROLES, AuthService) {
+  // })
+
+  .controller('ApplicationController', function ($rootScope, $scope, $mdSidenav, $mdToast, $http, $state, USER_ROLES, AuthService, Session) {
     $rootScope.currentUser = null;
     $rootScope.userRoles = USER_ROLES;
     $rootScope.isAuthorized = AuthService.isAuthorized;
@@ -159,6 +161,7 @@ angular
        $scope.showSimpleToast(req.data.status);
      });
       $rootScope.currentUser = null;
+      Session.destroy()
       $state.go('login');
    };
 
@@ -198,6 +201,10 @@ angular
      }
      else if (api === 'File linkage Setting'){
        $state.go('fileLinkSetting');
+       $mdSidenav('left').close();
+     }
+     else if (api === 'System Upload Log'){
+       $state.go('sysUploadLog');
        $mdSidenav('left').close();
      }
    };

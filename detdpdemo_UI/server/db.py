@@ -796,8 +796,8 @@ class detdp:
     return 'Delete {} records \n Add {} records.'.format(del_no, add_no)
 
   def get_upload_log(self, s_y, s_m, s_d, e_y, e_m, e_d):
-
-    str_method = 'get_upload_log(s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(s_y, s_m, s_d, e_y, e_m, e_d)
+    str_method = 'get_upload_log(s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(s_y, s_m, s_d, e_y,
+                                                                                                     e_m, e_d)
     print 'call method: ', str_method
     query_dict = {}
     if s_y != '' and s_m != '' and s_d != '':
@@ -812,6 +812,30 @@ class detdp:
       query_dict['log.status_date']['$lt'] = e_t
     print query_dict
     return list(self.db.auto_upload_log.find(query_dict, {'_id': False}))
+
+  def get_autoupload_conf(self):
+    str_method = 'get_autoload_conf()'
+    print 'call method: ', str_method
+    conf = self.db.system_conf.find_one({})
+    if conf is not None:
+      linkCols = [] if conf.get('link_list') is None else conf.get('link_list')
+      prefix = {'data_prefix': '',
+                'conf_prefix': ''}
+      if conf.get('data_prefix') is not None:
+        prefix['data_prefix'] = conf.get('data_prefix')
+      if conf.get('conf_prefix') is not None:
+        prefix['conf_prefix'] = conf.get('conf_prefix')
+
+    return {'linkCols': linkCols, 'prefix': prefix}
+
+  def set_autoupload_conf(self, data_prefix, conf_prefix, link_list):
+    str_method = 'set_autoupload_conf( data_prefix = {}, conf_prefix = {}, link_list = {} )'.format(data_prefix, conf_prefix, link_list)
+    print 'call method: ', str_method
+    result = self.db.system_conf.find_one_and_update({},{'$set': {'data_prefix': data_prefix, 'conf_prefix': conf_prefix, 'link_list': link_list}})
+    if (result is not None):
+      return True
+    else:
+      return False
 
 # if __name__ == '__main__':
 #   db = detdp()

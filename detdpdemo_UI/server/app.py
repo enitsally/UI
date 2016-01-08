@@ -152,7 +152,7 @@ def get_delete_temp():
   data_status = db.delete_temp(data_file)
   conf_status = db.delete_temp(conf_file)
   # result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
-  result = {'data_status': data_status, 'conf_status':conf_status}
+  result = {'data_status': data_status, 'conf_status': conf_status}
   return jsonify({'status': result})
 
 
@@ -344,7 +344,7 @@ def get_file_retrieve():
     flag = var_flag
 
   db = detdp()
-  result = db.get_file_retrieve(user_name,program, record_mode, read_only, doe_no, design_no, param, email, flag)
+  result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
   return jsonify({'status': result})
 
 
@@ -354,6 +354,7 @@ def get_colmapping_pair():
   db = detdp()
   result = db.get_col_mapping()
   return jsonify({'status': result})
+
 
 @app.route('/set$colmn$mapping$pair', methods=['GET', 'POST'])
 def set_colmapping_pair():
@@ -370,6 +371,7 @@ def set_colmapping_pair():
   result = db.set_col_mapping(new_pair)
   return jsonify({'status': result})
 
+
 @app.route('/get$upload$log', methods=['GET', 'POST'])
 def get_upload_log():
   print 'API: /get$upload$log, method: get_upload_log()'
@@ -384,12 +386,37 @@ def get_upload_log():
   result = db.get_upload_log(s_y, s_m, s_d, e_y, e_m, e_d)
   return jsonify({'status': result})
 
+
 @app.route('/get$manual$upload', methods=['GET', 'POST'])
 def get_manual_upload():
   print 'API: /get$manual$upload, method: get_manual_upload()'
   auto_upload = detdpautoupload()
   auto_upload.get_file('Admin_manual')
-  return jsonify({'status':'Upload finished, go to log for information.'})
+  return jsonify({'status': 'Upload finished, go to log for information.'})
+
+
+@app.route('/get$link$cols$list$predix')
+def get_linkcols_prefix():
+  print 'API: /get$link$cols$list$predix, method: get_autoupload_conf()'
+  db = detdp()
+  result = db.get_autoupload_conf()
+  return jsonify({'status': result})
+
+
+@app.route('/set$link$cols$list$predix', methods=['GET', 'POST'])
+def set_linlcols_prefix():
+  print 'API: /set$link$cols$list$predix, method : set_autoupload_conf'
+  input_data = json.loads(request.data)
+  data_prefix = input_data['data_prefix']
+  conf_prefix = input_data['conf_prefix']
+  link_list = [x.lower() for x in input_data['link_list']]
+  db = detdp()
+  result = db.set_autoupload_conf(data_prefix, conf_prefix, link_list)
+  if result:
+    msg = 'SAVE DONE!'
+  else:
+    msg = 'SAVE FAILED'
+  return jsonify({'status': msg})
 
 
 if __name__ == "__main__":
