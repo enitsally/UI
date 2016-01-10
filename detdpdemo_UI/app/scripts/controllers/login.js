@@ -79,17 +79,17 @@ angular.module('detdpdemoApp')
         });
     };
 
-    authService.isAuthenticated = function () {
-      return !!Session.userId;
-    };
-
-    authService.isAuthorized = function (authorizedRoles) {
-      if (!angular.isArray(authorizedRoles)) {
-        authorizedRoles = [authorizedRoles];
-      }
-      return (authService.isAuthenticated() &&
-      authorizedRoles.indexOf(Session.userRole) !== -1);
-    };
+    // authService.isAuthenticated = function () {
+    //   return !!Session.userId;
+    // };
+    //
+    // authService.isAuthorized = function (authorizedRoles) {
+    //   if (!angular.isArray(authorizedRoles)) {
+    //     authorizedRoles = [authorizedRoles];
+    //   }
+    //   return (authService.isAuthenticated() &&
+    //   authorizedRoles.indexOf(Session.userRole) !== -1);
+    // };
 
     return authService;
   })

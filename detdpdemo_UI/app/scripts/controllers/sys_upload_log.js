@@ -58,7 +58,7 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doSearchLog = function (flag){
-      if (flag == 'A'){
+      if (flag ==='A'){
         $scope.doReset();
       }
 
@@ -74,19 +74,19 @@ angular.module('detdpdemoApp')
         $scope.search.e_d = $scope.search.end_date.getDate();
       }
 
-      if ($scope.search.uploaded == true){
+      if ($scope.search.uploaded === true){
         $scope.search.status.push('Y');
       }
 
-      if ($scope.search.failed == true){
+      if ($scope.search.failed === true){
         $scope.search.status.push('N');
       }
 
-      if ($scope.search.read_only == true){
+      if ($scope.search.read_only === true){
         $scope.search.only_full.push('Y');
       }
 
-      if ($scope.search.full_device == true){
+      if ($scope.search.full_device === true){
         $scope.search.only_full.push('N');
       }
 
