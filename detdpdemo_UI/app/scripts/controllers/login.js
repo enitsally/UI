@@ -25,7 +25,7 @@ angular.module('detdpdemoApp')
 
     //$scope.doLogin = function () {
     //
-    //  $http.post('http://localhost:5000/login', $scope.user).then(function (response) {
+    //  $http.post('/login', $scope.user).then(function (response) {
     //    var loginResult = response.data.status;
     //    if (loginResult == 'R') {
     //      $state.go('retrieve');
@@ -73,7 +73,7 @@ angular.module('detdpdemoApp')
   .factory('AuthService', function ($http) {
     var authService = {};
     authService.login = function (credentials) {
-      return $http.post('http://localhost:5000/login', credentials)
+      return $http.post('/login', credentials)
         .then(function (response) {
           return response.data.user;
         });

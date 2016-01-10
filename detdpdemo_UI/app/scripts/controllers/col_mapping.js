@@ -19,7 +19,7 @@ angular.module('detdpdemoApp')
     };
     var originalMappingPair =[];
 
-    $http.get('http://localhost:5000/get$colmn$mapping$pair').then (function (response) {
+    $http.get('/get$colmn$mapping$pair').then (function (response) {
       var tmp = response.data.status;
       $scope.mappingPair = tmp.slice(0);
       originalMappingPair = tmp.slice(0);
@@ -84,9 +84,9 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doSaveMappingToDB = function (){
-      $http.post('http://localhost:5000/set$colmn$mapping$pair', $scope.mappingPair).then (function (response) {
+      $http.post('/set$colmn$mapping$pair', $scope.mappingPair).then (function (response) {
         var mgs = response.data.status;
-        $http.get('http://localhost:5000/get$colmn$mapping$pair').then (function (response) {
+        $http.get('/get$colmn$mapping$pair').then (function (response) {
           var tmp = response.data.status;
           $scope.mappingPair = [];
           originalMappingPair = [];

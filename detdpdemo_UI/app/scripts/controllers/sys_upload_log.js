@@ -91,7 +91,7 @@ angular.module('detdpdemoApp')
       }
 
 
-      $http.post('http://localhost:5000/get$upload$log', $scope.search).then (function (response) {
+      $http.post('/get$upload$log', $scope.search).then (function (response) {
         $scope.logSearchInfo = response.data.status;
       }, function () {
       });
@@ -99,7 +99,7 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doManualUpload = function (){
-      $http.get('http://localhost:5000/get$manual$upload').then (function (response) {
+      $http.get('/get$manual$upload').then (function (response) {
         $scope.showSimpleToast("DONE, PLEASE GO TO LOG.");
       }, function () {
       });

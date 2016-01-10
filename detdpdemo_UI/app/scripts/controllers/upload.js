@@ -56,7 +56,7 @@ angular.module('detdpdemoApp')
             return;
         }
 
-        $http.post('http://localhost:5000/get$exist$chk',$scope.file).then(function (r) {
+        $http.post('/get$exist$chk',$scope.file).then(function (r) {
             if (r.data.status.status === 'EXIST'){
               $scope.pass = 'N';
               $scope.mgs = '\n' + r.data.status.comment;
@@ -147,7 +147,7 @@ angular.module('detdpdemoApp')
           $mdDialog.hide();
         };
         $scope.doUpload = function () {
-          $http.post('http://localhost:5000/get$upload', arg).then (function (resp) {
+          $http.post('/get$upload', arg).then (function (resp) {
             var result = resp.data.status;
             $mdDialog.hide();
             $scope.doClearAll();
@@ -162,7 +162,7 @@ angular.module('detdpdemoApp')
             });
         };
         $scope.doDelTemp = function () {
-          $http.post('http://localhost:5000/get$del$temp', arg).then (function (response) {
+          $http.post('/get$del$temp', arg).then (function (response) {
             var doneDel = { 'data_status':response.data.status.data_status ? "Deleted":'Wrong',
                                'conf_status':response.data.status.conf_status ? "Deleted":'Wrong'};
             $mdDialog.hide();
@@ -187,12 +187,12 @@ angular.module('detdpdemoApp')
       $scope.uploader.clearQueue();
     };
 
-    $http.get('http://localhost:5000/get$record$mode').then (function (response) {
+    $http.get('/get$record$mode').then (function (response) {
       $scope.recordmode_list = response.data.status;
     }, function () {
     });
 
-    $http.get('http://localhost:5000/get$program').then (function (response) {
+    $http.get('/get$program').then (function (response) {
       $scope.program_list = response.data.status;
     }, function () {
     });
@@ -230,7 +230,7 @@ angular.module('detdpdemoApp')
         }
     };
     $scope.doOverview = function (ev) {
-      $http.get('http://localhost:5000/get$upload$overview').then (function (response) {
+      $http.get('/get$upload$overview').then (function (response) {
         $scope.uploadinfo = response.data.status;
 
         $mdDialog.show({

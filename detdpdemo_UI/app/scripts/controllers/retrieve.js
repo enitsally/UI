@@ -77,12 +77,12 @@ angular.module('detdpdemoApp')
     };
 
 
-    $http.get('http://localhost:5000/get$record$mode').then (function (response) {
+    $http.get('/get$record$mode').then (function (response) {
       $scope.recordmode_list = response.data.status;
     }, function () {
     });
 
-    $http.get('http://localhost:5000/get$program').then (function (response) {
+    $http.get('/get$program').then (function (response) {
       $scope.program_list = response.data.status;
     }, function () {
     });
@@ -136,7 +136,7 @@ angular.module('detdpdemoApp')
         $scope.search.e_d = $scope.search.doe_end_date.getDate();
       }
 
-      $http.post('http://localhost:5000/get$search$summary', $scope.search).then (function (response) {
+      $http.post('/get$search$summary', $scope.search).then (function (response) {
         $scope.doeSearchInfo = response.data.status;
       }, function () {
       });
@@ -175,7 +175,7 @@ angular.module('detdpdemoApp')
         $scope.criteria.read_only.push('N');
       }
 
-      $http.post('http://localhost:5000/get$file$retrieve', $scope.criteria).then (function (response) {
+      $http.post('/get$file$retrieve', $scope.criteria).then (function (response) {
         usSpinnerService.stop('retrievingSpinner');
         var retrieveResult = response.data.status;
         $scope.showSimpleToast(retrieveResult);
@@ -190,7 +190,7 @@ angular.module('detdpdemoApp')
     var content;
     var gridOptions;
 
-    $http.get("http://localhost:5000/get$conf$summary")
+    $http.get("/get$conf$summary")
       .then(function (res) {
         content = res.data.status.conf_content;
         var colslist = res.data.status.conf_col;

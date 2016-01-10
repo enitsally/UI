@@ -38,13 +38,13 @@
         };
       }
 
-      $http.get('http://localhost:5000/get$system$setup').then (function (response) {
+      $http.get('/get$system$setup').then (function (response) {
         $scope.fulllist = response.data.status.full_cols;
         sys_std_list = response.data.status.standard_cols.slice(0);
       }, function () {
       });
 
-      $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
+      $http.post('/get$user$setup', $scope.user_setup).then (function (response) {
         $scope.selectedStdCols = response.data.status.standard_cols.slice(0);
         $scope.selectedCusCols = response.data.status.customized_cols.slice(0);
         comment = response.data.status.cus_comment + response.data.status.std_comment;
@@ -67,11 +67,11 @@
         $scope.user_setup.std_cols = $scope.selectedStdCols.slice(0);
         $scope.user_setup.cus_cols = $scope.selectedCusCols.slice(0);
 
-        $http.post('http://localhost:5000/get$save$setup', $scope.user_setup).then (function (response) {
+        $http.post('/get$save$setup', $scope.user_setup).then (function (response) {
           comment = response.data.status.cus_comment + '\n' +  response.data.status.std_comment;
           $scope.showSimpleToast(comment);
 
-          $http.post('http://localhost:5000/get$user$setup', $scope.user_setup).then (function (response) {
+          $http.post('/get$user$setup', $scope.user_setup).then (function (response) {
             $scope.selectedStdCols = response.data.status.standard_cols.slice(0);
             $scope.selectedCusCols = response.data.status.customized_cols.slice(0);
             comment = response.data.status.cus_comment + '\n' +  response.data.status.std_comment;

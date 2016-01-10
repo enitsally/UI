@@ -178,7 +178,7 @@ angular
      };
      $scope.doLogout = function(){
 
-       $http.get('http://localhost:5000/logout').then(function(req){
+       $http.get('/logout').then(function(req){
          $scope.showSimpleToast(req.data.status);
        });
         $rootScope.currentUser = null;
