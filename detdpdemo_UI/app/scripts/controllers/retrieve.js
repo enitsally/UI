@@ -168,11 +168,11 @@ angular.module('detdpdemoApp')
       }
 
       if ($scope.criteria.readonly){
-        $scope.criteria.read_only.push('Y');
+        $scope.criteria.read_only.push('y');
       }
 
       if ($scope.criteria.fulldevice){
-        $scope.criteria.read_only.push('N');
+        $scope.criteria.read_only.push('n');
       }
 
       $http.post('/get$file$retrieve', $scope.criteria).then (function (response) {

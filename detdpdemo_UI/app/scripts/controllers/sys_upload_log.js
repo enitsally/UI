@@ -96,7 +96,7 @@ angular.module('detdpdemoApp')
       // }
 
 
-      $http.post('http://localhost:5000/get$upload$log', $scope.search).then (function (response) {
+      $http.post('/get$upload$log', $scope.search).then (function (response) {
         $scope.logSearchInfo = response.data.status;
       }, function () {
       });
@@ -137,7 +137,7 @@ angular.module('detdpdemoApp')
           showPeriod.e_y = todayDate.getFullYear();
           showPeriod.e_m = todayDate.getMonth() + 1;
           showPeriod.e_d = todayDate.getDate();
-
+      }
       else if ($scope.ShownPeriod === "1"){
           var oneYearAgo = new Date();
           oneYearAgo.setYear(oneYearAgo.getFullYear()-1);
@@ -152,7 +152,7 @@ angular.module('detdpdemoApp')
           showPeriod.e_d = todayDate.getDate();
       }
 
-      $http.post('http://localhost:5000/get$upload$log', showPeriod).then (function (response) {
+      $http.post('/get$upload$log', showPeriod).then (function (response) {
         $scope.logSearchInfo = response.data.status;
       }, function () {
       });
