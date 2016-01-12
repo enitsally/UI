@@ -33,7 +33,7 @@ angular.module('detdpdemoApp')
       };
     }
 
-    $http.get('http://localhost:5000/get$system$setup').then (function (response) {
+    $http.get('/get$system$setup').then (function (response) {
       $scope.fulllist = response.data.status.full_cols;
       sys_std_list = response.data.status.standard_cols;
 	  $scope.selectedStdCols = sys_std_list.slice(0);
@@ -48,11 +48,11 @@ angular.module('detdpdemoApp')
       $scope.admin_setup.std_cols = $scope.selectedStdCols;
 
 
-      $http.post('http://localhost:5000/get$save$system$setup', $scope.admin_setup).then (function (response) {
+      $http.post('/get$save$system$setup', $scope.admin_setup).then (function (response) {
         comment = response.data.status;
         $scope.showSimpleToast(comment);
 
-        $http.post('http://localhost:5000/get$system$setup', $scope.user_setup).then (function (response) {
+        $http.post('/get$system$setup', $scope.user_setup).then (function (response) {
           sys_std_list = response.data.status.standard_cols;
           $scope.selectedStdCols = sys_std_list.slice(0);
         }, function () {

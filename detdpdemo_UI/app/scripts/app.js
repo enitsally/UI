@@ -178,7 +178,7 @@ angular
      };
      $scope.doLogout = function(){
 
-       $http.get('http://localhost:5000/logout').then(function(req){
+       $http.get('/logout').then(function(req){
          $scope.showSimpleToast(req.data.status);
        });
         $rootScope.currentUser = null;
@@ -306,8 +306,7 @@ angular
     };
   })
   .run(function($rootScope, $location, $state, $mdDialog) {
-    $rootScope.$on( '$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
-
+    $rootScope.$on('$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
        var isLogin = toState.name === "login";
        if(isLogin){
           return; // no need to redirect

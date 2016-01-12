@@ -21,7 +21,7 @@ angular.module('detdpdemoApp')
     var originaldPrefix = '';
     var originalcPrefix = '';
 
-    $http.get('http://localhost:5000/get$link$cols$list$predix').then (function (response) {
+    $http.get('/get$link$cols$list$predix').then (function (response) {
       var tmp = response.data.status.linkCols;
       var pre = response.data.status.prefix;
       $scope.linkCols = tmp.slice(0);
@@ -86,11 +86,10 @@ angular.module('detdpdemoApp')
       var currConf = {'data_prefix': $scope.dPrefix,
                   'conf_prefix': $scope.cPrefix,
                   'link_list' : $scope.linkCols
-
                 };
-      $http.post('http://localhost:5000/set$link$cols$list$predix', currConf).then (function (response) {
+      $http.post('/set$link$cols$list$predix', currConf).then (function (response) {
         var mgs = response.data.status;
-        $http.get('http://localhost:5000/get$link$cols$list$predix').then (function (response) {
+        $http.get('/get$link$cols$list$predix').then (function (response) {
           var tmp = response.data.status.linkCols;
           var pre = response.data.status.prefix;
           $scope.linkCols = [];

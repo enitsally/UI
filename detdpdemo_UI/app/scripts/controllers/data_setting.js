@@ -19,7 +19,7 @@ angular.module('detdpdemoApp')
     };
     var originalDataPair =[];
 
-    $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
+    $http.get('/get$program$recordmode$pair').then (function (response) {
       var tmp = response.data.status;
       $scope.dataPair = tmp.slice(0);
       originalDataPair = tmp.slice(0);
@@ -87,10 +87,10 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doSaveDataToDB = function (){
-      $http.post('http://localhost:5000/set$program$recordmode$pair', $scope.dataPair).then (function (response) {
+      $http.post('/set$program$recordmode$pair', $scope.dataPair).then (function (response) {
         var msg = response.data.status;
 
-        $http.get('http://localhost:5000/get$program$recordmode$pair').then (function (response) {
+        $http.get('/get$program$recordmode$pair').then (function (response) {
           var tmp = response.data.status;
           $scope.dataPair = [];
           originalDataPair = [];

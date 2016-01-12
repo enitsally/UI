@@ -37,7 +37,7 @@
             <label>Select a Data File </label>
             <br>
             <input nv-file-select uploader="uploader" type="file" name="dFile" ng-model="file.data_input"
-                   options="{url:'http://localhost:5000/upload$d', alias:'data'}">
+                   options="{url:'/upload$d', alias:'data'}">
           </md-input-container>
 
           <md-input-container class="md-icon-float md-block">
@@ -45,7 +45,7 @@
             <label>Select a Conf. File</label>
             <br>
             <input nv-file-select uploader="uploader" type="file" name="cFile" ng-model="file.conf_input"
-                   options="{url:'http://localhost:5000/upload$c', alias:'conf'}">
+                   options="{url:'/upload$c', alias:'conf'}">
           </md-input-container>
         </div>
         <table class="table">
