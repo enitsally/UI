@@ -19,7 +19,7 @@ angular.module('detdpdemoApp')
     };
     var originalLinkCols =[];
     var originaldPrefix = '';
-    var originalcPrefix = ''
+    var originalcPrefix = '';
 
     $http.get('http://localhost:5000/get$link$cols$list$predix').then (function (response) {
       var tmp = response.data.status.linkCols;
@@ -34,7 +34,7 @@ angular.module('detdpdemoApp')
     }, function () {
     });
 
-    $scope.editRow = function(flag, colName, newC) {
+    $scope.editRow = function(flag, colName) {
       $scope.hideform = false;
       if (flag === 'N') {
         $scope.edit = true;
@@ -114,4 +114,4 @@ angular.module('detdpdemoApp')
       $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(3000));
     };
 
-  })
+  });

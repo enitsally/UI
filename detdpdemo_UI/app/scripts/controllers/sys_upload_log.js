@@ -25,11 +25,15 @@ angular.module('detdpdemoApp')
       s_d: '',
       e_y: '',
       e_m: '',
-      e_d: '',
-      status: [],
-      only_full: []
+      e_d: ''
+      // status: [],
+      // only_full: []
     };
     $scope.logSearchInfo = [];
+
+    $scope.ShownPeriod = "3";
+
+
 
     var todayDate = new Date();
     $scope.maxDate = new Date(
@@ -58,7 +62,7 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doSearchLog = function (flag){
-      if (flag == 'A'){
+      if (flag === 'A'){
         $scope.doReset();
       }
 
@@ -74,21 +78,21 @@ angular.module('detdpdemoApp')
         $scope.search.e_d = $scope.search.end_date.getDate();
       }
 
-      if ($scope.search.uploaded == true){
-        $scope.search.status.push('Y');
-      }
-
-      if ($scope.search.failed == true){
-        $scope.search.status.push('N');
-      }
-
-      if ($scope.search.read_only == true){
-        $scope.search.only_full.push('Y');
-      }
-
-      if ($scope.search.full_device == true){
-        $scope.search.only_full.push('N');
-      }
+      // if ($scope.search.uploaded == true){
+      //   $scope.search.status.push('Y');
+      // }
+      //
+      // if ($scope.search.failed == true){
+      //   $scope.search.status.push('N');
+      // }
+      //
+      // if ($scope.search.read_only == true){
+      //   $scope.search.only_full.push('Y');
+      // }
+      //
+      // if ($scope.search.full_device == true){
+      //   $scope.search.only_full.push('N');
+      // }
 
 
       $http.post('http://localhost:5000/get$upload$log', $scope.search).then (function (response) {
@@ -96,6 +100,61 @@ angular.module('detdpdemoApp')
       }, function () {
       });
 
+    };
+
+
+    $scope.onShowPeriodChanged  = function(){
+      var showPeriod = {
+                          s_y: '',
+                          s_m: '',
+                          s_d: '',
+                          e_y: '',
+                          e_m: '',
+                          e_d: ''
+                        };
+      if ($scope.ShownPeriod === "3"){
+          var threeMonthAgo = new Date();
+          threeMonthAgo.setMonth(threeMonthAgo.getMonth()-3);
+
+          showPeriod.s_y = threeMonthAgo.getFullYear();
+          showPeriod.s_m = threeMonthAgo.getMonth() + 1;
+          showPeriod.s_d = threeMonthAgo.getDate();
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+
+      }
+      else if ($scope.ShownPeriod === "6"){
+          var sixMonthAgo = new Date();
+          sixMonthAgo.setMonth(sixMonthAgo.getMonth()-6);
+
+          showPeriod.s_y = sixMonthAgo.getFullYear();
+          showPeriod.s_m = sixMonthAgo.getMonth() + 1;
+          showPeriod.s_d = sixMonthAgo.getDate();
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+
+      }
+      else if ($scope.ShownPeriod === "1"){
+          var oneYearAgo = new Date();
+          oneYearAgo.setYear(oneYearAgo.getFullYear()-1);
+
+          showPeriod.s_y = oneYearAgo.getFullYear();
+          showPeriod.s_m = oneYearAgo.getMonth() + 1;
+          showPeriod.s_d = oneYearAgo.getDate();
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+      }
+
+      $http.post('http://localhost:5000/get$upload$log', showPeriod).then (function (response) {
+        $scope.logSearchInfo = response.data.status;
+      }, function () {
+      });
     };
 
     $scope.doManualUpload = function (){

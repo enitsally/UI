@@ -8,7 +8,7 @@ from fuzzywuzzy import fuzz
 import unicodecsv
 import StringIO
 import time
-import datetime
+from datetime import datetime
 
 
 class detdp:
@@ -312,7 +312,7 @@ class detdp:
                  'record_mode': record_mode,
                  'read_only': read_only,
                  'upload_user': user_name,
-                 'upload_date': time.strftime('%m/%d/%Y,%H:%M:%S'),
+                 'upload_date': datetime.now(),
                  'file_size': str(float("{0:.2f}".format(temp.length / 1024.00 / 1024.00))) + 'MB',
                  'data_file_id': data_file_id}
     self.db.data_file.insert_one(data_dict)
@@ -452,12 +452,12 @@ class detdp:
     if s_y != '' and s_m != '' and s_d != '':
       if query_dict.get('upload_date') is None:
         query_dict['upload_date'] = {}
-      s_t = datetime.datetime(s_y, s_m, s_d, 0, 0, 1).strftime('%m/%d/%Y,%H:%M:%S')
+      s_t = datetime(s_y, s_m, s_d, 0, 0, 1)
       query_dict['upload_date']['$gt'] = s_t
     if e_y != '' and e_m != '' and e_d != '':
       if query_dict.get('upload_date') is None:
         query_dict['upload_date'] = {}
-      e_t = datetime.datetime(e_y, e_m, e_d, 23, 59, 59).strftime('%m/%d/%Y,%H:%M:%S')
+      e_t = datetime(e_y, e_m, e_d, 23, 59, 59)
       query_dict['upload_date']['$lt'] = e_t
     print query_dict
     return list(self.db.data_file.find(query_dict, {'_id': False, 'data_file_id': False}))
@@ -803,12 +803,13 @@ class detdp:
     if s_y != '' and s_m != '' and s_d != '':
       if query_dict.get('log.status_date') is None:
         query_dict['log.status_date'] = {}
-      s_t = datetime.datetime(s_y, s_m, s_d, 0, 0, 1).strftime('%m/%d/%Y,%H:%M:%S')
+      s_t = datetime(s_y, s_m, s_d, 0, 0, 1)
       query_dict['log.status_date']['$gt'] = s_t
     if e_y != '' and e_m != '' and e_d != '':
       if query_dict.get('log.status_date') is None:
         query_dict['log.status_date'] = {}
-      e_t = datetime.datetime(e_y, e_m, e_d, 23, 59, 59).strftime('%m/%d/%Y,%H:%M:%S')
+      e_t = datetime(e_y, e_m, e_d, 23, 59, 59)
+        #.strftime('%m/%d/%Y,%H:%M:%S')
       query_dict['log.status_date']['$lt'] = e_t
     print query_dict
     return list(self.db.auto_upload_log.find(query_dict, {'_id': False}))

@@ -34,13 +34,13 @@ angular
     idleservice.start = function() {
       Idle.watch();
       idleservice.started = true;
-    }
+    };
 
     idleservice.stop = function() {
       Idle.unwatch();
       idleservice.started = false;
 
-    }
+    };
     return idleservice;
   })
   .config(function ($urlRouterProvider) {
@@ -306,8 +306,7 @@ angular
     };
   })
   .run(function($rootScope, $location, $state, $mdDialog) {
-    $rootScope.$on( '$stateChangeStart', function(e, toState  , toParams
-                                                  , fromState, fromParams) {
+    $rootScope.$on( '$stateChangeStart', function(e, toState, toParams, fromState, fromParams) {
 
        var isLogin = toState.name === "login";
        if(isLogin){

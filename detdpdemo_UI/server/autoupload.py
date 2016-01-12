@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import gridfs
 from os import listdir
 import time
-import datetime
+from datetime import datetime
 import unicodecsv
 
 
@@ -61,7 +61,7 @@ class detdpautoupload:
       comment = ''
       sys_mgs = ''
       key = data_name.replace(suffix, '')
-      timestamp = time.strftime('%m/%d/%Y,%H:%M:%S')
+      timestamp = datetime.now()
       log_dict[key] = {}
       log_dict[key]['data_file'] = data_name
       log_dict[key]['ready_upload'] = 'Y'
