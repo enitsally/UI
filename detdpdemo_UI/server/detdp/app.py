@@ -22,7 +22,6 @@ def allowed_file(filename):
     result = '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
     return result
 
-
 @app.route('/')
 def root():
     return app.send_static_file('index.html')
@@ -349,6 +348,7 @@ def get_file_retrieve():
 
     db = detdp()
     result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
+    print "TEST", result
     return jsonify({'status': result})
 
 
@@ -395,15 +395,9 @@ def get_upload_log():
 def get_manual_upload():
     print 'API: /get$manual$upload, method: get_manual_upload()'
     auto_upload = detdpautoupload()
-<<<<<<< HEAD
     print 'test1------'
     auto_upload.get_file('Admin_manual')
-    print 'test2------'
-=======
-    print 'Finish init object'
-    auto_upload.get_file('Admin_manual')
-    print 'Finish manul upload,call method'
->>>>>>> 962fc9d31c3ecb778f90b90de4858e25a7ffebc0
+    print 'Finish manual upload,call method'
     return jsonify({'status': 'Upload finished, go to log for information.'})
 
 

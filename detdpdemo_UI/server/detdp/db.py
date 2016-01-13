@@ -531,6 +531,7 @@ class detdp:
     print 'call method: ', str_method
 
     fs = gridfs.GridFS(self.db)
+    final_msg = {'comment':''}
     # flag = ['S']  ##-----------------##
 
     key_list = self.db.system_conf.find_one({}).get('link_list')
@@ -579,10 +580,12 @@ class detdp:
       final_header_list = []
       final_header_list_full = []
       final_header_list_cust = []
-
+      timestamp = time.strftime('%Y%m%d%H%M%S')
       # -----------Flag is 'S', using standard columns list
       if 'S' in flag:
-        file_name_stand = 'output/{}_STANDARD_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        file_name_stand = 'output/{}_STANDARD_{}.csv'.format(user_name, timestamp)
+        final_msg['std_file'] = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
+
         data = self.db.user.find_one({'user_name': user_name}, {'standard_cols': True}).get(
           'standard_cols')
         if data is None:
@@ -615,7 +618,8 @@ class detdp:
               final_header_list.append(head)
 
       if 'F' in flag:
-        file_name_full = 'output/{}_FULL_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        file_name_full = 'output/{}_FULL_{}.csv'.format(user_name, timestamp)
+        final_msg['full_file'] = '{}_FULL_{}.csv'.format(user_name, timestamp)
         data_full = self.db.user.find_one({'user_name': user_name}, {'full_cols': True}).get(
           'full_cols')
         if data_full is None:
@@ -645,7 +649,8 @@ class detdp:
               final_header_list_full.append(head)
 
       if 'C' in flag:
-        file_name_cust = 'output/{}_CUSTOMIZED_{}.csv'.format(user_name, time.strftime('%Y%m%d%H%M%S'))
+        file_name_cust = 'output/{}_CUSTOMIZED_{}.csv'.format(user_name, timestamp)
+        final_msg['cus_file'] = '{}_CUSTOMIZED_{}.csv'.format(user_name, timestamp)
         data_cust = self.db.user.find_one({'user_name': user_name}, {'customized_cols': True}).get(
           'customized_cols')
         if data_cust is None:
@@ -754,20 +759,25 @@ class detdp:
                                                                                                  doe_recordmode_search,
                                                                                                  doe_readonly_search)
       if len(final_header_list) > 0:
+        print "concat std file"
         final_pf = pd.concat(final)
+        print "write to: ", file_name_stand
         final_pf.to_csv(file_name_stand, index=False)
       if len(final_header_list_cust) > 0:
+        print "concat cust file"
         final_cust_pf = pd.concat(final_cust)
+        print "write to: ", file_name_cust
         final_cust_pf.to_csv(file_name_cust, index=False)
       if len(final_header_list_full) > 0:
+        print "concat full file"
         final_full_pf = pd.concat(final_full)
+        print "write to: ", file_name_full
         final_full_pf.to_csv(file_name_full, index=False)
-
-      comment = "File Aggregation succeed!"
+      print final_msg
+      final_msg['comment'] = "File Aggregation succeed!"
     else:
-      comment = "Aggregated file not found."
-
-    return comment
+      final_msg['comment'] = "Aggregated file not found."
+    return final_msg
 
   def get_col_mapping(self):
     str_method = 'get_col_mapping()'
@@ -809,7 +819,7 @@ class detdp:
       if query_dict.get('log.status_date') is None:
         query_dict['log.status_date'] = {}
       e_t = datetime(e_y, e_m, e_d, 23, 59, 59)
-        #.strftime('%m/%d/%Y,%H:%M:%S')
+      # .strftime('%m/%d/%Y,%H:%M:%S')
       query_dict['log.status_date']['$lt'] = e_t
     print query_dict
     return list(self.db.auto_upload_log.find(query_dict, {'_id': False}))
@@ -830,9 +840,12 @@ class detdp:
     return {'linkCols': linkCols, 'prefix': prefix}
 
   def set_autoupload_conf(self, data_prefix, conf_prefix, link_list):
-    str_method = 'set_autoupload_conf( data_prefix = {}, conf_prefix = {}, link_list = {} )'.format(data_prefix, conf_prefix, link_list)
+    str_method = 'set_autoupload_conf( data_prefix = {}, conf_prefix = {}, link_list = {} )'.format(data_prefix,
+                                                                                                    conf_prefix,
+                                                                                                    link_list)
     print 'call method: ', str_method
-    result = self.db.system_conf.find_one_and_update({},{'$set': {'data_prefix': data_prefix, 'conf_prefix': conf_prefix, 'link_list': link_list}})
+    result = self.db.system_conf.find_one_and_update({}, {
+      '$set': {'data_prefix': data_prefix, 'conf_prefix': conf_prefix, 'link_list': link_list}})
     if (result is not None):
       return True
     else:

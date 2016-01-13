@@ -8,7 +8,7 @@
  * Controller of the detdpdemoApp
  */
 angular.module('detdpdemoApp')
-  .controller('RetrieveCtrl', function ($scope, $http, $mdToast, usSpinnerService) {
+  .controller('RetrieveCtrl', function ($scope, $http, $mdToast, $mdDialog, usSpinnerService) {
 
     $scope.criteria = {
       fullCol : false,
@@ -177,8 +177,27 @@ angular.module('detdpdemoApp')
 
       $http.post('/get$file$retrieve', $scope.criteria).then (function (response) {
         usSpinnerService.stop('retrievingSpinner');
-        var retrieveResult = response.data.status;
+        var retrieveResult = response.data.status.comment;
+        var std = response.data.status.std_file;
+        var cus = response.data.status.cus_file;
+        var full = response.data.status.full_file;
         $scope.showSimpleToast(retrieveResult);
+        var fileName = '';
+        if ($scope.criteria.fullCol === true){
+          fileName = fileName + full + ';';
+        }
+        if ($scope.criteria.cusCol === true){
+          fileName = fileName + cus + ';'
+        }
+        if ($scope.criteria.stdCol === true){
+          fileName = fileName + std + ';'
+        }
+        console.log(fileName);
+        var alert =  $mdDialog.confirm()
+                     .parent(angular.element(document.querySelector('#popupContainer')))
+                     .title(fileName)
+                     .ok('Got it!');
+         $mdDialog.show(alert);
       }, function () {
       });
     };

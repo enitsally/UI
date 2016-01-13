@@ -17,12 +17,15 @@ class detdpautoupload:
     return self.db
 
   def get_file(self, user_name):
+    print 'OK, You are in.'
     path = 'input/'
     suffix = '.csv'
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
-    filenames = listdir(path)
-    print 'File names',filenames
+    print 'Godd for GridFS'
+    # filenames = listdir(path)
+    filenames = listdir('test/')
+    print 'File names', filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
       data_prefix = system_conf.get('data_prefix')
@@ -74,7 +77,7 @@ class detdpautoupload:
         log_dict[key]['number_of_check'] = existlog.get('log').get('number_of_check') + 1
         log_dict[key]['checkIn_date'] = existlog.get('log').get('checkIn_date')
       else:
-        print 'File exist checkin in system for the first time'
+        print 'File checkin in system for the first time'
         log_dict[key]['number_of_check'] = 1
         log_dict[key]['checkIn_date'] = timestamp
       conf_name = data_name.replace(data_prefix, conf_prefix)
@@ -97,7 +100,7 @@ class detdpautoupload:
         readonly = features[3].lower()
         doename = features[4]
 
-        print 'if file name is good, start to check program, readonly'
+        print 'File name is good, start to check program, readonly'
         chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
         if chk_program is not None:
           log_dict[key]['program'] = 'Match'
@@ -115,7 +118,7 @@ class detdpautoupload:
 
       if log_dict[key]['ready_upload'] == 'Y':
         # ------Open files--------------------------------------------------------
-        print 'Open two files, when it is ready for upload, checking cols'
+        print 'Open two files, ready for checking cols'
         with open(path + data_name, 'rb') as data_file:
           with open(path + conf_name, 'rb') as conf_file:
             data_file.seek(0)
@@ -132,18 +135,21 @@ class detdpautoupload:
         for col in link_list:
           if col not in data_head or col not in conf_head:
             log_dict[key]['column_check'] = 'Check Failed'
+            log_dict[key]['ready_upload'] = 'N'
             comment += '''Required link column: {} is not provided. '''.format(col)
             break
 
           if chk_dup(col, data_head) or chk_dup(col, conf_head):
             log_dict[key]['column_check'] = 'Check Failed'
-            comment += '''Duplicate link column: {} is not provided. '''.format(col)
+            log_dict[key]['ready_upload'] = 'N'
+            comment += '''Duplicate link column: {} is provided. '''.format(col)
             break
 
         if log_dict[key]['column_check'] == 'Check Pass':
           for col in std_col:
-            if col not in data_head and mapping_head[col] not in data_head:
+            if col not in data_head and mapping_head.get(col) not in data_head:
               log_dict[key]['column_check'] = 'Check Failed'
+              log_dict[key]['ready_upload'] = 'N'
               comment += '''Required column: {} is not provided. '''.format(col)
               break
 
@@ -164,7 +170,7 @@ class detdpautoupload:
         updated_conf_list = set(conf_list).union(set(conf_head))
         self.db.system_conf.find_one_and_update({}, {"$set": {"conf_cols": list(updated_conf_list)}})
 
-        #-------------Update all existing conf files in conf_file if new column (key) is coming
+        # -------------Update all existing conf files in conf_file if new column (key) is coming
 
         if len(updated_conf_list) > len(conf_list) and len(conf_list) != 0:
           print 'update all exiting conf file if there is new conf column'
@@ -232,36 +238,35 @@ class detdpautoupload:
             conf_file_cols_list = [x if mapping_head.get(x) is None else mapping_head.get(x) for x in
                                    conf_file_cols_list]
             if len(conf_file_cols_list) == 0:
-                sys_mgs += 'Configuration file is not follow csv format.'
-                fs.delete(data_file_id)
-                self.db.data_file.delete_many({'data_file_id': data_file_id})
-                log_dict[key]['upload_date'] = None
-                log_dict[key]['status'] = 'Check Failed'
+              log_dict[key]['comment'] += 'Configuration file is not follow csv format.'
+              fs.delete(data_file_id)
+              self.db.data_file.delete_many({'data_file_id': data_file_id})
+              log_dict[key]['upload_date'] = None
+              log_dict[key]['status'] = 'Check Failed'
             else:
-                reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
-                for row in reader:
-                  row['doe_name'] = doename
-                  row['program'] = program
-                  row['record_mode'] = recordmode
-                  row['read_only'] = readonly
-                  row['upload_key'] = key
-                  self.db.conf_file.insert_one(row)
-                  print 'ROW:', row
-                print 'Finish insert into conf_file'
-            # ------Close opened files
-                log_dict[key]['upload_date'] = timestamp
-                log_dict[key]['status'] = 'Uploaded'
-                print 'delete uploaded data file:',data_name
-                remove(path + data_name)
-                print 'delete uploaded conf file:',conf_name
-                remove(path + conf_name)
+              reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
+              for row in reader:
+                row['doe_name'] = doename
+                row['program'] = program
+                row['record_mode'] = recordmode
+                row['read_only'] = readonly
+                row['upload_key'] = key
+                self.db.conf_file.insert_one(row)
+              print 'Finish insert into conf_file'
+              # ------Close opened files
+              log_dict[key]['upload_date'] = timestamp
+              log_dict[key]['status'] = 'Uploaded'
+        if log_dict[key]['status'] == 'Uploaded':
+          print 'delete uploaded data file:', data_name
+          remove(path + data_name)
+          print 'delete uploaded conf file:', conf_name
+          remove(path + conf_name)
 
       else:
         log_dict[key]['upload_date'] = None
         log_dict[key]['status'] = 'Check Failed'
 
       log_dict[key]['status_date'] = timestamp
-      log_dict[key]['comment'] = log_dict[key]['comment'] + sys_mgs
 
       print 'update log file'
       if log_dict[key]['number_of_check'] == 1:
@@ -269,7 +274,7 @@ class detdpautoupload:
       else:
         self.db.auto_upload_log.update_one({'key': key}, {'$set': {'log': log_dict[key]}})
 
-      print 'File: {} -- System Message: {}'.format(key, sys_mgs)
+      print 'Finish File: {} -- System Message: {}'.format(key, sys_mgs)
 
 
 def chk_dup(value, lst):
