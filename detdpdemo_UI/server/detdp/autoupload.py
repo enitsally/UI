@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import gridfs
 from os import listdir
+from os import remove
 import time
 from datetime import datetime
 import unicodecsv
@@ -21,6 +22,7 @@ class detdpautoupload:
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
     filenames = listdir(path)
+    print 'File names',filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
       data_prefix = system_conf.get('data_prefix')
@@ -58,6 +60,7 @@ class detdpautoupload:
     log_dict = {}
 
     for data_name in dfileList:
+      print 'Start File: {} here'.format(data_name)
       comment = ''
       sys_mgs = ''
       key = data_name.replace(suffix, '')
@@ -67,9 +70,11 @@ class detdpautoupload:
       log_dict[key]['ready_upload'] = 'Y'
       existlog = self.db.auto_upload_log.find_one({'key': key})
       if existlog is not None:
+        print 'File exist in System, update duplicate number'
         log_dict[key]['number_of_check'] = existlog.get('log').get('number_of_check') + 1
         log_dict[key]['checkIn_date'] = existlog.get('log').get('checkIn_date')
       else:
+        print 'File exist checkin in system for the first time'
         log_dict[key]['number_of_check'] = 1
         log_dict[key]['checkIn_date'] = timestamp
       conf_name = data_name.replace(data_prefix, conf_prefix)
@@ -92,6 +97,7 @@ class detdpautoupload:
         readonly = features[3].lower()
         doename = features[4]
 
+        print 'if file name is good, start to check program, readonly'
         chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
         if chk_program is not None:
           log_dict[key]['program'] = 'Match'
@@ -109,6 +115,7 @@ class detdpautoupload:
 
       if log_dict[key]['ready_upload'] == 'Y':
         # ------Open files--------------------------------------------------------
+        print 'Open two files, when it is ready for upload, checking cols'
         with open(path + data_name, 'rb') as data_file:
           with open(path + conf_name, 'rb') as conf_file:
             data_file.seek(0)
@@ -145,14 +152,14 @@ class detdpautoupload:
 
       log_dict[key]['comment'] = comment
       log_dict[key]['upload_user'] = user_name
-
+      print 'All checking finished, start to upload the good ones'
       if log_dict[key]['ready_upload'] == 'Y':
         # upload files
-
+        print 'update full columns list'
         # -------- Update the full columns list, in the 'system_conf' collection
         updated_full_list = set(full_list).union(set(data_head))
         self.db.system_conf.find_one_and_update({}, {"$set": {"full_cols": list(updated_full_list)}})
-
+        print 'update conf columns list'
         # ----------- Update the conf columns list, in the 'system_conf' collection
         updated_conf_list = set(conf_list).union(set(conf_head))
         self.db.system_conf.find_one_and_update({}, {"$set": {"conf_cols": list(updated_conf_list)}})
@@ -160,6 +167,7 @@ class detdpautoupload:
         #-------------Update all existing conf files in conf_file if new column (key) is coming
 
         if len(updated_conf_list) > len(conf_list) and len(conf_list) != 0:
+          print 'update all exiting conf file if there is new conf column'
           for col in updated_conf_list:
             if col not in conf_list:
               self.db.conf_file.update_many({}, {"$set": {col: ""}})
@@ -167,6 +175,7 @@ class detdpautoupload:
         # ---------delete duplicate files----------------------------
         if log_dict[key]['number_of_check'] != 1:
           # -----------delete existing data file from gridfd and collection data_file
+          print 'delete duplicated files'
           del_data_file = self.db.data_file.find(
             {'upload_key': key, 'doe_name': doename, 'program': program, 'record_mode': recordmode,
              'read_only': readonly})
@@ -194,14 +203,14 @@ class detdpautoupload:
             result.deleted_count)
 
         # ------Open files for add new files into system-----------------------------------------------------
+        print 'Open file for actual uploading'
         with open(path + data_name, 'rb') as data_file:
           with open(path + conf_name, 'rb') as conf_file:
-            data_file.seek(0)
-            conf_file.seek(0)
 
             # ------- Insert new data file into gridfs and an index file into 'data_file' collection
             data_file.seek(0)
             data_file_id = fs.put(data_file)
+            print 'Finish putting file in GridFS'
             temp = fs.find_one(filter=data_file_id)
             data_dict = {'doe_name': doename,
                          'program': program,
@@ -214,7 +223,7 @@ class detdpautoupload:
                          'data_file_id': data_file_id,
                          'upload_key': key}
             self.db.data_file.insert_one(data_dict)
-
+            print 'Finish insert into data_file'
             # -------- Insert conf file into the 'conf_file' collection
             conf_file.seek(0)
             reader = unicodecsv.reader(conf_file)
@@ -222,23 +231,39 @@ class detdpautoupload:
             conf_file_cols_list = [x.lower().encode('ascii', 'ignore') for x in conf_file_cols_list]
             conf_file_cols_list = [x if mapping_head.get(x) is None else mapping_head.get(x) for x in
                                    conf_file_cols_list]
-            reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
-            for row in reader:
-              row['doe_name'] = doename
-              row['program'] = program
-              row['record_mode'] = recordmode
-              row['read_only'] = readonly
-              row['upload_key'] = key
-              self.db.conf_file.insert_one(row)
-        # ------Close opened files
-        log_dict[key]['upload_date'] = timestamp
-        log_dict[key]['status'] = 'Uploaded'
+            if len(conf_file_cols_list) == 0:
+                sys_mgs += 'Configuration file is not follow csv format.'
+                fs.delete(data_file_id)
+                self.db.data_file.delete_many({'data_file_id': data_file_id})
+                log_dict[key]['upload_date'] = None
+                log_dict[key]['status'] = 'Check Failed'
+            else:
+                reader = unicodecsv.DictReader(conf_file, fieldnames=conf_file_cols_list)
+                for row in reader:
+                  row['doe_name'] = doename
+                  row['program'] = program
+                  row['record_mode'] = recordmode
+                  row['read_only'] = readonly
+                  row['upload_key'] = key
+                  self.db.conf_file.insert_one(row)
+                  print 'ROW:', row
+                print 'Finish insert into conf_file'
+            # ------Close opened files
+                log_dict[key]['upload_date'] = timestamp
+                log_dict[key]['status'] = 'Uploaded'
+                print 'delete uploaded data file:',data_name
+                remove(path + data_name)
+                print 'delete uploaded conf file:',conf_name
+                remove(path + conf_name)
+
       else:
         log_dict[key]['upload_date'] = None
         log_dict[key]['status'] = 'Check Failed'
 
       log_dict[key]['status_date'] = timestamp
+      log_dict[key]['comment'] = log_dict[key]['comment'] + sys_mgs
 
+      print 'update log file'
       if log_dict[key]['number_of_check'] == 1:
         self.db.auto_upload_log.insert_one({'key': key, 'log': log_dict[key]})
       else:
@@ -256,9 +281,9 @@ def chk_dup(value, lst):
   return False
 
 
-# if __name__ == '__main__':
-#   dp = detdpautoupload()
-#   dp.get_file('SysAuto')
+if __name__ == '__main__':
+  dp = detdpautoupload()
+  dp.get_file('SysAuto')
 
   # std = dp.db.system_conf.find_one({}).get('standard_cols')
   # new_std = [x.lower() for x in std]
