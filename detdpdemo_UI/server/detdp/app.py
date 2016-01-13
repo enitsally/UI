@@ -395,9 +395,15 @@ def get_upload_log():
 def get_manual_upload():
     print 'API: /get$manual$upload, method: get_manual_upload()'
     auto_upload = detdpautoupload()
+<<<<<<< HEAD
     print 'test1------'
     auto_upload.get_file('Admin_manual')
     print 'test2------'
+=======
+    print 'Finish init object'
+    auto_upload.get_file('Admin_manual')
+    print 'Finish manul upload,call method'
+>>>>>>> 962fc9d31c3ecb778f90b90de4858e25a7ffebc0
     return jsonify({'status': 'Upload finished, go to log for information.'})
 
 
