@@ -23,8 +23,7 @@ class detdpautoupload:
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
     print 'Godd for GridFS'
-    # filenames = listdir(path)
-    filenames = listdir('test/')
+    filenames = listdir(path)
     print 'File names', filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
