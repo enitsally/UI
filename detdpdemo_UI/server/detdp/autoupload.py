@@ -23,8 +23,8 @@ class detdpautoupload:
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
     print 'Godd for GridFS'
-    # filenames = listdir(path)
-    filenames = listdir('test/')
+    filenames = listdir(path)
+    # filenames = listdir('test/')
     print 'File names', filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
@@ -276,6 +276,7 @@ class detdpautoupload:
 
       print 'Finish File: {} -- System Message: {}'.format(key, sys_mgs)
 
+    print 'Start to write log to shared folder:----'
 
 def chk_dup(value, lst):
   count = 0
