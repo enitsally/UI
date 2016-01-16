@@ -582,8 +582,9 @@ class detdp:
       final_header_list_cust = []
       timestamp = time.strftime('%Y%m%d%H%M%S')
       # -----------Flag is 'S', using standard columns list
+      path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
       if 'S' in flag:
-        file_name_stand = 'output/{}_STANDARD_{}.csv'.format(user_name, timestamp)
+        file_name_stand = '{}/{}_STANDARD_{}.csv'.format(path,user_name, timestamp)
         final_msg['std_file'] = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
 
         data = self.db.user.find_one({'user_name': user_name}, {'standard_cols': True}).get(
@@ -618,7 +619,7 @@ class detdp:
               final_header_list.append(head)
 
       if 'F' in flag:
-        file_name_full = 'output/{}_FULL_{}.csv'.format(user_name, timestamp)
+        file_name_full = '{}/{}_FULL_{}.csv'.format(path, user_name, timestamp)
         final_msg['full_file'] = '{}_FULL_{}.csv'.format(user_name, timestamp)
         data_full = self.db.user.find_one({'user_name': user_name}, {'full_cols': True}).get(
           'full_cols')
@@ -649,7 +650,7 @@ class detdp:
               final_header_list_full.append(head)
 
       if 'C' in flag:
-        file_name_cust = 'output/{}_CUSTOMIZED_{}.csv'.format(user_name, timestamp)
+        file_name_cust = '{}/{}_CUSTOMIZED_{}.csv'.format(path, user_name, timestamp)
         final_msg['cus_file'] = '{}_CUSTOMIZED_{}.csv'.format(user_name, timestamp)
         data_cust = self.db.user.find_one({'user_name': user_name}, {'customized_cols': True}).get(
           'customized_cols')

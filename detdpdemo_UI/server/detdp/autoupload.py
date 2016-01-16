@@ -18,13 +18,13 @@ class detdpautoupload:
 
   def get_file(self, user_name):
     print 'OK, You are in.'
-    path = 'input/'
+    # path = 'input/'
+    path = '/MAP-Apps/DETDataProcessing/Upload_Files/'
     suffix = '.csv'
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
     print 'Godd for GridFS'
     filenames = listdir(path)
-    # filenames = listdir('test/')
     print 'File names', filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
@@ -277,6 +277,16 @@ class detdpautoupload:
       print 'Finish File: {} -- System Message: {}'.format(key, sys_mgs)
 
     print 'Start to write log to shared folder:----'
+    log_time = time.strftime('%Y%m%d%H%M%S')
+    log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
+    fieldnames = ['data_file', 'conf_file', 'checkIn_date','number_of_check', 'program', 'read_only','column_check', 'ready_upload', 'upload_user', 'status','status_date', 'upload_date', 'comment']
+    with open (log_name, 'w') as log_file:
+      writer = unicodecsv.DictWriter(log_file, fieldnames=fieldnames)
+      writer.writeheader()
+      for key, log in log_dict.items():
+        writer.writerow(log)
+    print 'Finish writing log----'
+
 
 def chk_dup(value, lst):
   count = 0
