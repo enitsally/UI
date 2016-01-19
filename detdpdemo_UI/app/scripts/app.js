@@ -56,8 +56,8 @@ angular
       })
       .state('upload', {
         url: '/upload',
-        templateUrl: 'views/upload.html',
-        controller: 'UploadCtrl',
+        templateUrl: 'views/upload_work_file.html',
+        controller: 'UploadWorkFileCtrl',
         controllerAs: 'upload'
       })
       .state('retrieve', {
@@ -65,6 +65,12 @@ angular
         templateUrl: 'views/retrieve.html',
         controller: 'RetrieveCtrl',
         controllerAs: 'retrieve'
+      })
+      .state('concat', {
+        url: '/concat',
+        templateUrl: 'views/concat_work_file.html',
+        controller: 'ConcatWorkFileCtrl',
+        controllerAs: 'concat'
       })
       .state('sysSetting', {
         url: '/sysSetting',
@@ -192,11 +198,15 @@ angular
      };
 
      $scope.doDirectPage = function (api){
-       if (api === 'Upload'){
+       if (api === 'Work File Upload'){
          $state.go('upload');
          $mdSidenav('left').close();
        }
-       else if (api === 'Retrieve'){
+       else if (api === 'Work File Concat'){
+         $state.go('concat');
+         $mdSidenav('left').close();
+       }
+       else if (api === 'Test File Retrieve'){
          $state.go('retrieve');
          $mdSidenav('left').close();
        }
@@ -224,7 +234,7 @@ angular
          $state.go('fileLinkSetting');
          $mdSidenav('left').close();
        }
-       else if (api === 'System Upload Log'){
+       else if (api === 'Test File Upload Log'){
          $state.go('sysUploadLog');
          $mdSidenav('left').close();
        }
@@ -254,12 +264,17 @@ angular
     $scope.menu = [
           {
             link : '',
-            title: 'Upload',
+            title: 'Work File Upload',
             icon: 'images/icon/uploadfile.svg'
           },
           {
             link : '',
-            title: 'Retrieve',
+            title: 'Work File Concat',
+            icon: 'images/icon/getfile.svg'
+          },
+          {
+            link : '',
+            title: 'Test File Retrieve',
             icon: 'images/icon/getfile.svg'
           },
           {
@@ -269,7 +284,7 @@ angular
           },
           {
             link : '',
-            title: 'System Upload Log',
+            title: 'Test File Upload Log',
             icon: 'images/icon/settings.svg'
           }
     ];

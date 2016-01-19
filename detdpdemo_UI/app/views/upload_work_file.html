@@ -1,0 +1,144 @@
+<style>
+    .my-drop-zone { border: dotted 3px lightgray; }
+    .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
+    .another-file-over-class { border: dotted 3px green; }
+    html, body { height: 100%; }
+</style>
+
+
+<md-content layout layout-align="center center">
+  <div flex="5"></div>
+  <form flex="90">
+    <md-tabs md-dynamic-height md-border-bottom >
+      <md-tab label="File Upload">
+        <div layout = "row">
+        <md-card flex = "25">
+          <md-card-content layout="column" layout-align="center left">
+            <div layout="column" layout-align="center, center" >
+              <md-input-container flex>
+                <label>Record Mode</label>
+                <md-select ng-model="exp_files.record_mode" required>
+                  <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container>
+                <label>Program</label>
+                <md-select ng-model="exp_files.program" required>
+                  <md-option ng-repeat="f in program_list | filter: {record_mode: exp_files.record_mode }"
+                             value="{{f.program}}">{{f.program}}
+                  </md-option>
+                </md-select>
+              </md-input-container>
+              <md-input-container>
+                <label>Experiment Type</label>
+                <md-select ng-model = "exp_file.exp_type" required>
+                  <md-option ng-repeat = "type in exp_type" value= "{{type}}">{{type}}</md-option>
+                </md-select>
+              </md-input-container>
+            </div>
+            <!-- <div><p ng-if="exp_files.program || exp_files.record_mode">You selected a "{{exp_files.record_mode}}" record mode
+              with program "{{exp_files.program}}".</p></div> -->
+            <br>
+            <div layout="row">
+              <md-radio-group ng-model="exp_files.read_only" required>
+                <md-radio-button value="y">Read Only</md-radio-button>
+                <md-radio-button value="n"> Full Device</md-radio-button>
+              </md-radio-group>
+            </div>
+            <br>
+            <md-input-container>
+              <label>Project</label>
+              <input ng-model="exp_file.project">
+            </md-input-container>
+
+            <md-input-container>
+              <label>Tester</label>
+              <input ng-model="exp_file.tester" >
+            </md-input-container>
+
+            <md-input-container>
+              <label>Comment</label>
+              <input ng-model="exp_file.comment">
+            </md-input-container>
+          </md-card-content>
+        </md-card>
+        <md-card>
+          <md-card-title>
+          </md-card-title>
+          <md-card-content>
+            <div class="col-md-3" flex>
+                <h3>Select files</h3>
+                Multiple
+                <input type="file" nv-file-select="" uploader="uploader" multiple /><br/>
+            </div>
+            <div class="col-md-9" style="margin-bottom: 80px">
+              <h3>Upload queue</h3>
+              <p>Queue length: {{ uploader.queue.length }}</p>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th width="60%">Name</th>
+                    <th ng-show="uploader.isHTML5">Size</th>
+                    <th ng-show="uploader.isHTML5">Progress</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="item in uploader.queue">
+                    <td><strong>{{ item.file.name }}</strong></td>
+                    <td ng-show="uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                    <td ng-show="uploader.isHTML5">
+                      <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                      <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                    </td>
+                    <td nowrap>
+                      <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                        <span class="glyphicon glyphicon-upload"></span> Upload
+                      </button>
+                      <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                        <span class="glyphicon glyphicon-trash"></span> Remove
+                      </button>
+                      {{item.isReady}}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div>
+                <div>
+                  Queue progress:
+                  <div class="progress" style="">
+                    <div class="progress-bar" role="progressbar" ng-style="{ 'width': uploader.progress + '%' }"></div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-success btn-s" ng-click="uploader.uploadAll()" ng-disabled="!uploader.getNotUploadedItems().length">
+                  <span class="glyphicon glyphicon-upload"></span> Upload all
+                </button>
+                <button type="button" class="btn btn-danger btn-s" ng-click="uploader.clearQueue()" ng-disabled="!uploader.queue.length">
+                  <span class="glyphicon glyphicon-trash"></span> Remove all
+                </button>
+              </div>
+            </div>
+          </md-card-content>
+        </md-card>
+      </div>
+      <div class="md-actions" layout="row" layout-align="center center">
+        <md-button class="md-primary md-raised" ng-click="doUploadChk()"><strong>Upload</strong></md-button>
+        <md-button class="md-primary md-raised" ng-click="doUplSearch()"><strong>Search</strong></md-button>
+        <span flex></span>
+        <md-button ng-click="doClearAll($event)">Clear All</md-button>
+        <span flex></span>
+        <md-button ng-click="doOverview($event)">Get Overview</md-button>
+      </div>
+      </md-tab>
+      <md-tab label="Upload Summary">
+      </md-tab>
+    </md-tabs>
+  </form>
+  <div flex="5"></div>
+</md-content>
