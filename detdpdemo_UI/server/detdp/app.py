@@ -450,9 +450,11 @@ def upload_work_file():
     if request.method == 'POST':
         db = detdp()
         file = request.files['file']
-        descr = request.data['descr']
+        descr = request.values['item_descr']
+        index = request.values['item_index']
         print file.filename
         print descr
+        print index
     return jsonify({'status':'GOOD'})
 
 if __name__ == "__main__":

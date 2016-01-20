@@ -30,14 +30,15 @@ angular.module('detdpdemoApp')
     });
 
     $scope.uploader.onBeforeUploadItem = function(item) {
+      console.log($scope.file_descr);
       item.formData.push({item_descr: $scope.file_descr, item_index: item.index});
     };
 
     $scope.uploader.onCompleteAll = function (item, response, status, headers){
-      console.log(item);
-      console.log(response);
-      console.log(status);
-      console.log(headers);
+      // console.log(item);
+      // console.log(response);
+      // console.log(status);
+      // console.log(headers);
 
     };
 
