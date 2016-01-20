@@ -192,7 +192,7 @@ angular.module('detdpdemoApp')
         if ($scope.criteria.stdCol === true){
           fileName = fileName + std + ';'
         }
-        console.log(fileName);
+    
         var alert =  $mdDialog.confirm()
                      .parent(angular.element(document.querySelector('#popupContainer')))
                      .title(fileName)

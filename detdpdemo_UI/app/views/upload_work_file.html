@@ -11,13 +11,11 @@
   <form flex = "90" layout = "row">
     <span class="md-headline">Work File Upload</span>
     <span flex></span>
-    <!-- <md-button class="md-primary md-raised" ng-click="doSearchLog('S')">Save</md-button>
+    <md-button class="md-primary md-raised" ng-click="doUploadWorkFile()">Save</md-button>
       <div layout="row" layout-align="end center">
         <span flex></span>
-        <md-button class="md-primary md-raised" ng-click="doSearchLog('A')">Search</md-button>
-        <span flex></span>
-        <md-button ng-click="doReset()">Reset</md-button>
-      </div> -->
+        <md-button ng-click="doResetInput()">Reset</md-button>
+      </div>
   </form>
 </div>
 <div layout="column" ng-cloak="">
@@ -111,13 +109,16 @@
                         <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
                       </td>
                       <td nowrap>
-                        <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                        <!-- <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
                           <span class="glyphicon glyphicon-upload"></span> Upload
-                        </button>
+                        </button> -->
                         <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
                           <span class="glyphicon glyphicon-trash"></span> Remove
                         </button>
-                        {{item.isReady}}
+                        <md-input-container>
+                          <label>Description</label>
+                          <input ng-model="file_descr">
+                        </md-input-container>
                       </td>
                     </tr>
                   </tbody>

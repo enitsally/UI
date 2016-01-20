@@ -444,5 +444,16 @@ def set_exp_type():
         msg = 'SAVE FAILED'
     return jsonify({'status': msg})
 
+@app.route('/upload$work$file', methods=['GET', 'POST'])
+def upload_work_file():
+    print 'API: /upload$work$file, method: upload_work_file()'
+    if request.method == 'POST':
+        db = detdp()
+        file = request.files['file']
+        descr = request.data['descr']
+        print file.filename
+        print descr
+    return jsonify({'status':'GOOD'})
+
 if __name__ == "__main__":
     app.run(debug=True)
