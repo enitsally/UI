@@ -72,6 +72,12 @@ angular
         controller: 'ConcatWorkFileCtrl',
         controllerAs: 'concat'
       })
+      .state('help', {
+        url: '/help',
+        templateUrl: 'views/help.html',
+        controller: 'helpCtrl',
+        controllerAs: 'help'
+      })
       .state('sysSetting', {
         url: '/sysSetting',
         templateUrl: 'views/sys_setting.html',
@@ -105,7 +111,7 @@ angular
       .state('usersetting', {
         url: '/usersetting',
         templateUrl: 'views/user_setting.html',
-        controller: 'UserSettingCtrl',
+        controller: 'userSettingCtrl',
         controllerAs: 'usersetting'
       });
   })
@@ -182,6 +188,11 @@ angular
        .then(function () {
        });
      };
+
+     $scope.doGetHelp = function(){
+       $state.go('help');
+     };
+
      $scope.doLogout = function(){
 
        $http.get('/logout').then(function(req){

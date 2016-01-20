@@ -8,7 +8,7 @@
  * Controller of the detdpdemoApp
  */
   angular.module('detdpdemoApp')
-    .controller('UserSettingCtrl', function ($scope, $http, $mdToast) {
+    .controller('userSettingCtrl', function ($scope, $http, $mdToast) {
 
       $scope.user_setup = {
         user_name : $scope.currentUser ? $scope.currentUser.id : '',

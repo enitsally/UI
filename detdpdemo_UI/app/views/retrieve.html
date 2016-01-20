@@ -39,104 +39,78 @@
   <form flex="90">
     <md-tabs md-dynamic-height md-border-bottom >
       <md-tab label="File Summary">
-        <md-card>
-          <md-card-title>
-          </md-card-title>
-
-          <md-card-content layout="row">
-            <div layout="column" flex ="20" layout-align="left center">
-              <div layout = "row">
+        <div layout = "row">
+          <md-card flex = "20">
+            <md-card-content>
+              <div layout="column">
+                  <md-input-container>
+                    <label>Record Mode</label>
+                    <md-select ng-model="search.doe_record_mode" required>
+                      <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
+                    </md-select>
+                  </md-input-container>
+                  <md-input-container>
+                    <label>Program</label>
+                    <md-select ng-model="search.doe_program" required>
+                      <md-option ng-repeat="f in program_list | filter: {record_mode: search.doe_record_mode }"
+                                 value="{{f.program}}">{{f.program}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                <br>
+                <div layout="row" >
+                  <md-radio-group ng-model="search.doe_read_only" required>
+                    <md-radio-button value="y">Read Only</md-radio-button>
+                    <md-radio-button value="n"> Full Device</md-radio-button>
+                  </md-radio-group>
+                </div>
+                <br>
                 <md-input-container>
-                  <label>Record Mode</label>
-                  <md-select ng-model="search.doe_record_mode" required>
-                    <md-option ng-repeat="mode in recordmode_list" value="{{mode}}">{{mode}}</md-option>
-                  </md-select>
+                  <label>DOE File Name</label>
+                  <input ng-model="search.doe_name">
                 </md-input-container>
-                <md-input-container>
-                  <label>Program</label>
-                  <md-select ng-model="search.doe_program" required>
-                    <md-option ng-repeat="f in program_list | filter: {record_mode: search.doe_record_mode }"
-                               value="{{f.program}}">{{f.program}}
-                    </md-option>
-                  </md-select>
-                </md-input-container>
+                <br>
+                <div class="md-actions" layout="column" layout-align="center left">
+                  <md-datepicker ng-model="search.doe_start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
+                  <br>
+                  <md-datepicker ng-model="search.doe_end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
+                </div>
               </div>
-              <br>
-              <div layout="row">
-                <md-radio-group ng-model="search.doe_read_only" required>
-                  <md-radio-button value="y">Read Only</md-radio-button>
-                  <md-radio-button value="n"> Full Device</md-radio-button>
-                </md-radio-group>
-              </div>
-              <br>
-              <md-input-container>
-                <label>DOE File Name</label>
-                <input ng-model="search.doe_name">
-              </md-input-container>
-              <md-input-container>
-                <label>DOE File Description</label>
-                <input ng-model="search.doe_descr" >
-              </md-input-container>
-              <md-input-container>
-                <label>DOE File Comment</label>
-                <input ng-model="search.doe_comment">
-              </md-input-container>
-              <md-datepicker ng-model="search.doe_start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
-              <md-datepicker ng-model="search.doe_end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
-
-            </div>
-            <div layout = "column" flex>
-              <!-- <div>
-                <p ng-if="search">You selected</p>
-                <p ng-if="search.doe_record_mode"><strong> record mode: </strong>"{{search.doe_record_mode}}";</p>
-                <p ng-if="search.doe_program"><strong> program: </strong>"{{search.doe_program}}";</p>
-                <p ng-if="search.doe_read_only"><strong> read_only: </strong>"{{search.doe_read_only}}";</p>
-                <p ng-if="search.doe_name"><strong> doe name: </strong>"{{search.doe_name}}";</p>
-                <p ng-if="search.doe_descr"><strong> doe description: </strong>"{{search.doe_descr}}";</p>
-                <p ng-if="search.doe_comment"><strong> comment: </strong>"{{search.doe_comment}}";</p>
-                <p ng-if="search.doe_start_date"><strong> start date: </strong>"{{search.doe_start_date}}";</p>
-                <p ng-if="search.doe_end_date"><strong> end date: </strong>"{{search.doe_end_date}}"</p>
-              </div> -->
-              <md-card>
-                <md-card-title layout="column" layout-align="center center">
-                  <md-card-title-text layout = "row">
-                    <h5><strong>Data File Summary</strong></h5><div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
-                  </md-card-title-text>
-                </md-card-title>
-                <md-card-content>
-                  <md-content flex layout-padding style="height: 500px">
-                  <span flex>
-                    <table class="table table-hover">
-                      <tr>
-                        <th>DOE File Name</th>
-                        <th>Program</th>
-                        <th>Record Mode</th>
-                        <th>Read Only</th>
-                        <th>File Description</th>
-                        <th>Comment</th>
-                        <th>Upload Date</th>
-                        <th>Upload User</th>
-                        <th>File Size</th>
-                      </tr>
-                      <tr ng-repeat="row in doeSearchInfo">
-                        <td>{{row.doe_name}}</td>
-                        <td>{{row.program}}</td>
-                        <td>{{row.record_mode}}</td>
-                        <td>{{row.read_only}}</td>
-                        <td>{{row.doe_descr}}</td>
-                        <td>{{row.comment}}</td>
-                        <td>{{row.upload_date}}</td>
-                        <td>{{row.upload_user}}</td>
-                        <td>{{row.file_size}}</td>
-                      </tr>
-                    </table>
-                  <span>
-                  </md-content>
-                </md-card-content>
-              </md-card>
-            </div>
-          </md-card-content>
-        </md-card>
+            </md-card-content>
+          </md-card>
+          <md-card flex = "70">
+            <md-card-title layout="row">
+              <md-card-title-text layout = "row" layout-align="center center">
+                <div><h5><strong>Data File Summary</strong></h5></div>
+                <div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
+              </md-card-title-text>
+            </md-card-title>
+            <md-card-content>
+              <md-content flex layout-padding style="height: 500px">
+                <table class="table table-hover">
+                  <tr>
+                    <th>DOE File Name</th>
+                    <th>Program</th>
+                    <th>Record Mode</th>
+                    <th>Read Only</th>
+                    <th>Upload Date</th>
+                    <th>Upload User</th>
+                    <th>File Size</th>
+                  </tr>
+                  <tr ng-repeat="row in doeSearchInfo">
+                    <td>{{row.doe_name}}</td>
+                    <td>{{row.program}}</td>
+                    <td>{{row.record_mode}}</td>
+                    <td>{{row.read_only}}</td>
+                    <td>{{row.upload_date}}</td>
+                    <td>{{row.upload_user}}</td>
+                    <td>{{row.file_size}}</td>
+                  </tr>
+                </table>
+              </md-content>
+            </md-card-content>
+          </md-card>
+        </div>
       </md-tab>
       <md-tab label="File Retrieve" >
         <md-card>
@@ -218,16 +192,18 @@
                 </md-card-content>
               </md-card>
               <md-card>
-                <md-card-title  flex layout-padding style="width: 700px">
-                  <lable><strong>Parameter Selection: </strong></lable>
-                  <span us-spinner spinner-key="retrievingSpinner"></span>
-                  <md-input-container>
-                    <md-select aria-label="selectParam" ng-model="currentParam">
-                      <md-option ng-repeat="p in paramsList" value="{{p}}">{{p}}</md-option>
-                    </md-select>
-                  </md-input-container>
-                  <span flex></span>
-                  <md-button class="md-primary md-raised" ng-click="doAddParam()">Add</md-button>
+                <md-card-title  flex layout-padding style="width: 700px" >
+                  <div flex>
+                    <lable><strong>Parameter Selection: </strong></lable>
+                    <span us-spinner spinner-key="retrievingSpinner"></span>
+                    <md-input-container>
+                      <md-select aria-label="selectParam" ng-model="currentParam">
+                        <md-option ng-repeat="p in paramsList" value="{{p}}">{{p}}</md-option>
+                      </md-select>
+                    </md-input-container>
+                    <span flex></span>
+                    <md-button class="md-primary md-raised" ng-click="doAddParam()">Add</md-button>
+                  </div>
                 </md-card-title>
                 <md-card-content ng-show = "paramsSelection.length">
                   <md-content layout = "column"  flex layout-padding style="height: 550px; width: 700px">

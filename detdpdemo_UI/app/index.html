@@ -92,6 +92,10 @@
           </div>
         </div> -->
 
+        <md-button class="md-icon-button" aria-label="help">
+            <md-icon ng-if = "currentUser" md-svg-icon="images/icon/help.svg" ng-click = "doGetHelp()"></md-icon>
+        </md-button>
+
         <md-button class="md-icon-button" aria-label="logout">
             <md-icon ng-if = "currentUser" md-svg-icon="images/icon/logout.svg" ng-click = "doLogout()"></md-icon>
             <md-icon ng-if = "currentUser == null " md-svg-icon="images/icon/account_off.svg" ng-click = "doDirectLogin()"></md-icon>
@@ -116,6 +120,7 @@
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-messages/angular-messages.js"></script>
 <script src="bower_components/angular-material/angular-material.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 <script src="bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>
@@ -139,6 +144,7 @@
 <script src="scripts/controllers/file_upload_setting.js"></script>
 <script src="scripts/controllers/upload_work_file.js"></script>
 <script src="scripts/controllers/concat.js"></script>
+<script src="scripts/controllers/help.js"></script>
 
 
 <!-- endbuild -->

@@ -531,7 +531,7 @@ class detdp:
     print 'call method: ', str_method
 
     fs = gridfs.GridFS(self.db)
-    final_msg = {'comment':''}
+    final_msg = {'comment': ''}
     # flag = ['S']  ##-----------------##
 
     key_list = self.db.system_conf.find_one({}).get('link_list')
@@ -584,7 +584,7 @@ class detdp:
       # -----------Flag is 'S', using standard columns list
       path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
       if 'S' in flag:
-        file_name_stand = '{}/{}_STANDARD_{}.csv'.format(path,user_name, timestamp)
+        file_name_stand = '{}/{}_STANDARD_{}.csv'.format(path, user_name, timestamp)
         final_msg['std_file'] = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
 
         data = self.db.user.find_one({'user_name': user_name}, {'standard_cols': True}).get(
@@ -852,5 +852,23 @@ class detdp:
     else:
       return False
 
+  def get_exp_type(self):
+    str_method = 'get_exp_type()'
+    print 'call method: ', str_method
+    conf = self.db.system_conf.find_one({})
+    if conf is not None:
+      result = [] if conf.get('exp_type') is None else conf.get('exp_type')
+      return result
+
+  def set_exp_type(self, exp_type):
+    str_method = 'set_exp_type()'
+    print 'call method: ', str_method
+    result = self.db.system_conf.find_one_and_update({}, {'$set': {'exp_type': exp_type}})
+    if (result is not None):
+      return True
+    else:
+      return False
+
 # if __name__ == '__main__':
-#   db = detdp()
+#   obj = detdp()
+#   obj.db.data_conf()

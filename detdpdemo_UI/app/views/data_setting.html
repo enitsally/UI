@@ -31,8 +31,8 @@
   <md-content class="md-padding" layout="row">
   <div flex="5"></div>
   <form flex="90">
-    <md-tabs md-dynamic-height md-border-bottom >
-      <md-tab label="Program/Record">
+    <md-tabs md-dynamic-height md-border-bottom>
+      <md-tab md-on-select = "setIndex(0)" label ="Program/Record" >
         <div layout = "row" flex>
           <div flex = "20">
             <md-card>
@@ -64,52 +64,117 @@
                   </button>
                 </div>
               </md-card-content>
-          </md-card>
+            </md-card>
+          </div>
+          <div flex = "10"></div>
+          <div flex = "70">
+            <md-card>
+              <md-card-title layout="row" layout-align="center center">
+                <h5><strong>Program / Record Mode Pairs </strong></h5><div ng-show= "dataPair.length"><h5><strong>({{dataPair.length}})</strong></h5></div>
+              </md-card-title>
+              <md-card-content>
+                <md-content flex layout-padding style="height: 500px">
+                  <span flex>
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Program Name</th>
+                          <th>Record Mode</th>
+                          <th>Edit</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="row in dataPair">
+                          <td>{{row.program}}</td>
+                          <td>{{row.record_mode}}</td>
+                          <td>
+                            <button class="btn" ng-click="editRow($index, row.program, row.record_mode)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                            </button>
+                          </td>
+                          <td>
+                            <button class="btn" ng-click="deleteRow($index)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  <span>
+                </md-content>
+              </md-card-content>
+            </md-card>
+          </div>
         </div>
-        <div flex = "10"></div>
-        <div flex = "70">
-          <md-card>
-            <md-card-title layout="row" layout-align="center center">
-              <h5><strong>Program / Record Mode Pairs </strong></h5><div ng-show= "dataPair.length"><h5><strong>({{dataPair.length}})</strong></h5></div>
-            </md-card-title>
-            <md-card-content>
-              <md-content flex layout-padding style="height: 500px">
-                <span flex>
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Program Name</th>
-                        <th>Record Mode</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr ng-repeat="row in dataPair">
-                        <td>{{row.program}}</td>
-                        <td>{{row.record_mode}}</td>
-                        <td>
-                          <button class="btn" ng-click="editRow($index, row.program, row.record_mode)">
-                          <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
-                          </button>
-                        </td>
-                        <td>
-                          <button class="btn" ng-click="deleteRow($index)">
-                          <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                <span>
-              </md-content>
-            </md-card-content>
-          </md-card>
-        </div>
-
-      </div>
       </md-tab>
-      <md-tab label="More" >
+      <md-tab md-on-select = "setIndex(1)" label = "EXPERIMENT TYPE">
+        <div flex layout = "row">
+          <div flex="25">
+            <md-card>
+              <md-card-title>
+                <br>
+                <button class="btn btn-success" ng-click="editType('N', '')">
+                  <span class="glyphicon glyphicon-user"></span> Create New Row
+                </button>
+              </md-card-title>
+              <md-card-content>
+                <div ng-hide = "typeHideform" flex>
+                  <h4 ng-show="typeEdit">Create New Row:</h4>
+                  <h4 ng-hide="typeEdit">Edit Row:</h4>
+                  <md-input-container>
+                    <label>Type Name:</label>
+                    <input ng-model="currentType.type" >
+                  </md-input-container>
+                  <hr>
+                  <button class="btn btn-success"  ng-click="saveNewType()" ng-show="typeEdit">
+                    <span class="glyphicon glyphicon-save"></span> Add Row
+                  </button>
+                  <button class="btn btn-success"  ng-click="saveEditType(currentType.row_id)" ng-hide="typeEdit">
+                    <span class="glyphicon glyphicon-save"></span> Save change
+                  </button>
+                </div>
+              </md-card-content>
+            </md-card>
+          </div>
+          <div flex="75">
+            <md-card>
+              <md-card-title layout="row" layout-align="center center">
+                <h5><strong>Experiment Type</strong></h5><div ng-show= "expType.length"><h5><strong>({{expType.length}})</strong></h5></div>
+              </md-card-title>
+              <md-card-content>
+                <md-content flex layout-padding style="height: 500px">
+                  <span flex>
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>Column Name</th>
+                          <th>Edit</th>
+                          <th>Delete</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr ng-repeat="row in expType">
+                          <td>{{row}}</td>
+                          <td>
+                            <button class="btn" ng-click="editType($index, row)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                            </button>
+                          </td>
+                          <td>
+                            <button class="btn" ng-click="deleteType($index)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
+                            </button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  <span>
+                </md-content>
+              </md-card-content>
+            </md-card>
+          </div>
+        </div>
       </md-tab>
     </md-tabs>
   </form>

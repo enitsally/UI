@@ -424,6 +424,25 @@ def set_linlcols_prefix():
         msg = 'SAVE FAILED'
     return jsonify({'status': msg})
 
+@app.route('/get$exp$type')
+def get_exp_type():
+    print 'API: /get$exp$type, method: get_exp_type()'
+    db = detdp()
+    result = db.get_exp_type()
+    return jsonify({'status': result})
+
+@app.route('/set$exp$type' , methods=['GET', 'POST'])
+def set_exp_type():
+    print 'API: /set$exp$type, method: set_exp_type()'
+    input_data = json.loads(request.data)
+    exp_type = [x.lower() for x in input_data]
+    db = detdp()
+    result = db.set_exp_type(exp_type)
+    if result:
+        msg = 'SAVE DONE!'
+    else:
+        msg = 'SAVE FAILED'
+    return jsonify({'status': msg})
 
 if __name__ == "__main__":
     app.run(debug=True)
