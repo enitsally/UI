@@ -345,7 +345,7 @@ class detdp:
     return file_id
 
   def delete_temp(self, tempFile):
-    str_method = 'upload_temp( tempFile = {})'.format(tempFile)
+    str_method = 'delete_temp( tempFile = {})'.format(tempFile)
     print 'call method: ', str_method
     fs = gridfs.GridFS(self.db)
     file_id = ObjectId(tempFile)
@@ -869,6 +869,50 @@ class detdp:
     else:
       return False
 
-# if __name__ == '__main__':
-#   obj = detdp()
-#   obj.db.data_conf()
+  def upload_work_file_toDB(self, exp_user, program, record_mode, read_only, exp_type, project, tester, comment,
+                            file_list):
+    str_method = '''upload_work_file_toDB(exp_user = {}, program = {}, record_mode = {}, read_only = {}, exp_type = {}, project = {}, tester = {}, comment = {},
+                            file_list = {})'''.format(exp_user, program, record_mode, read_only, exp_type,
+                                                                   project, tester, comment,
+                                                                   file_list)
+    print 'call method: ', str_method
+
+    # --- This is new uploaded files
+    user_profile = self.db.work_file.find_one({'exp_user': exp_user})
+    if user_profile is None:
+      self.db.work_file.insert_one({'exp_user': exp_user, 'experiments': [], 'last_exp_no': 0})
+      user_profile = self.db.work_file.find_one({'exp_user': exp_user})
+
+    exp_no = user_profile.get('last_exp_no') + 1
+    timestamp = datetime.now()
+    new_exp = {
+      'exp_no': exp_no,
+      'timestamp': timestamp,
+      'program': program,
+      'record_mode': record_mode,
+      'read_only': read_only,
+      'exp_type': exp_type,
+      'project': project,
+      'tester': tester,
+      'comment': comment,
+      'exp_sub_files': [{'exp_sub_no': x + 1,
+                         'file_descr': file_list[x].get('file_descr'),
+                         'file_name': file_list[x].get('file_name'),
+                         'file_size': file_list[x].get('file_size'),
+                         'file_id': file_list[x].get('file_id')
+                         } for x in
+                        range(len(file_list))]
+    }
+    current_exps = user_profile.get('experiments')
+    current_exps.append(new_exp)
+    result = self.db.work_file.find_one_and_update({'exp_user': exp_user},
+                                          {'$set': {'experiments': current_exps, 'last_exp_no': exp_no}})
+    if result is not None:
+      return True
+    else:
+      return False
+
+if __name__ == '__main__':
+  obj = detdp()
+  result = obj.db.work_file.find_one({'exp_user': 'map'})
+  print result.get('last_exp_no')
