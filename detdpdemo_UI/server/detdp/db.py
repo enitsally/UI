@@ -873,8 +873,8 @@ class detdp:
                             file_list):
     str_method = '''upload_work_file_toDB(exp_user = {}, program = {}, record_mode = {}, read_only = {}, exp_type = {}, project = {}, tester = {}, comment = {},
                             file_list = {})'''.format(exp_user, program, record_mode, read_only, exp_type,
-                                                                   project, tester, comment,
-                                                                   file_list)
+                                                      project, tester, comment,
+                                                      file_list)
     print 'call method: ', str_method
 
     # --- This is new uploaded files
@@ -906,13 +906,20 @@ class detdp:
     current_exps = user_profile.get('experiments')
     current_exps.append(new_exp)
     result = self.db.work_file.find_one_and_update({'exp_user': exp_user},
-                                          {'$set': {'experiments': current_exps, 'last_exp_no': exp_no}})
+                                                   {'$set': {'experiments': current_exps, 'last_exp_no': exp_no}})
     if result is not None:
       return True
     else:
       return False
 
+
 if __name__ == '__main__':
   obj = detdp()
-  result = obj.db.work_file.find_one({'exp_user': 'map'})
-  print result.get('last_exp_no')
+  result = obj.db.work_file.aggregate([
+    {'$unwind': '$experiments'},
+    {'$match': {'experiments.read_only': 'y'}},
+    {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
+  ])
+  for row in result:
+    print row.get('_id')
+
