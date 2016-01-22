@@ -9,6 +9,7 @@ import unicodecsv
 import StringIO
 import time
 from datetime import datetime
+from datetime import timedelta
 
 
 class detdp:
@@ -912,14 +913,86 @@ class detdp:
     else:
       return False
 
+  def get_work_file_overview(self, exp_user, time_range):
+    str_method = 'get_work_file_overview( exp_user = {}, time_range = {})'.format(exp_user, time_range)
+    print 'call method: ', str_method
+
+    lt_time = datetime.now()
+    if time_range == '1':
+      gt_time = datetime.now() + timedelta(days=-365)
+    elif time_range == '6':
+      gt_time = datetime.now() + timedelta(days=-183)
+    elif time_range == '3':
+      gt_time = datetime.now() + timedelta(days=-93)
+    else:
+      gt_time = '*'
+
+    if gt_time == '*' and exp_user == '*':
+      result = self.db.work_file.aggregate([
+        {'$unwind': '$experiments'},
+        {'$sort': {'exp_user': 1, 'experiments.exp_no': 1}}
+        # {'$group': {'_id': '$exp_user', '$group': {'_id': '$exp_user'}}}
+      ])
+    elif gt_time == '*':
+      result = self.db.work_file.aggregate([
+        {'$unwind': '$experiments'},
+        {'$match': {'exp_user': exp_user}},
+        {'$sort': {'exp_user': 1, 'experiments.exp_no': 1}}
+        # {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
+      ])
+    elif exp_user == '*':
+      result = self.db.work_file.aggregate([
+        {'$unwind': '$experiments'},
+        {'$match': {'experiments.timestamp': {'$lt': lt_time, '$gt': gt_time}}},
+        {'$sort': {'exp_user': 1, 'experiments.exp_no': 1}}
+        # {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
+      ])
+    else:
+      result = self.db.work_file.aggregate([
+        {'$unwind': '$experiments'},
+        {'$match': {'experiments.timestamp': {'$lt': lt_time, '$gt': gt_time}, 'exp_user': exp_user}},
+        {'$sort': {'exp_user': 1, 'experiments.exp_no': 1}}
+        # {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
+      ])
+
+    info = []
+
+    for row in result:
+      dict = {}
+      dict['exp_user'] = row.get('exp_user')
+      tmp = row.get('experiments')
+
+      dict['exp_no'] = tmp.get('exp_no')
+      dict['timestamp'] = tmp.get('timestamp')
+      dict['exp_type'] = tmp.get('exp_type')
+      dict['project'] = tmp.get('project')
+      dict['program'] = tmp.get('program')
+      dict['record_mode'] = tmp.get('record_mode')
+      dict['read_only'] = tmp.get('read_only')
+      dict['tester'] = tmp.get('tester')
+      dict['comment'] = tmp.get('comment')
+      dict['files'] = tmp.get('exp_sub_files')
+
+      info.append(dict)
+
+    return info
+
 
 if __name__ == '__main__':
   obj = detdp()
-  result = obj.db.work_file.aggregate([
-    {'$unwind': '$experiments'},
-    {'$match': {'experiments.read_only': 'y'}},
-    {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
-  ])
-  for row in result:
-    print row.get('_id')
-
+  # result = obj.db.work_file.aggregate([
+  #   {'$unwind': '$experiments'},
+  #   {'$match': {'experiments.timestamp': {'$lt': datetime.now(), '$gt': (datetime.now() + timedelta(-2))},
+  #               'exp_user': 'map'}},
+  #   {'$group': {'_id': '$exp_user', 'experiments': {'$push': '$experiments'}}}
+  # ])
+  #
+  # for row in result:
+  #   tmp = row.get('experiments')
+  #   for exp in tmp:
+  #     for k, v in exp.items():
+  #       print k, v
+  # result = obj.get_work_file_overview('hong.pan@wdc.com', '3')
+  #
+  # for row in result:
+  #   print row

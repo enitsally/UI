@@ -450,7 +450,7 @@ def set_exp_type():
 
 @app.route('/upload$work$file', methods=['GET', 'POST'])
 def upload_work_file():
-  print 'API: /upload$work$file, method: upload_work_file()'
+  print 'API: /upload$work$file, method: upload_temp()'
   if request.method == 'POST':
     db = detdp()
     file = request.files['file']
@@ -464,7 +464,7 @@ def upload_work_file():
 
 @app.route('/cancel$work$file$upload', methods=['GET', 'POST'])
 def del_work_file():
-  print 'API: /cancel$work$file$upload, method: del_work_file()'
+  print 'API: /cancel$work$file$upload, method: delete_temp()'
   result = True
   db = detdp()
   input_data = json.loads(request.data)
@@ -484,7 +484,7 @@ def del_work_file():
 
 @app.route('/confirm$work$file$upload', methods=['GET', 'POST'])
 def confirm_work_file():
-  print 'API: /confirm$work$file$upload, method: confirm_work_file()'
+  print 'API: /confirm$work$file$upload, method: upload_work_file_toDB()'
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -504,6 +504,17 @@ def confirm_work_file():
   else:
     msg = 'UPLOAD FAILED'
   return jsonify({'status': msg})
+
+@app.route('/get$work$file$summary', methods=['GET', 'POST'])
+def get_work_file_summary():
+  print 'API: /confirm$work$file$upload, method: get_work_file_overview()'
+  db = detdp()
+  input_data = json.loads(request.data)
+  exp_user = input_data['exp_user']
+  time_range = input_data['ShownPeriod']
+  result = db.get_work_file_overview(exp_user,time_range)
+
+  return jsonify({'status': result})
 
 
 if __name__ == "__main__":
