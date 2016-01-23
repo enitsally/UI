@@ -511,7 +511,7 @@ def get_work_file_summary():
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
-  time_range = input_data['ShownPeriod']
+  time_range = input_data['shownPeriod']
   result = db.get_work_file_overview(exp_user,time_range)
 
   return jsonify({'status': result})

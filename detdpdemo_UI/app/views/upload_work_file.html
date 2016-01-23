@@ -3,6 +3,19 @@
     .nv-file-over { border: dotted 3px red; } /* Default class applied to drop zones on over */
     .another-file-over-class { border: dotted 3px green; }
     html, body { height: 100%; }
+    table, th , td {
+        border-collapse: collapse;
+        padding: 5px;
+    }
+
+    table tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    table tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+
 </style>
 
 <br>
@@ -142,6 +155,77 @@
         </div>
         </md-tab>
         <md-tab label="Upload Summary">
+          <md-card>
+            <md-card-content layout="column">
+              <div class="md-actions" layout="row" layout-align="left center">
+                  <md-datepicker ng-model="search.start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
+                  <md-datepicker ng-model="search.end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
+              </div>
+              <div layout = "column" flex>
+                <md-card>
+                  <md-card-title>
+                    <md-card-title-text layout="row">
+                      <div flex = "75" layout="row" layout-align="center center">
+                        <h5><strong>User Work File Overview</strong></h5><div ng-show= "workFileInfo.length"><h5><strong>({{workFileInfo.length}})</strong></h5></div>
+                      </div>
+                      <div flex = "20" layout="row" layout-align="center center">
+                          <span flex></span>
+                            Shown Period:
+                            <select ng-model="ShownPeriod" ng-change="onShowPeriodChanged()" ng-init=onShowPeriodChanged() >
+                                <option value="3">Last 3 Months</option>
+                                <option value="6">Last 6 Months</option>
+                                <option value="1">Last 1 Year</option>
+                                <option value="A">All</option>
+                            </select>
+                      </div>
+                    </md-card-title-text>
+                  </md-card-title>
+                  <md-card-content>
+                    <md-content flex layout-padding style="height: 500px">
+                      <table class="table table-hover">
+                        <tr>
+                          <th>User Name</th>
+                          <th>Exp Number</th>
+                          <th>Timestamp</th>
+                          <th>Exp Type</th>
+                          <th>Project</th>
+                          <th>Program</th>
+                          <th>Record Mode</th>
+                          <th>Read Only/Full Device</th>
+                          <th>Tester</th>
+                          <th>Comment</th>
+                          <th>Exp Files</th>
+                          <th>Action</th>
+                        </tr>
+                        <tr ng-repeat="row in workFileInfo">
+                          <td>{{row.exp_user}}</td>
+                          <td>{{row.exp_no}}</td>
+                          <td>{{row.timestamp}}</td>
+                          <td>{{row.exp_type}}</td>
+                          <td>{{row.project}}</td>
+                          <td>{{row.program}}</td>
+                          <td>{{row.record_mode}}</td>
+                          <td>{{row.read_only}}</td>
+                          <td>{{row.tester}}</td>
+                          <td>{{row.comment}}</td>
+                          <td>{{row.files.length}}</td>
+                          <td nowrap>
+                            <button class="btn" ng-click="editRow($index, row.exp_user, row.exp_no)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                            </button>
+                            <button class="btn" ng-click="deleteRow($index)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
+                            </button>
+
+                          </td>
+                        </tr>
+                      </table>
+                    </md-content>
+                  </md-card-content>
+                </md-card>
+              </div>
+            </md-card-content>
+          </md-card>
         </md-tab>
       </md-tabs>
     </form>

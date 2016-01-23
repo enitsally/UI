@@ -23,9 +23,36 @@ angular.module('detdpdemoApp')
       files: []
     };
 
+    $scope.search = {
+      start_date:'',
+      end_date:'',
+      s_y: '',
+      s_m: '',
+      s_d: '',
+      e_y: '',
+      e_m: '',
+      e_d: ''
+    };
+
     $scope.file_log = [];
 
     $scope.file_descr = [];
+
+    $scope.ShownPeriod = "3";
+    $scope.workFileInfo = [];
+
+    var todayDate = new Date();
+    $scope.maxDate = new Date(
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate() + 1
+    );
+
+    $scope.onlyLaterDate = function (date) {
+      var day = date;
+      return day >= $scope.search.start_date;
+    };
+
 
     $scope.uploader = new FileUploader({
       url:'/upload$work$file',
@@ -74,7 +101,6 @@ angular.module('detdpdemoApp')
         $http.post('/cancel$work$file$upload', $scope.file_log).then (function (response) {
           var msg = response.data.status;
           $scope.showSimpleToast(msg);
-
         }, function () {
         });
       });
@@ -101,6 +127,18 @@ angular.module('detdpdemoApp')
       $scope.exp_files.files = [];
 
     }
+
+    $scope.onShowPeriodChanged = function (){
+      var criteria = {
+        shownPeriod: $scope.ShownPeriod,
+        exp_user: $scope.currentUser ? $scope.currentUser.id : ''
+      };
+      $http.post('/get$work$file$summary', criteria).then(function(response){
+          $scope.workFileInfo = response.data.status;
+      }, function (){
+
+      });
+    };
 
     $http.get('/get$record$mode').then (function (response) {
       $scope.recordmode_list = response.data.status;
