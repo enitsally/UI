@@ -24,6 +24,7 @@ angular.module('detdpdemoApp')
     };
 
     $scope.search = {
+      exp_user : $scope.currentUser ? $scope.currentUser.id : '',
       start_date:'',
       end_date:'',
       s_y: '',
@@ -40,6 +41,8 @@ angular.module('detdpdemoApp')
 
     $scope.ShownPeriod = "3";
     $scope.workFileInfo = [];
+
+    $scope.showFlag = true;
 
     var todayDate = new Date();
     $scope.maxDate = new Date(
@@ -126,9 +129,31 @@ angular.module('detdpdemoApp')
       $scope.exp_files.comment = '';
       $scope.exp_files.files = [];
 
+      $scope.search.start_date = '';
+      $scope.search.end_date = '';
+      $scope.search.s_y = '';
+      $scope.search.s_m = '';
+      $scope.search.s_d = '';
+      $scope.search.e_y = '';
+      $scope.search.e_m = '';
+      $scope.search.e_d = '';
+
+    }
+
+    $scope.setIndex = function (index){
+      $scope.selectedIndex = index;
     }
 
     $scope.onShowPeriodChanged = function (){
+      $scope.search.start_date = '';
+      $scope.search.end_date = '';
+      $scope.search.s_y = '';
+      $scope.search.s_m = '';
+      $scope.search.s_d = '';
+      $scope.search.e_y = '';
+      $scope.search.e_m = '';
+      $scope.search.e_d = '';
+
       var criteria = {
         shownPeriod: $scope.ShownPeriod,
         exp_user: $scope.currentUser ? $scope.currentUser.id : ''
@@ -138,6 +163,26 @@ angular.module('detdpdemoApp')
       }, function (){
 
       });
+    };
+
+    $scope.doSearchWorkFile = function (){
+      if ($scope.search.start_date !== '') {
+        $scope.search.s_y = $scope.search.start_date.getFullYear();
+        $scope.search.s_m = $scope.search.start_date.getMonth() + 1;
+        $scope.search.s_d = $scope.search.start_date.getDate();
+      }
+
+      if ($scope.search.end_date !== '') {
+        $scope.search.e_y = $scope.search.end_date.getFullYear();
+        $scope.search.e_m = $scope.search.end_date.getMonth() + 1;
+        $scope.search.e_d = $scope.search.end_date.getDate();
+      }
+      $http.post('/search$work$file$summary', $scope.search).then(function(response){
+          $scope.workFileInfo = response.data.status;
+      }, function (){
+
+      });
+
     };
 
     $http.get('/get$record$mode').then (function (response) {

@@ -14,7 +14,7 @@ from datetime import timedelta
 
 class detdp:
   def __init__(self):
-    self.conn_str = "mongodb://mapserverdev:27017"
+    self.conn_str = "mongodb://172.18.60.20:27017"
     self.client = MongoClient(self.conn_str)
     self.db = self.client['detdp']
 
@@ -913,19 +913,25 @@ class detdp:
     else:
       return False
 
-  def get_work_file_overview(self, exp_user, time_range):
-    str_method = 'get_work_file_overview( exp_user = {}, time_range = {})'.format(exp_user, time_range)
+  def get_work_file_overview(self, exp_user, time_range, start_time, end_time):
+    str_method = 'get_work_file_overview( exp_user = {}, time_range = {}, start_time = {}, end_time = {})'.format(exp_user, time_range, start_time, end_time)
     print 'call method: ', str_method
 
-    lt_time = datetime.now()
-    if time_range == '1':
-      gt_time = datetime.now() + timedelta(days=-365)
-    elif time_range == '6':
-      gt_time = datetime.now() + timedelta(days=-183)
-    elif time_range == '3':
-      gt_time = datetime.now() + timedelta(days=-93)
+    if start_time == '' and end_time == '':
+      lt_time = datetime.now()
+      if time_range == '1':
+        gt_time = datetime.now() + timedelta(days=-365)
+      elif time_range == '6':
+        gt_time = datetime.now() + timedelta(days=-183)
+      elif time_range == '3':
+        gt_time = datetime.now() + timedelta(days=-93)
+      else:
+        gt_time = '*'
     else:
-      gt_time = '*'
+      gt_time = start_time
+      lt_time = end_time
+    print 'start_time:', start_time
+    print 'end_time:', end_time
 
     if gt_time == '*' and exp_user == '*':
       result = self.db.work_file.aggregate([
@@ -996,3 +1002,7 @@ if __name__ == '__main__':
   #
   # for row in result:
   #   print row
+  # a = datetime(2005,1,12)
+  # b = datetime.now()
+  # print type(a)
+  # print type(b)

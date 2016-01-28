@@ -24,7 +24,9 @@
   <form flex = "90" layout = "row">
     <span class="md-headline">Work File Upload</span>
     <span flex></span>
-    <md-button class="md-primary md-raised" ng-click="doConcatWorkFile()">Concat</md-button>
+    <md-button class="md-primary md-raised" ng-click="doSearchWorkFile()">Search</md-button>
+    <md-button class="md-primary md-raised" ng-click="doSaveWorkFile()">Save</md-button>
+
       <div layout="row" layout-align="end center">
         <span flex></span>
         <md-button ng-click="doResetInput()">Reset</md-button>
@@ -36,7 +38,7 @@
     <div flex="5"></div>
     <form flex="90">
       <md-tabs md-dynamic-height md-border-bottom >
-        <md-tab label="File Upload">
+        <md-tab md-on-select = "setIndex(0)" label="File Upload">
           <div layout = "row">
           <md-card flex = "20">
             <md-card-content layout="column">
@@ -154,7 +156,7 @@
           </md-card>
         </div>
         </md-tab>
-        <md-tab label="Upload Summary">
+        <md-tab md-on-select = "setIndex(1)" label="Upload Summary">
           <md-card>
             <md-card-content layout="column">
               <div class="md-actions" layout="row" layout-align="left center">
@@ -164,8 +166,12 @@
               <div layout = "column" flex>
                 <md-card>
                   <md-card-title>
+
                     <md-card-title-text layout="row">
-                      <div flex = "75" layout="row" layout-align="center center">
+                      <div flex = "20">
+                        <md-checkbox ng-model="showFlag">Show Summary</md-checkbox>
+                      </div>
+                      <div flex = "60" layout="row" layout-align="center center">
                         <h5><strong>User Work File Overview</strong></h5><div ng-show= "workFileInfo.length"><h5><strong>({{workFileInfo.length}})</strong></h5></div>
                       </div>
                       <div flex = "20" layout="row" layout-align="center center">
@@ -182,7 +188,7 @@
                   </md-card-title>
                   <md-card-content>
                     <md-content flex layout-padding style="height: 500px">
-                      <table class="table table-hover">
+                      <table ng-show = "showFlag" class="table table-hover">
                         <tr>
                           <th>User Name</th>
                           <th>Exp Number</th>

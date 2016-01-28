@@ -9,7 +9,7 @@ import unicodecsv
 
 class detdpautoupload:
   def __init__(self):
-    self.conn_str = "mongodb://mapserverdev:27017"
+    self.conn_str = "mongodb://172.18.60.20:27017"
     self.client = MongoClient(self.conn_str)
     self.db = self.client['detdp']
 
