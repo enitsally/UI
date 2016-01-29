@@ -93,6 +93,7 @@ angular.module('detdpdemoApp')
 
     $scope.doAddExp = function(){
       var tmp = {
+        'exp_user':'',
         'exp_no': '',
         'sub_exps' : ''
       };
@@ -100,11 +101,43 @@ angular.module('detdpdemoApp')
       $scope.expSelection.push(tmp);
     }
 
+    $scope.addToExpList = function(exp_user, exp_no, sub_exps){
+      var tmp = {
+        'exp_user':exp_user,
+        'exp_no': exp_no,
+        'sub_exps': sub_exps
+      };
+
+      $scope.expSelection.push(tmp);
+    };
+
+    $scope.clearDetail = function(){
+      if ($scope.showFlag === true){
+        $scope.subExpList = [];
+      }
+    };
+
+    $scope.showDetailExp = function(exp_user, exp_no){
+      var selectedExp = {
+        'exp_user': exp_user,
+        'exp_no': exp_no
+      };
+
+      $http.post('/get$sub$exp$detail', selectedExp).then(function (response) {
+        $scope.showFlag = false;
+        $scope.subExpList = response.data.status;
+        console.log($scope.subExpList);
+      }, function(){
+
+      });
+    }
+
     $scope.doDelExp = function(index){
       if (index >=-1){
         $scope.expSelection.splice(index, 1);
       }
     };
+
 
     $scope.doConcatWorkFile = function(){
       usSpinnerService.spin('concatSpinner');

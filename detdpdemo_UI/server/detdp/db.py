@@ -902,7 +902,8 @@ class detdp:
                          'file_size': file_list[x].get('file_size'),
                          'file_id': file_list[x].get('file_id')
                          } for x in
-                        range(len(file_list))]
+                        range(len(file_list))],
+      'last_subexp_no': len(file_list)
     }
     current_exps = user_profile.get('experiments')
     current_exps.append(new_exp)
@@ -983,6 +984,37 @@ class detdp:
 
     return info
 
+  def get_work_file_subfile(self, exp_user, exp_no):
+    str_method = 'get_work_file_subfile( exp_user = {}, exp_no = {})'.format(exp_user, exp_no)
+    print 'call method: ', str_method
+
+    info = []
+
+    result = self.db.work_file.aggregate([
+        {'$unwind': '$experiments'},
+        {'$match': {'exp_user': exp_user, 'experiments.exp_no': exp_no}},
+        {'$sort': {'experiments.exp_sub_files.exp_sub_no': 1}}
+    ]);
+
+    for row in result:
+      tmp = row.get('experiments')
+      for t in tmp.get('exp_sub_files'):
+        dict = {}
+        dict['exp_user'] = row.get('exp_user')
+        dict['exp_no'] = tmp.get('exp_no')
+        dict['exp_sub_no'] = t.get('exp_sub_no')
+        dict['file_descr'] = t.get('file_descr')
+        dict['file_name'] = t.get('file_name')
+        dict['file_id'] = str(t.get('file_id'))
+        dict['file_size'] = t.get('file_size')
+        info.append(dict)
+    return info
+
+  def concat_work_file(self, concat_files):
+    file_name = ''
+
+    result = True
+    return {'comment': result, 'file_name':file_name}
 
 if __name__ == '__main__':
   obj = detdp()
@@ -1006,3 +1038,6 @@ if __name__ == '__main__':
   # b = datetime.now()
   # print type(a)
   # print type(b)
+  result = obj.get_work_file_subfile('hong.pan@wdc.com', 1)
+  for row in result:
+     print row

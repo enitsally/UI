@@ -544,16 +544,28 @@ def concat_work_file_toOne():
     concat_files = []
     for row in input_data:
         tmp = {}
-        tmp['exp_user'] = row.exp_user
-        tmp['exp_no'] = row.exp_no
-        tmp['sub_exp'] = ['*'] if row.sub_exp == '*' else [x for x in row.sub_exp.split(',')]
+        tmp['exp_user'] = row.get('exp_user')
+        tmp['exp_no'] = row.get('exp_no')
+        tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
+        if tmp['sub_exps'] != '*':
+            tmp['sub_exps'] = list(set(tmp['sub_exps']))
         concat_files.append(tmp)
 
     print concat_files
+    # result = db.concat_work_file(concat_files)
     result = {'comment': 'Good', 'file_name': 'File_name'}
     return jsonify({'status': result})
-
-
+@app.route('/get$sub$exp$detail', methods = ['GET', 'POST'])
+def get_sub_exp_detail():
+    print 'API: /get$sub$exp$detail, method: get_work_file_subfile'
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    exp_no = input_data['exp_no']
+    result = db.get_work_file_subfile(exp_user, exp_no)
+    for row in result:
+        print row
+    return jsonify({'status': result})
 
 if __name__ == "__main__":
     app.run(debug=True)

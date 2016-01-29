@@ -45,17 +45,17 @@
                   <md-datepicker ng-model="search.start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
                   <md-datepicker ng-model="search.end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
               </div>
-              <div layout = "column" flex>
+              <div layout = "row" flex>
                 <md-card>
                   <md-card-title>
                     <md-card-title-text layout="row">
                       <div flex = "20">
-                        <md-checkbox ng-model="showFlag">Show Summary</md-checkbox>
+                        <md-checkbox ng-model="showFlag" ng-change = "clearDetail()">Show Summary</md-checkbox>
                       </div>
-                      <div flex = "60" layout="row" layout-align="center center">
+                      <div ng-show = "showFlag" flex = "60" layout="row" layout-align="center center">
                         <h5><strong>User Work File Overview</stßrong></h5><div ng-show= "workFileInfo.length"><h5><strong>({{workFileInfo.length}})</strong></h5></div>
                       </div>
-                      <div flex = "20" layout="row" layout-align="center center">
+                      <div ng-show = "showFlag" flex = "20" layout="row" layout-align="center center">
                           <span flex></span>
                             Shown Period:
                             <select ng-model="ShownPeriod" ng-change="onShowPeriodChanged()" ng-init=onShowPeriodChanged() >
@@ -97,11 +97,37 @@
                           <td>{{row.comment}}</td>
                           <td>{{row.files.length}}</td>
                           <td nowrap>
-                            <button class="btn" ng-click="editRow($index, row.exp_user, row.exp_no)">
-                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Show Detail
+                            <button class="btn" ng-click="showDetailExp(row.exp_user, row.exp_no)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Detail
                             </button>
-
+                            <button class="btn" ng-click="addToExpList(row.exp_user, row.exp_no, '*')">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Add To
+                            </button>
                           </td>
+                        </tr>
+                      </table>
+                    </md-content>
+                  </md-card-content>
+                </md-card>
+                <md-card>
+                  <md-card-content ng-show = "!showFlag && subExpList.length !=0">
+                    <md-content flex layout-padding style="height: 400px" >
+                      <table class="table table-hover">
+                        <tr>
+                          <th>User Name</th>
+                          <th>Exp Number</th>
+                          <th>Sub Exp Number</th>
+                          <th>File Description</th>
+                          <th>File Name</th>
+                          <th>File Size</th>
+                        </tr>
+                        <tr ng-repeat="row in subExpList">
+                          <td>{{row.exp_user}}</td>
+                          <td>{{row.exp_no}}</td>
+                          <td>{{row.exp_sub_no}}</td>
+                          <td>{{row.file_descr}}</td>
+                          <td>{{row.file_name}}</td>
+                          <td>{{row.file_size}}</td>
                         </tr>
                       </table>
                     </md-content>
@@ -122,10 +148,12 @@
             <md-card-content ng-show = "expSelection.length">
               <md-content layout = "column"  flex layout-padding>
                 <div ng-repeat="exp in expSelection">
+                  <label><strong>Experiment User</strong></label>
+                  <input ng-model="exp.exp_user">
                     <label><strong>Experiment Number</strong></label>
                     <input ng-model="exp.exp_no">
                     <label><strong>Sub Experiments (* for All)</strong></label>
-                    <input ng-model="exp.sub_no">
+                    <input ng-model="exp.sub_exps">
                     <button class="btn" ng-click="doDelExp($index)">
                       <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
                     </button>
