@@ -141,7 +141,11 @@ angular.module('detdpdemoApp')
 
     $scope.doConcatWorkFile = function(){
       usSpinnerService.spin('concatSpinner');
-      $http.post('/concat$work$file', $scope.expSelection).then (function (response) {
+      var concatWorkList = {
+        'concat_user': $scope.currentUser ? $scope.currentUser.id : '',,
+        'expSelection': $scope.expSelection
+      }
+      $http.post('/concat$work$file', concatWorkList).then (function (response) {
         usSpinnerService.stop('concatSpinner');
         var result = response.data.status.comment;
         var file_name = response.data.status.file_name;

@@ -541,19 +541,18 @@ def concat_work_file_toOne():
     print 'API: /concat$work$file, method: concat_work_file'
     db = detdp()
     input_data = json.loads(request.data)
+    concat_user = input_data['concat_user']
+    expSelection  = input_data['expSelection']
     concat_files = []
-    for row in input_data:
+    for row in expSelection:
         tmp = {}
         tmp['exp_user'] = row.get('exp_user')
-        tmp['exp_no'] = row.get('exp_no')
+        tmp['exp_no'] = int(row.get('exp_no'))
         tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
-        if tmp['sub_exps'] != '*':
-            tmp['sub_exps'] = list(set(tmp['sub_exps']))
         concat_files.append(tmp)
 
     print concat_files
-    # result = db.concat_work_file(concat_files)
-    result = {'comment': 'Good', 'file_name': 'File_name'}
+    result = db.concat_work_file(concat_user, concat_files)
     return jsonify({'status': result})
 @app.route('/get$sub$exp$detail', methods = ['GET', 'POST'])
 def get_sub_exp_detail():
