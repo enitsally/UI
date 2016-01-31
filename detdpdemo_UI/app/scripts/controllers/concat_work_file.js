@@ -22,6 +22,7 @@ angular.module('detdpdemoApp')
       e_d: ''
     };
     $scope.expSelection = [];
+    $scope.subExpList = [];
     $scope.ShownPeriod = "3";
 
     $scope.showFlag = true;
@@ -89,7 +90,7 @@ angular.module('detdpdemoApp')
       $scope.search.e_m = '';
       $scope.search.e_d = '';
 
-    }
+    };
 
     $scope.doAddExp = function(){
       var tmp = {
@@ -99,7 +100,7 @@ angular.module('detdpdemoApp')
       };
 
       $scope.expSelection.push(tmp);
-    }
+    };
 
     $scope.addToExpList = function(exp_user, exp_no, sub_exps){
       var tmp = {
@@ -126,11 +127,10 @@ angular.module('detdpdemoApp')
       $http.post('/get$sub$exp$detail', selectedExp).then(function (response) {
         $scope.showFlag = false;
         $scope.subExpList = response.data.status;
-        console.log($scope.subExpList);
       }, function(){
 
       });
-    }
+    };
 
     $scope.doDelExp = function(index){
       if (index >=-1){
@@ -142,21 +142,24 @@ angular.module('detdpdemoApp')
     $scope.doConcatWorkFile = function(){
       usSpinnerService.spin('concatSpinner');
       var concatWorkList = {
-        'concat_user': $scope.currentUser ? $scope.currentUser.id : '',,
+        'concat_user': $scope.currentUser ? $scope.currentUser.id : '',
         'expSelection': $scope.expSelection
-      }
+      };
       $http.post('/concat$work$file', concatWorkList).then (function (response) {
         usSpinnerService.stop('concatSpinner');
         var result = response.data.status.comment;
         var file_name = response.data.status.file_name;
 
-        $scope.showSimpleToast(result);
-
         var alert =  $mdDialog.confirm()
                      .parent(angular.element(document.querySelector('#popupContainer')))
-                     .title(file_Name)
+                     .title(file_name)
                      .ok('Got it!');
-         $mdDialog.show(alert);
+         if (result === true){
+           $mdDialog.show(alert);
+         }
+         else{
+           $scope.showSimpleToast("Concat Failed.");
+         }
       }, function () {
       });
     };
