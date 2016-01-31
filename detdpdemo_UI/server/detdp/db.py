@@ -1113,6 +1113,49 @@ class detdp:
 
         return result
 
+    def delete_sub_file(self, exp_user, exp_no, del_sub_exp_list):
+        str_method = 'delete_sub_file( exp_user = {}, exp_no = {}, sub_exp_list = {} )'.format(exp_user, exp_no,
+                                                                                               del_sub_exp_list)
+        print 'call method: ', str_method
+
+        delete_file_ids = []
+        fs = gridfs.GridFS(self.db)
+
+        if len(del_sub_exp_list) == 0:
+            print "No sub experiments are selected."
+            return False
+        else:
+
+            result = self.db.work_file.aggregate([
+                {'$unwind': '$experiments'},
+                {'$match': {'exp_user': exp_user, 'experiments.exp_no': exp_no}},
+                {'$sort': {'experiments.exp_sub_files.exp_sub_no': 1}}
+            ]);
+
+            for row in result:
+                sub_file_list = row.get('experiments').get('exp_sub_files')
+                for t in sub_file_list:
+                    if t.get('exp_sub_no') in del_sub_exp_list:
+                        delete_file_ids.append(t.get('file_id'))
+            new_sub_file_list = [x for x in sub_file_list if x.get('exp_sub_no') not in del_sub_exp_list]
+
+        try:
+            for f in delete_file_ids:
+                fs.delete(f)
+
+            self.db.getCollection('work_file').update(
+                    {'exp_user': exp_user, 'experiments.exp_no': exp_no},
+                    {'$set': {'experiments.$.exp_sub_files': new_sub_file_list}}
+            )
+            mgs = True
+        except ValueError as e:
+            print 'ERROR:---', e
+            mgs = False
+        except IOError as e:
+            print 'ERROR:---', e
+            mgs = False
+        return mgs
+
 
 if __name__ == '__main__':
     obj = detdp()
