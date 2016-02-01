@@ -36,11 +36,11 @@ angular.module('detdpdemoApp')
     };
 
     $scope.file_log = [];
-
     $scope.file_descr = [];
-
     $scope.ShownPeriod = "3";
     $scope.workFileInfo = [];
+    $scope.subExpList = [];
+    $scope.delsubExpList = [];
 
     $scope.showFlag = true;
 
@@ -50,6 +50,7 @@ angular.module('detdpdemoApp')
       todayDate.getMonth(),
       todayDate.getDate() + 1
     );
+    var originalsubExpList = [];
 
     $scope.onlyLaterDate = function (date) {
       var day = date;
@@ -184,6 +185,74 @@ angular.module('detdpdemoApp')
       });
 
     };
+    $scope.doSaveWorkFile = function(){
+      if ($scope.selectedIndex === 1){
+        $http.post('/save$sub$work$file$del', $scope.delsubExpList).then(function(response){
+            var msg = response.data.status;
+            originalsubExpList = [];
+            $scope.showFlag = true;
+            $scope.subExpList = [];
+            $scope.onShowPeriodChanged();
+            $scope.showSimpleToast(msg);
+        }, function (){
+
+        });
+      }
+    };
+
+    $scope.deleteExp = function(exp_user, exp_no){
+      var selectedExp = {
+        'exp_user': exp_user,
+        'exp_no': exp_no
+      };
+
+      $http.post('/del$experiment', selectedExp).then(function (response) {
+        var msg = response.data.status;
+        $scope.onShowPeriodChanged();
+        $scope.showSimpleToast(msg);
+      }, function(){
+
+      });
+    };
+
+    $scope.doResetWorkFile = function(){
+      $scope.subExpList = originalsubExpList.splice(0);
+    };
+
+    $scope.clearDetail = function(){
+      if ($scope.showFlag === true){
+        originalsubExpList = [];
+        $scope.subExpList = [];
+      }
+    };
+
+    $scope.editSubFile = function(exp_user, exp_no){
+      var selectedExp = {
+        'exp_user': exp_user,
+        'exp_no': exp_no
+      };
+
+      $http.post('/get$sub$exp$detail', selectedExp).then(function (response) {
+        $scope.showFlag = false;
+        $scope.subExpList = response.data.status;
+        originalsubExpList = $scope.subExpList.slice(0);
+      }, function(){
+
+      });
+    };
+
+
+    $scope.delFromExp = function(index, exp_user, exp_no, sub_exp){
+      var tmp = {
+        'exp_user': exp_user,
+        'exp_no': exp_no,
+        'sub_exp': sub_exp
+      };
+      if (index >=-1){
+        $scope.subExpList.splice(index, 1);
+      }
+      $scope.delsubExpList.push(tmp);
+    }
 
     $http.get('/get$record$mode').then (function (response) {
       $scope.recordmode_list = response.data.status;

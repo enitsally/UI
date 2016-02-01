@@ -1102,14 +1102,15 @@ class detdp:
         # result = True
         try:
             final_pf = pd.concat(final)
+            print 'tet1'
             final_pf.to_csv(final_adr, index=False)
             print "write to: ", final_adr
             result = True
         except ValueError as e:
-            print 'ERROR:---', e
+            print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
             result = False
         except UnicodeEncodeError as e:
-            print 'ERROR:---', e
+            print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
 
         return result
 
@@ -1139,20 +1140,56 @@ class detdp:
                         delete_file_ids.append(t.get('file_id'))
             new_sub_file_list = [x for x in sub_file_list if x.get('exp_sub_no') not in del_sub_exp_list]
 
+        # for f in delete_file_ids:
+        #         id = ObjectId(f)
+        #         if fs.exists(id):
+        #             fs.delete(id)
+        #         else:
+        #             print "File not exit: ", f
+        #
+        # self.db.work_file.update(
+        #             {'exp_user': exp_user, 'experiments.exp_no': exp_no},
+        #             {'$set': {'experiments.$.exp_sub_files': new_sub_file_list}}
+        #     )
+        # mgs = True
+
         try:
             for f in delete_file_ids:
-                fs.delete(f)
+                f_id = ObjectId(f)
+                if fs.exists(f_id):
+                    fs.delete(f_id)
+                else:
+                    print "File not exit: ", f
 
-            self.db.getCollection('work_file').update(
+            self.db.work_file.update(
                     {'exp_user': exp_user, 'experiments.exp_no': exp_no},
                     {'$set': {'experiments.$.exp_sub_files': new_sub_file_list}}
             )
             mgs = True
         except ValueError as e:
-            print 'ERROR:---', e
+            print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
             mgs = False
-        except IOError as e:
-            print 'ERROR:---', e
+        except TypeError as e:
+            print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
+            mgs = False
+        return mgs
+
+    def delete_exp_file(self, exp_user, exp_no):
+        str_method = 'delete_exp_file( exp_user = {}, exp_no = {} )'.format(exp_user, exp_no)
+        print 'call method: ', str_method
+
+        try:
+            self.db.work_file.update(
+                {'exp_user': exp_user},
+                {'$pull': {'experiments': {'exp_no': exp_no}}},
+                multi=True
+            )
+            mgs = True
+        except ValueError as e:
+            print 'ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+            mgs = False
+        except TypeError as e:
+            print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
             mgs = False
         return mgs
 

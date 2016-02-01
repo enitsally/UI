@@ -26,6 +26,8 @@
     <span flex></span>
     <md-button class="md-primary md-raised" ng-click="doSearchWorkFile()">Search</md-button>
     <md-button class="md-primary md-raised" ng-click="doSaveWorkFile()">Save</md-button>
+    <span flex></span>
+    <md-button class="md-primary md-raised" ng-click="doResetWorkFile()">Reset</md-button>
 
       <div layout="row" layout-align="end center">
         <span flex></span>
@@ -169,7 +171,7 @@
 
                     <md-card-title-text layout="row">
                       <div flex = "20">
-                        <md-checkbox ng-model="showFlag">Show Summary</md-checkbox>
+                        <md-checkbox ng-model="showFlag" ng-change = "clearDetail()">Show Summary</md-checkbox>
                       </div>
                       <div flex = "60" layout="row" layout-align="center center">
                         <h5><strong>User Work File Overview</strong></h5><div ng-show= "workFileInfo.length"><h5><strong>({{workFileInfo.length}})</strong></h5></div>
@@ -216,13 +218,43 @@
                           <td>{{row.comment}}</td>
                           <td>{{row.files.length}}</td>
                           <td nowrap>
-                            <button class="btn" ng-click="editRow($index, row.exp_user, row.exp_no)">
+                            <button class="btn" ng-click="editSubFile(row.exp_user, row.exp_no)">
                             <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
                             </button>
-                            <button class="btn" ng-click="deleteRow($index)">
+                            <button class="btn" ng-click="deleteExp(row.exp_user, row.exp_no)">
                             <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Delete
                             </button>
 
+                          </td>
+                        </tr>
+                      </table>
+                    </md-content>
+                  </md-card-content>
+                </md-card>
+                <md-card>
+                  <md-card-content ng-show = "!showFlag && subExpList.length !=0">
+                    <md-content flex layout-padding style="height: 400px" >
+                      <table class="table table-hover">
+                        <tr>
+                          <th>User Name</th>
+                          <th>Exp Number</th>
+                          <th>Sub Exp Number</th>
+                          <th>File Description</th>
+                          <th>File Name</th>
+                          <th>File Size</th>
+                          <th>Action</th>
+                        </tr>
+                        <tr ng-repeat="row in subExpList">
+                          <td>{{row.exp_user}}</td>
+                          <td>{{row.exp_no}}</td>
+                          <td>{{row.exp_sub_no}}</td>
+                          <td>{{row.file_descr}}</td>
+                          <td>{{row.file_name}}</td>
+                          <td>{{row.file_size}}</td>
+                          <td>
+                            <button class="btn" ng-click="delFromExp($index, row.exp_user, row.exp_no, row.exp_sub_no)">
+                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Remove
+                            </button>
                           </td>
                         </tr>
                       </table>

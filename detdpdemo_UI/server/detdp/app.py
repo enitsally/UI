@@ -536,13 +536,14 @@ def search_work_file_summary():
     result = db.get_work_file_overview(exp_user, '', start_time, end_time)
     return jsonify({'status': result})
 
-@app.route('/concat$work$file', methods = ['GET', 'POST'])
+
+@app.route('/concat$work$file', methods=['GET', 'POST'])
 def concat_work_file_toOne():
     print 'API: /concat$work$file, method: concat_work_file'
     db = detdp()
     input_data = json.loads(request.data)
     concat_user = input_data['concat_user']
-    expSelection  = input_data['expSelection']
+    expSelection = input_data['expSelection']
     concat_files = []
     for row in expSelection:
         tmp = {}
@@ -554,7 +555,9 @@ def concat_work_file_toOne():
     print concat_files
     result = db.concat_work_file(concat_user, concat_files)
     return jsonify({'status': result})
-@app.route('/get$sub$exp$detail', methods = ['GET', 'POST'])
+
+
+@app.route('/get$sub$exp$detail', methods=['GET', 'POST'])
 def get_sub_exp_detail():
     print 'API: /get$sub$exp$detail, method: get_work_file_subfile'
     db = detdp()
@@ -562,9 +565,60 @@ def get_sub_exp_detail():
     exp_user = input_data['exp_user']
     exp_no = input_data['exp_no']
     result = db.get_work_file_subfile(exp_user, exp_no)
-    for row in result:
-        print row
     return jsonify({'status': result})
+
+
+@app.route('/save$sub$work$file$del', methods=['GET', 'POST'])
+def save_sub_work_file_del():
+    print 'API: /save$sub$work$file$del, method: delete_sub_file'
+    db = detdp()
+    del_key = []
+    del_list = []
+    input_data = json.loads(request.data)
+    for row in input_data:
+        tmp = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no')}
+        if tmp not in del_key:
+            del_key.append(tmp)
+            del_sub_exp_list = [row.get('sub_exp')]
+            oneList = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no'),
+                       'del_sub_exp_list': del_sub_exp_list}
+            del_list.append(oneList)
+        else:
+            for one in del_list:
+                if one.get('exp_user') == row.get('exp_user') and one.get('exp_no') == row.get('exp_no'):
+                    one.get('del_sub_exp_list').append(row.get('sub_exp'))
+                    break;
+
+    result = True
+    for t in del_list:
+        print 'Delete --- exp_user : {}, exp_no : {}, del_sub_exp_list : {}'.format(t.get('exp_user'), t.get('exp_no'),
+                                                                                    t.get('del_sub_exp_list'))
+        result = result and db.delete_sub_file(t.get('exp_user'), t.get('exp_no'), t.get('del_sub_exp_list'))
+
+    if result:
+        msg = 'DELETE SUB FILES SUCCEED.'
+    else:
+        msg = 'DELETE SUB FILES FAILED.'
+
+    return jsonify({'status': msg})
+
+
+@app.route('/del$experiment', methods=['GET', 'POST'])
+def del_experiment():
+    print 'API: /del$experiment, method: delete_exp_file'
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    exp_no = int(input_data['exp_no'])
+
+    result = db.delete_exp_file(exp_user, exp_no)
+    if result:
+        msg = 'DELETE EXPERIMENT SUCCEED.'
+    else:
+        msg = 'DELETE EXPERIMENT FAILED.'
+
+    return jsonify({'status': msg})
+
 
 if __name__ == "__main__":
     app.run(debug=True)
