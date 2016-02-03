@@ -26,9 +26,6 @@
     <span flex></span>
     <md-button class="md-primary md-raised" ng-click="doSearchWorkFile()">Search</md-button>
     <md-button class="md-primary md-raised" ng-click="doSaveWorkFile()">Save</md-button>
-    <span flex></span>
-    <md-button class="md-primary md-raised" ng-click="doResetWorkFile()">Reset</md-button>
-
       <div layout="row" layout-align="end center">
         <span flex></span>
         <md-button ng-click="doResetInput()">Reset</md-button>
@@ -231,8 +228,11 @@
                     </md-content>
                   </md-card-content>
                 </md-card>
-                <md-card>
-                  <md-card-content ng-show = "!showFlag && subExpList.length !=0">
+                <md-card ng-show = "!showFlag && subExpList.length !=0">
+                  <md-card-title layout="row" layout-align="center center">
+                    <h5><strong>Detail Sub Experiements List</strong></h5>
+                  </md-card-title>
+                  <md-card-content>
                     <md-content flex layout-padding style="height: 400px" >
                       <table class="table table-hover">
                         <tr>
@@ -259,6 +259,73 @@
                         </tr>
                       </table>
                     </md-content>
+                  </md-card-content>
+                </md-card>
+                <md-card ng-show = "!showFlag && subExpList.length !=0">
+                  <md-card-title layout="row" layout-align="center start">
+                    <h5><strong>Add New Sub Experiment Files</strong></h5>
+                  </md-card-title>
+                  <md-card-content layout = "row" layout-align="center start">
+                    <div class="col-md-3" flex>
+                        <h3>Select Multiple files</h3>
+                        <input type="file" nv-file-select="" uploader="add_uploader" multiple /><br/>
+                    </div>
+                    <div class="col-md-9" style="margin-bottom: 80px">
+                      <h3>Upload queue</h3>
+                      <p>Queue length: {{ add_uploader.queue.length }}</p>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th width="60%">Name</th>
+                            <th ng-show="add_uploader.isHTML5">Size</th>
+                            <th ng-show="add_uploader.isHTML5">Progress</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="item in add_uploader.queue">
+                            <td><strong>{{ item.file.name }}</strong></td>
+                            <td ng-show="add_uploader.isHTML5" nowrap>{{ item.file.size/1024/1024|number:2 }} MB</td>
+                            <td ng-show="add_uploader.isHTML5">
+                              <div class="progress" style="margin-bottom: 0;">
+                                <div class="progress-bar" role="progressbar" ng-style="{ 'width': item.progress + '%' }"></div>
+                              </div>
+                            </td>
+                            <td class="text-center">
+                              <span ng-show="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                              <span ng-show="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                            </td>
+                            <td nowrap>
+                              <!-- <button type="button" class="btn btn-success btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+                                <span class="glyphicon glyphicon-upload"></span> Upload
+                              </button> -->
+                              <button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+                                <span class="glyphicon glyphicon-trash"></span> Remove
+                              </button>
+                              <!-- <md-input-container> -->
+                                <label>Description</label>
+                                <input ng-model="add_file_descr[$index]">
+                              <!-- </md-input-container> -->
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div>
+                        <div>
+                          Queue progress:
+                          <div class="progress" style="">
+                            <div class="progress-bar" role="progressbar" ng-style="{ 'width': add_uploader.progress + '%' }"></div>
+                          </div>
+                        </div>
+                        <button type="button" class="btn btn-success btn-s" ng-click="add_uploader.uploadAll()" ng-disabled="!add_uploader.getNotUploadedItems().length">
+                          <span class="glyphicon glyphicon-upload"></span> Add all
+                        </button>
+                        <button type="button" class="btn btn-danger btn-s" ng-click="add_clearAll()" ng-disabled="!add_uploader.queue.length">
+                          <span class="glyphicon glyphicon-trash"></span> Remove all
+                        </button>
+                      </div>
+                    </div>
                   </md-card-content>
                 </md-card>
               </div>

@@ -23,6 +23,12 @@ angular.module('detdpdemoApp')
       files: []
     };
 
+    $scope.add_exp_files = {
+      exp_user : '',
+      exp_no: '',
+      files: []
+    };
+
     $scope.search = {
       exp_user : $scope.currentUser ? $scope.currentUser.id : '',
       start_date:'',
@@ -37,6 +43,8 @@ angular.module('detdpdemoApp')
 
     $scope.file_log = [];
     $scope.file_descr = [];
+    $scope.add_file_log = [];
+    $scope.add_file_descr = [];
     $scope.ShownPeriod = "3";
     $scope.workFileInfo = [];
     $scope.subExpList = [];
@@ -63,8 +71,17 @@ angular.module('detdpdemoApp')
       queueLimit: 20
     });
 
+    $scope.add_uploader = new FileUploader({
+      url:'/upload$work$file',
+      queueLimit: 20
+    });
+
     $scope.uploader.onBeforeUploadItem = function(item) {
       item.formData.push({descr: $scope.file_descr[item.index-1]});
+    };
+
+    $scope.add_uploader.onBeforeUploadItem = function(item) {
+      item.formData.push({descr: $scope.add_file_descr[item.index-1]});
     };
 
     $scope.uploader.onSuccessItem  = function(item, response){
@@ -75,7 +92,17 @@ angular.module('detdpdemoApp')
         file_descr : item.formData[0].descr
       };
       $scope.file_log.push(tmp);
-    }
+    };
+
+    $scope.add_uploader.onSuccessItem  = function(item, response){
+      var tmp  = {
+        file_name: response.status.file_name,
+        file_id : response.status.file_id,
+        file_size : (parseFloat(item.file.size / 1024.00 / 1024.00).toFixed(2)) + 'MB',
+        file_descr : item.formData[0].descr
+      };
+      $scope.add_file_log.push(tmp);
+    };
 
     $scope.uploader.onCompleteAll = function (item, response, status, headers){
       var confirm = $mdDialog.confirm()
@@ -110,16 +137,63 @@ angular.module('detdpdemoApp')
       });
     };
 
+    $scope.add_uploader.onCompleteAll = function (item, response, status, headers){
+      var confirm = $mdDialog.confirm()
+          .title('Would you like to confirm adding files to experiment?')
+          .ariaLabel('Confirm Dialog')
+          .ok('Confirm')
+          .cancel('Cancel');
+      $mdDialog.show(confirm).then(function() {
+        //Confirm Upload
+        $scope.add_exp_files.files = [];
+        for (var i = 0; i < $scope.add_file_log.length; i ++){
+          $scope.add_exp_files.files.push($scope.add_file_log[i]);
+        }
+
+        $http.post('/confirm$add$work$file', $scope.add_exp_files).then (function (response) {
+          var msg = response.data.status;
+          $scope.showSimpleToast(msg);
+          $scope.doResetInput();
+
+        }, function () {
+        });
+        $scope.showFlag = true;
+        $scope.onShowPeriodChanged();
+
+      }, function() {
+        //Cancal Upload
+
+        $http.post('/cancel$work$file$upload', $scope.add_file_log).then (function (response) {
+          var msg = response.data.status;
+          $scope.showSimpleToast(msg);
+        }, function () {
+        });
+      });
+    };
+
     $scope.clearAll = function(){
       $scope.uploader.clearQueue();
       $scope.file_descr = [];
       $scope.file_log = [];
-    }
+    };
+
+    $scope.add_clearAll = function(){
+      $scope.add_uploader.clearQueue();
+      $scope.add_file_descr = [];
+      $scope.add_file_log = [];
+    };
 
     $scope.doResetInput = function(){
+
+      $scope.showFlag = true;
+      $scope.subExpList = [];
       $scope.uploader.clearQueue();
       $scope.file_descr = [];
       $scope.file_log = [];
+
+      $scope.add_uploader.clearQueue();
+      $scope.add_file_descr = [];
+      $scope.add_file_log = [];
 
       $scope.exp_files.program = '';
       $scope.exp_files.record_mode = '';
@@ -130,6 +204,10 @@ angular.module('detdpdemoApp')
       $scope.exp_files.comment = '';
       $scope.exp_files.files = [];
 
+      $scope.add_exp_files.exp_user = '';
+      $scope.add_exp_files.exp_no = '';
+      $scope.add_exp_files.files = [];
+
       $scope.search.start_date = '';
       $scope.search.end_date = '';
       $scope.search.s_y = '';
@@ -139,11 +217,11 @@ angular.module('detdpdemoApp')
       $scope.search.e_m = '';
       $scope.search.e_d = '';
 
-    }
+    };
 
     $scope.setIndex = function (index){
       $scope.selectedIndex = index;
-    }
+    };
 
     $scope.onShowPeriodChanged = function (){
       $scope.search.start_date = '';
@@ -231,6 +309,8 @@ angular.module('detdpdemoApp')
         'exp_user': exp_user,
         'exp_no': exp_no
       };
+      $scope.add_exp_files.exp_user = exp_user;
+      $scope.add_exp_files.exp_no = exp_no;
 
       $http.post('/get$sub$exp$detail', selectedExp).then(function (response) {
         $scope.showFlag = false;
