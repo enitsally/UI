@@ -52,7 +52,7 @@
           </md-card-title>
 
           <md-card-content>
-            <md-chips ng-model="selectedStdCols" md-autocomplete-snap="" md-transform-chip="transformChip($chip)" md-require-match="true">
+            <md-chips ng-model="selectedStdCols" md-autocomplete-snap="" md-transform-chip="transformChip($chip)" md-require-match="false">
               <md-autocomplete md-selected-item="selectedItem" md-search-text="searchText" md-items="item in querySearch(searchText)" md-item-text="item" placeholder="Search for a column name">
                 <span md-highlight-text="searchText">{{item}}</span>
               </md-autocomplete>

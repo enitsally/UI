@@ -90,6 +90,9 @@ angular.module('detdpdemoApp')
       $scope.search.e_m = '';
       $scope.search.e_d = '';
 
+      $scope.subExpList = [];
+      $scope.showFlag = true;
+
     };
 
     $scope.doAddExp = function(){

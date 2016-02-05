@@ -18,7 +18,7 @@ angular.module('detdpdemoApp')
     $scope.showFlag = false;
     $scope.selectedItem = null;
     $scope.searchText = null;
-    
+
     var comment;
     var sys_std_list=[];
 
@@ -37,8 +37,7 @@ angular.module('detdpdemoApp')
       $scope.fulllist = response.data.status.full_cols;
       sys_std_list = response.data.status.standard_cols;
 	  $scope.selectedStdCols = sys_std_list.slice(0);
-	  
-      
+
     }, function () {
     });
 
@@ -70,13 +69,11 @@ angular.module('detdpdemoApp')
       if (angular.isObject(chip)) {
         return chip;
       }
-      // Otherwise, create a new one
-      // return { name: chip, type: 'new' }
+    // Otherwise, create a new one
+    // return { name: chip, type: 'new' }
     };
 
-    /**
-     * Search for vegetables.
-     */
+
     $scope.querySearch = function (query) {
       var results = query ?   $scope.fulllist.filter(createFilterFor(query)) : [];
       return results;

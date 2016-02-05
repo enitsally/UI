@@ -22,7 +22,7 @@
 <div layout = "row">
   <div flex="5"></div>
   <form flex = "90" layout = "row">
-    <span class="md-headline">Work File Upload</span>
+    <span class="md-headline">Concat Work File</span>
     <span flex></span>
     <md-button class="md-primary md-raised" ng-click="doSearchWorkFile()">Search</md-button>
     <md-button class="md-primary md-raised" ng-click="doConcatWorkFile()">Concat</md-button>
@@ -45,7 +45,7 @@
                   <md-datepicker ng-model="search.start_date" md-max-date="maxDate" md-placeholder="Enter Start date" ></md-datepicker>
                   <md-datepicker ng-model="search.end_date" md-date-filter="onlyLaterDate" md-max-date="maxDate" md-placeholder="Enter End date"></md-datepicker>
               </div>
-              <div layout = "row" flex>
+              <div layout = "column" flex>
                 <md-card>
                   <md-card-title>
                     <md-card-title-text layout="row">

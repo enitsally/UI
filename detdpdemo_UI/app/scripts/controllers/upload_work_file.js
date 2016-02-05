@@ -279,18 +279,31 @@ angular.module('detdpdemoApp')
     };
 
     $scope.deleteExp = function(exp_user, exp_no){
-      var selectedExp = {
-        'exp_user': exp_user,
-        'exp_no': exp_no
-      };
 
-      $http.post('/del$experiment', selectedExp).then(function (response) {
-        var msg = response.data.status;
-        $scope.onShowPeriodChanged();
-        $scope.showSimpleToast(msg);
-      }, function(){
+      var confirm = $mdDialog.confirm()
+          .title('Are you sure to delete the entire experiment?')
+          .ariaLabel('Confirm Dialog')
+          .ok('Confirm')
+          .cancel('Cancel');
+      $mdDialog.show(confirm).then(function() {
+        //Confirm Upload
+        var selectedExp = {
+          'exp_user': exp_user,
+          'exp_no': exp_no
+        };
 
+        $http.post('/del$experiment', selectedExp).then(function (response) {
+          var msg = response.data.status;
+          $scope.onShowPeriodChanged();
+          $scope.showSimpleToast(msg);
+        }, function(){
+
+        });
+
+      }, function() {
+        //Cancal Upload
       });
+
     };
 
     $scope.doResetWorkFile = function(){
