@@ -1236,7 +1236,7 @@ class detdp:
 
     except TypeError as e:
       print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      
+
     finally:
       return mgs
 
