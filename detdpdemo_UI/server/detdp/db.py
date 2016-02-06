@@ -1073,6 +1073,7 @@ class detdp:
   def concat_csv(self, file_name, dict):
     path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
     final_adr = '{}/{}.csv'.format(path, file_name)
+    mgs = False
     fs = gridfs.GridFS(self.db)
     final = []
     for d in dict:
@@ -1105,20 +1106,22 @@ class detdp:
       print 'tet1'
       final_pf.to_csv(final_adr, index=False)
       print "write to: ", final_adr
-      result = True
+      mgs = True
+
     except ValueError as e:
       print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      result = False
+
     except UnicodeEncodeError as e:
       print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
 
-    return result
+    finally:
+      return mgs
 
   def delete_sub_file(self, exp_user, exp_no, del_sub_exp_list):
     str_method = 'delete_sub_file( exp_user = {}, exp_no = {}, sub_exp_list = {} )'.format(exp_user, exp_no,
                                                                                            del_sub_exp_list)
     print 'call method: ', str_method
-
+    mgs = False
     delete_file_ids = []
     fs = gridfs.GridFS(self.db)
 
@@ -1166,38 +1169,45 @@ class detdp:
         {'$set': {'experiments.$.exp_sub_files': new_sub_file_list}}
       )
       mgs = True
+
     except ValueError as e:
       print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
-      mgs = False
+
     except TypeError as e:
       print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
-      mgs = False
-    return mgs
+
+    finally:
+      return mgs
 
   def delete_exp_file(self, exp_user, exp_no):
     str_method = 'delete_exp_file( exp_user = {}, exp_no = {} )'.format(exp_user, exp_no)
     print 'call method: ', str_method
-
+    mgs = False
     try:
       self.db.work_file.update(
         {'exp_user': exp_user},
         {'$pull': {'experiments': {'exp_no': exp_no}}},
         multi=True
       )
+
       mgs = True
+
     except ValueError as e:
       print 'ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      mgs = False
     except TypeError as e:
       print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      mgs = False
-    return mgs
+
+    finally:
+      return mgs
 
   def add_sub_file(self, exp_user, exp_no, file_list):
+    str_method = 'add_sub_file( exp_user = {}, exp_no = {} ,file_list = {})'.format(exp_user, exp_no, file_list)
+    print 'call method: ', str_method
 
+    mgs = False
     tmp = self.db.work_file.find_one({'exp_user': exp_user, 'experiments.exp_no': exp_no},
-                                 {'_id': 0, 'experiments.$': 1}
-                                 )
+                                     {'_id': 0, 'experiments.$': 1}
+                                     )
     if tmp is not None:
       last_sub_exp_no = tmp.get('experiments')[0].get('last_sub_exp_no')
     else:
@@ -1220,13 +1230,15 @@ class detdp:
         {'$set': {'experiments.$.last_sub_exp_no': new_last_sub_exp_no}}
       )
       mgs = True
+
     except ValueError as e:
       print 'ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      mgs = False
+
     except TypeError as e:
       print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
-      mgs = False
-    return mgs
+      
+    finally:
+      return mgs
 
 
 if __name__ == '__main__':

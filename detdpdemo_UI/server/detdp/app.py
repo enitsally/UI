@@ -546,11 +546,16 @@ def concat_work_file_toOne():
   expSelection = input_data['expSelection']
   concat_files = []
   for row in expSelection:
-    tmp = {}
-    tmp['exp_user'] = row.get('exp_user')
-    tmp['exp_no'] = int(row.get('exp_no'))
-    tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
-    concat_files.append(tmp)
+    if row.get('exp_user') == '' or row.get('exp_no') == '' or row.get('sub_exps') == '' or row.get(
+      'exp_user') is None or row.get('exp_no') is None or row.get('sub_exps') is None:
+      result = []
+      break
+    else:
+      tmp = {}
+      tmp['exp_user'] = row.get('exp_user')
+      tmp['exp_no'] = int(row.get('exp_no'))
+      tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
+      concat_files.append(tmp)
 
   print concat_files
   result = db.concat_work_file(concat_user, concat_files)

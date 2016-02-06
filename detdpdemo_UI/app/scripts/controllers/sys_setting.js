@@ -41,7 +41,9 @@ angular.module('detdpdemoApp')
     }, function () {
     });
 
-
+    $scope.setIndex = function (index){
+      $scope.selectedIndex = index;
+    };
 
     $scope.doSaveToDB = function(){
       $scope.admin_setup.std_cols = $scope.selectedStdCols;
