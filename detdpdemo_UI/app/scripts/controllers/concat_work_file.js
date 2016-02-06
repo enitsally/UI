@@ -144,27 +144,40 @@ angular.module('detdpdemoApp')
 
     $scope.doConcatWorkFile = function(){
       usSpinnerService.spin('concatSpinner');
-      var concatWorkList = {
-        'concat_user': $scope.currentUser ? $scope.currentUser.id : '',
-        'expSelection': $scope.expSelection
-      };
-      $http.post('/concat$work$file', concatWorkList).then (function (response) {
-        usSpinnerService.stop('concatSpinner');
-        var result = response.data.status.comment;
-        var file_name = response.data.status.file_name;
+      if ($scope.expSelection.length === 0){
+          $mdDialog.show(
+                      $mdDialog.alert()
+                        .parent(angular.element(document.querySelector('#popupContainer')))
+                        .title('Concat Conditions are Empty, Please enter and try again.')
+                        .ok('Got it!')
+                          );
+      }
+      else{
 
-        var alert =  $mdDialog.confirm()
-                     .parent(angular.element(document.querySelector('#popupContainer')))
-                     .title(file_name)
-                     .ok('Got it!');
-         if (result === true){
-           $mdDialog.show(alert);
-         }
-         else{
-           $scope.showSimpleToast("Concat Failed.");
-         }
-      }, function () {
-      });
+        var concatWorkList = {
+          'concat_user': $scope.currentUser ? $scope.currentUser.id : '',
+          'expSelection': $scope.expSelection
+        };
+
+        $http.post('/concat$work$file', concatWorkList).then (function (response) {
+          usSpinnerService.stop('concatSpinner');
+          var result = response.data.status.comment;
+          var file_name = response.data.status.file_name;
+
+          var alert =  $mdDialog.confirm()
+                       .parent(angular.element(document.querySelector('#popupContainer')))
+                       .title(file_name)
+                       .ok('Got it!');
+           if (result === true){
+             $mdDialog.show(alert);
+           }
+           else{
+             $scope.showSimpleToast("Concat Failed.");
+           }
+        }, function () {
+        });
+      }
+
     };
 
     $scope.showSimpleToast = function(showmgs) {

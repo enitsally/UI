@@ -42,16 +42,12 @@
       <span class="md-headline">Search and Build User's Columns Setup</span>
       <span flex></span>
       <md-button class="md-primary md-raised" ng-click="doSaveToDB()">Save</md-button>
-      <md-card>
-        <div layout="row" layout-align="end center">
-          <span flex></span>
-          <md-checkbox ng-model="StdFlag">Standard</md-checkbox>
-          <md-checkbox ng-model="CusFlag">customized</md-checkbox>
-          <md-button class="md-primary md-raised" ng-click="doGetSysStd()"><strong>Get Sys.Standard</strong></md-button>
-          <span flex></span>
-          <md-button ng-click="doResetToUserProf()">Reset</md-button>
-        </div>
-      <md-card>
+      <div layout="row" layout-align="end center">
+        <span flex></span>
+        <md-button class="md-primary md-raised" ng-click="doGetSysStd()"><strong>Get Sys.Standard</strong></md-button>
+        <span flex></span>
+        <md-button ng-click="doResetToUserProf()">Reset</md-button>
+      </div>
     </form>
   <div flex="5"></div>
 </div>
@@ -60,7 +56,7 @@
   <div flex="5"></div>
   <form flex="90">
     <md-tabs md-dynamic-height md-border-bottom >
-      <md-tab label="Standard Setup ({{selectedStdCols.length}})">
+      <md-tab label="Standard Setup ({{selectedStdCols.length}})"  md-on-select = "setIndex(0)">
         <md-card>
           <md-card-title>
           </md-card-title>
@@ -79,7 +75,7 @@
           </md-card-content>
         </md-card>
       </md-tab>
-      <md-tab label="Customized Setup ({{selectedCusCols.length}})">
+      <md-tab label="Customized Setup ({{selectedCusCols.length}})"  md-on-select = "setIndex(1)">
         <md-card>
           <md-card-title>
           </md-card-title>

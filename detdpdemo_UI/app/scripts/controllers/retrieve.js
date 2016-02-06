@@ -45,7 +45,7 @@ angular.module('detdpdemoApp')
     $scope.currentParam = '';
     $scope.paramsList = [];
     $scope.paramsSelection=[];
-
+    $scope.ShownPeriod = "3";
 
     var todayDate = new Date();
     $scope.maxDate = new Date(
@@ -57,6 +57,10 @@ angular.module('detdpdemoApp')
     $scope.onlyLaterDate = function (date) {
       var day = date;
       return day > $scope.search.doe_start_date;
+    };
+
+    $scope.setIndex = function (index){
+      $scope.selectedIndex = index;
     };
 
     $scope.doAddParam = function (){
@@ -88,39 +92,44 @@ angular.module('detdpdemoApp')
     });
 
     $scope.doResetSelection = function () {
-      $scope.search = {
-        doe_name: '',
-        doe_descr: '',
-        doe_comment: '',
-        doe_program: '',
-        doe_record_mode: '',
-        doe_read_only: '',
-        doe_start_date: '',
-        doe_end_date: '',
-        s_y: '',
-        s_m: '',
-        s_d: '',
-        e_y: '',
-        e_m: '',
-        e_d: ''
-      };
-      $scope.doeSearchInfo = [];
+      if ($scope.selectedIndex === 0)
+      {
+        $scope.search = {
+          doe_name: '',
+          doe_descr: '',
+          doe_comment: '',
+          doe_program: '',
+          doe_record_mode: '',
+          doe_read_only: '',
+          doe_start_date: '',
+          doe_end_date: '',
+          s_y: '',
+          s_m: '',
+          s_d: '',
+          e_y: '',
+          e_m: '',
+          e_d: ''
+        };
+        $scope.onShowPeriodChanged();
+      }
+      if ($scope.selectedIndex === 1){
+        $scope.criteria = {
+          fullCol : false,
+          cusCol : false,
+          stdCol: true,
+          record_mode: '',
+          program : '',
+          readonly : true,
+          fulldevice : false,
+          doe_no: '',
+          design_no : '',
+          email : '',
+          user_name: $scope.currentUser ? $scope.currentUser.id : ''
+        };
+        $scope.currentParam = '';
+        $scope.paramsSelection = [];
+      }
 
-      $scope.criteria = {
-        fullCol : false,
-        cusCol : false,
-        stdCol: true,
-        record_mode: '',
-        program : '',
-        readonly : true,
-        fulldevice : false,
-        doe_no: '',
-        design_no : '',
-        email : '',
-        user_name: $scope.currentUser ? $scope.currentUser.id : ''
-      };
-      $scope.currentParam = '';
-      $scope.paramsSelection = [];
     };
 
     $scope.doSearchSummary = function () {
@@ -140,6 +149,69 @@ angular.module('detdpdemoApp')
         $scope.doeSearchInfo = response.data.status;
       }, function () {
       });
+    };
+
+    $scope.onShowPeriodChanged = function (){
+      var showPeriod = {
+        doe_name: '',
+        doe_descr: '',
+        doe_comment: '',
+        doe_program: '',
+        doe_record_mode: '',
+        doe_read_only: '',
+        doe_start_date: '',
+        doe_end_date: '',
+        s_y: '',
+        s_m: '',
+        s_d: '',
+        e_y: '',
+        e_m: '',
+        e_d: ''
+      };
+      if ($scope.ShownPeriod === "3"){
+          var threeMonthAgo = new Date();
+          threeMonthAgo.setMonth(threeMonthAgo.getMonth()-3);
+
+          showPeriod.s_y = threeMonthAgo.getFullYear();
+          showPeriod.s_m = threeMonthAgo.getMonth() + 1;
+          showPeriod.s_d = threeMonthAgo.getDate();
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+
+      }
+      else if ($scope.ShownPeriod === "6"){
+          var sixMonthAgo = new Date();
+          sixMonthAgo.setMonth(sixMonthAgo.getMonth()-6);
+
+          showPeriod.s_y = sixMonthAgo.getFullYear();
+          showPeriod.s_m = sixMonthAgo.getMonth() + 1;
+          showPeriod.s_d = sixMonthAgo.getDate();
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+      }
+      else if ($scope.ShownPeriod === "1"){
+          var oneYearAgo = new Date();
+          oneYearAgo.setYear(oneYearAgo.getFullYear()-1);
+
+          showPeriod.s_y = oneYearAgo.getFullYear();
+          showPeriod.s_m = oneYearAgo.getMonth() + 1;
+          showPeriod.s_d = oneYearAgo.getDate();
+
+
+          showPeriod.e_y = todayDate.getFullYear();
+          showPeriod.e_m = todayDate.getMonth() + 1;
+          showPeriod.e_d = todayDate.getDate();
+      }
+
+      $http.post('/get$search$summary', showPeriod).then (function (response) {
+        $scope.doeSearchInfo = response.data.status;
+      }, function () {
+      });
+
     };
 
     $scope.doRetrieveFile = function (){

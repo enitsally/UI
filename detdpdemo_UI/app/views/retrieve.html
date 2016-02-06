@@ -38,7 +38,7 @@
   <div flex="5"></div>
   <form flex="90">
     <md-tabs md-dynamic-height md-border-bottom >
-      <md-tab label="File Summary">
+      <md-tab label="File Summary" md-on-select = "setIndex(0)">
         <div layout = "row">
           <md-card flex = "20">
             <md-card-content>
@@ -79,10 +79,24 @@
             </md-card-content>
           </md-card>
           <md-card flex = "70">
-            <md-card-title layout="row">
-              <md-card-title-text layout = "row" layout-align="center center">
-                <div><h5><strong>Data File Summary</strong></h5></div>
-                <div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
+            <md-card-title>
+              <md-card-title-text>
+                <div layout = "row">
+                  <div flex = "80" layout = "row" layout-align="center center">
+                    <div><h5><strong>Data File Summary</strong></h5></div>
+                    <div ng-show= "doeSearchInfo.length"><h5><strong>({{doeSearchInfo.length}})</strong></h5></div>
+                  </div>
+                  <div flex = "20" layout="row" layout-align="center end">
+                      <span flex></span>
+                        Shown Period:
+                        <select ng-model="ShownPeriod" ng-change="onShowPeriodChanged()" ng-init=onShowPeriodChanged() >
+                            <option value="3">Last 3 Months</option>
+                            <option value="6">Last 6 Months</option>
+                            <option value="1">Last 1 Year</option>
+                            <option value="A">All</option>
+                        </select>
+                  </div>
+                </div>
               </md-card-title-text>
             </md-card-title>
             <md-card-content>
@@ -112,7 +126,7 @@
           </md-card>
         </div>
       </md-tab>
-      <md-tab label="File Retrieve" >
+      <md-tab label="File Retrieve" md-on-select = "setIndex(1)" >
         <md-card>
           <md-card-title>
             <md-checkbox ng-model="showFlag">
