@@ -9,6 +9,9 @@
  */
 
 angular.module('detdpdemoApp')
-  .controller('helpCtrl', function ($scope, $http, $mdToast) {
-
+  .controller('helpCtrl', function ($scope, $location, $anchorScroll) {
+    $scope.scrollTo = function(id) {
+          $location.hash(id);
+          $anchorScroll();
+       }
   });

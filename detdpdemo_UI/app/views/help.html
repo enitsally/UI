@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <style>.markdown-preview:not([data-use-github-style]) { padding: 2em; font-size: 1.2em; color: rgb(171, 178, 191); overflow: auto; background-color: rgb(40, 44, 52); }
 .markdown-preview:not([data-use-github-style]) > :first-child { margin-top: 0px; }
 .markdown-preview:not([data-use-github-style]) h1, .markdown-preview:not([data-use-github-style]) h2, .markdown-preview:not([data-use-github-style]) h3, .markdown-preview:not([data-use-github-style]) h4, .markdown-preview:not([data-use-github-style]) h5, .markdown-preview:not([data-use-github-style]) h6 { line-height: 1.2; margin-top: 1.5em; margin-bottom: 0.5em; color: rgb(255, 255, 255); }
@@ -453,7 +452,7 @@ pre.editor-colors .fold-marker:after,
   color: #d19a66;
 }
 </style>
-  <div class='markdown-preview' layout = "column">
+<div class='markdown-preview' layout = "column">
   <div flex = "5"><div>
   <div>
     <h1 id="det-data-process-application-user-manual">DET Data Process Application - User Manual</h1>
@@ -474,7 +473,7 @@ pre.editor-colors .fold-marker:after,
     </ul>
 
     <h2 id="work-file-upload-page">Work File Upload Page</h2>
-    <h4 id="tab-file-upload">Tab - File Upload</h6>
+    <h4 id="tab-file-upload">Tab - File Upload</h4>
       <p>User could upload experiment work files to the system. One experiment may have multiple sub work files to upload. System assign <code>Experiment ID</code> and <code>Sub File ID</code> automatically. <code>Experiment ID</code> and <code>Sub File ID</code> are immutable (Once created, no possibility to change). Input attributes for the one experiment are:</p>
       <ul>
         <li><code>Record Mode</code> : Selection required.</li>
@@ -488,227 +487,243 @@ pre.editor-colors .fold-marker:after,
       </ul>
       <p>Use <code>Choose Files</code> button to add new files to the experiments, multiple files selection are supported. Enter description for each file or remove files from the uploading queue.
 Upload all the selected files using <code>Upload all</code> button or clear all using <code>Remove all</code> button.</p>
-<p>After uploading, <code>Confirm</code> the action or <code>Cancel</code> it from the pop up dialog window.
+      <p>After uploading, <code>Confirm</code> the action or <code>Cancel</code> it from the pop up dialog window.
 User only upload experiments files based on user names.</p>
-<h4 id="tab-upload-summary">Tab - Upload Summary</h6>
-<p>User could overview, search and modify its own uploaded experiment files here. Default show period is last three months.</p>
-<ul>
-<li><code>Start Date</code> : Search input for start date.</li>
-<li><code>End Date</code> : Search input for end date.</li>
-<li><code>Search</code> : Search button for filter shown experiments by selected data scope.</li>
-<li><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</li>
-<li><code>Show Summary</code> : Show or hide the user work file overview.</li>
-</ul>
-<p>For each file, using <code>Delete</code> button on the Action column to remove the entire experiment, including the sub work files. Caution dialog will be show to let user <code>Confirm</code> or <code>Cancel</code> the remove experiment action. Using <code>Edit</code> button to see the sub work files that attached to the selected experiment, as well as remove and add files into the current experiment.</p>
-<ul>
-<li><code>Remove</code> : Files have to be removed one by one, using the <code>Save</code> button to save the action to database, otherwise, it is only actions in session, using <code>Reset</code> button to go back to original sub work file set.</li>
-<li><code>Add</code> : Similar actions with adding new sub work files to new experiment, see section <a href="#tab-upload-summary">Tab-File Upload</a></li>
-</ul>
-<p>Use the <code>Reset</code> button or <code>Show Summary</code> check box to go back to overview.</p>
-<h2 id="work-file-concat-page">Work File Concat Page</h2>
-<p>Page show all the experiments and its sub work files for all the users. It provide the same search function in the upload page, section <a href="#tab-upload-summary">Upload Summary</a>.</p>
-<p>For each experiments, using <code>Detail</code> button to see the list of sub work files or <code>Add to</code> button to add the entire experiment, including the sub work files into the concat list on the bottom portion. by default, the character <strong>&#39;*&#39;</strong> to represent selecting all sub work files.</p>
-<p>For concat work files, user could add multiple experiment into the concat list using <code>Add Experiment</code> button to add one line item on the bottom portion, or delete one from the list by <code>Delete</code> button.
+
+    <h4 id="tab-upload-summary">Tab - Upload Summary</h4>
+      <p>User could overview, search and modify its own uploaded experiment files here. Default show period is last three months.</p>
+      <ul>
+        <li><code>Start Date</code> : Search input for start date.</li>
+        <li><code>End Date</code> : Search input for end date.</li>
+        <li><code>Search</code> : Search button for filter shown experiments by selected data scope.</li>
+        <li><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</li>
+        <li><code>Show Summary</code> : Show or hide the user work file overview.</li>
+      </ul>
+      <p>For each file, using <code>Delete</code> button on the Action column to remove the entire experiment, including the sub work files. Caution dialog will be show to let user <code>Confirm</code> or <code>Cancel</code> the remove experiment action. Using <code>Edit</code> button to see the sub work files that attached to the selected experiment, as well as remove and add files into the current experiment.</p>
+      <ul>
+        <li><code>Remove</code> : Files have to be removed one by one, using the <code>Save</code> button to save the action to database, otherwise, it is only actions in session, using <code>Reset</code> button to go back to original sub work file set.</li>
+        <li><code>Add</code> : Similar actions with adding new sub work files to new experiment, see section <a ng-click="scrollTo('tab-upload-summary')">Tab-File Upload</a></li>
+      </ul>
+      <p>Use the <code>Reset</code> button or <code>Show Summary</code> check box to go back to overview.</p>
+
+    <h2 id="work-file-concat-page">Work File Concat Page</h2>
+      <p>Page show all the experiments and its sub work files for all the users. It provide the same search function in the upload page, section <a ng-click="scrollTo('tab-upload-summary')">Upload Summary</a>.</p>
+      <p>For each experiments, using <code>Detail</code> button to see the list of sub work files or <code>Add to</code> button to add the entire experiment, including the sub work files into the concat list on the bottom portion. by default, the character <strong>&#39;*&#39;</strong> to represent selecting all sub work files.</p>
+      <p>For concat work files, user could add multiple experiment into the concat list using <code>Add Experiment</code> button to add one line item on the bottom portion, or delete one from the list by <code>Delete</code> button.
 The atomic pair for concat is experiment user, experiment number and sub experiment number.</p>
-<ul>
-<li><code>Experiment User</code> : Input for experiment owner.</li>
-<li><code>Experiment Number</code> : Input for experiment number.</li>
-<li><p><code>Sub Experiments</code> : Input for list of sub work files, use character <strong>&#39;,&#39;</strong> for delimiter for a set of sub experiments, use the character <strong>&#39;*&#39;</strong> to select all sub work files.</p>
-</li>
-<li><p><code>Concat</code> : Button on the top to perform concat. The successful concat will return the file name to the user and user could locate the created file <a href="\\172.18.60.20\DETDP\Retrieve_Files">\\mapserverdev\DETDP\Retrieve_Files</a> (Enter this address into your fold path).</p>
-</li>
-</ul>
-<p>Use the <code>Reset</code> button or <code>Show Summary</code> check box to go back to overview.</p>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li><p>Using &quot;Add to&quot; button for each experiment to avoid manual error typos for experiment owner and experiment number and then modify the sub experiment number as needed.</p>
-</li>
-<li><p>Concat file followed the naming convention, e.g. &#39;user_concat_timestamps&#39;</p>
-</li>
-</ul>
-</blockquote>
-<h2 id="test-file-retrieve-page">Test File Retrieve Page</h2>
-<h4 id="tab-file-summary">Tab - File Summary</h6>
-<p>User could overview the uploaded test files here. Default show period is last three months. One record is only attached to one configuration file from the system database. The <strong>&#39;DOE File Name&#39;</strong> should be the unique identifier. DOE File Name is abstracted from the uploading process. (Auto upload or manual upload by admin)</p>
-<ul>
-<li><code>Record Mode</code> : Search selection for record mode.</li>
-<li><code>Program</code> : Search selection for Program.</li>
-<li><code>Read Only / Full Device</code> : Search selection for record type.</li>
-<li><code>DOE File Name</code> : Search input for one DOE configuration by file name.</li>
-<li><code>Start Date</code> : Search input for start date.</li>
-<li><code>End Date</code> : Search input for end date.</li>
-<li><p><code>Search</code> : Search button for filter shown experiments by selected data scope.</p>
-</li>
-<li><p><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</p>
-</li>
-</ul>
-<p>For each DOE file, using <code>Add to</code> button to add this DOE file into the Retrieve list, for the entire DOE, combined with the parameters filter set up, see section <a href="#tab-file-retrieve">Tab - File Retrieve</a>.</p>
-<p>Use <code>Reset</code> button to clear all the search conditions.</p>
-<h4 id="tab-file-retrieve">Tab - File Retrieve</h6>
-<p>User could merge test files (both data and configuration files) based on the selection of retrieving conditions. By default, the page only hide the detail configuration file content for the last three months. Check <code>Show Conf.File Summary</code> to show them and choose from <code>Shown Period</code> for change the time scope of data, last three months, last six months, last one year, and all.</p>
-<p>The configuration file summary table support filter by column, just click the right part of each column. It also support paging.</p>
-<p>For file retrieving, user should setup conditions of merging. All the conditions can be left to empty if no preferred filter for this conditions. For each condition, the multiple input are delimited by character <strong>&#39;,&#39;</strong>. Multiple input values will give a summarized return result.</p>
-<ul>
-<li><code>Record Mode</code> : Retrieve file by record mode.</li>
-<li><code>Program</code> : Retrieve file by Program.</li>
-<li><code>Read Only / Full Device</code> : Retrieve file by record type.</li>
-<li><code>DOE#</code> : Retrieve file by DOE number, match the column in the configuration file summary table.</li>
-<li><code>Design#</code> : Retrieve file by design, match the column in the configuration file summary table.</li>
-<li><p><code>Parameters</code> : Retrieve file by various Parameters.</p>
-<ul>
-<li>Select one parameter from the list and click <code>Add</code> button to add the parameter into the condition pool.</li>
-<li>Input the values for the added parameter, multiple values are separated by character <strong>&#39;,&#39;</strong>.</li>
-<li>Delete one parameter from the condition pool using <code>Delete</code> button.</li>
-</ul>
-</li>
-</ul>
-<p>User could also configure the retrieved file format by choosing from the check boxes</p>
-<ul>
-<li><code>Full File</code> : return a retrieved file with full columns list.</li>
-<li><code>Customized File</code> : return a retrieved file with user Customized columns list.</li>
-<li><code>Standard File</code> : return a retrieved file with user Standard columns list.</li>
-</ul>
-<p>Customized and Standard columns list should be set up before retrieving in the section <a href="#user-setting">User Setting</a>, otherwise, system won&#39;t return the retrieved file.</p>
-<p>After setting up the condition for retrieving, using <code>Retrieve</code> button on the top to perform selected files merging that satisfy all the set conditions. The successful retrieving will return the file name to the user and user could locate the created file <a href="\\172.18.60.20\DETDP\Retrieve_Files">\\mapserverdev\DETDP\Retrieve_Files</a> (Enter this address into your fold path).</p>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li><p>Duplicated selection of the same parameter represent as combination that drive the return result.</p>
-</li>
-<li><p>Retrieved file followed the naming convention, e.g. &#39;user_STANDARD_timestamps&#39;, &#39;user_CUSTOMIZED_timestamps&#39;, &#39;user_FULL_timestamps&#39;</p>
-</li>
-</ul>
-</blockquote>
-<h2 id="user-setting">User Setting</h2>
-<p>User could set up user owned standard / Customized columns list from the full columns list in the system. To add columns, type the name in the top part &#39;Search for a column name&#39; and the system will list all the matching name for selection. To delete columns, click the <strong>&#39;X&#39;</strong> at the end of column name.</p>
-<ul>
-<li><code>Show Full System Columns List</code> : Show / Hide full columns list that current stored in the system.</li>
-<li><code>Get Sys.Standard</code> : Copy System standard columns list to user owned standard / Customized columns list.</li>
-<li><code>Save</code> : Save the operations to database.</li>
-<li><code>Reset</code> : clear all the current operations and go back to the original version before saving.</li>
-</ul>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li><p>Always remember to click &#39;Save&#39; to store the new modified list to database.</p>
-</li>
-<li><p>System not allowed to enter a columns that not exists in the system, always select from searching list.</p>
-</li>
-</ul>
-</blockquote>
-<h2 id="test-file-upload-log">Test File Upload Log</h2>
-<p>Page show the log information for testing files uploading (Auto upload or manual upload by admin). By default, it only list the log information for the last three months. The comment show detail upload information for each data and configuration file.</p>
-<ul>
-<li><code>Start Date</code> : Search input for start date.</li>
-<li><code>End Date</code> : Search input for end date.</li>
-<li><code>Search</code> : Search button for filter shown experiments by selected data scope.</li>
-<li><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</li>
-<li><code>Reset</code> : Clear the time scope selection.</li>
-</ul>
-<p>In case if need to manual upload test file from default location, go to <code>Manual Operation</code> tab to click the button.</p>
-<hr>
-<h2 id="system-setting-administrator-only">System setting - Administrator Only</h2>
-<h4 id="standard-setting">Standard Setting</h4>
-<p>Administrator need to set up system standard columns list when the project started. Auto upload or manual upload for test files (data and configuration file) need to check whether the uploaded files have the system standard columns. To add columns, type the name in the top part &#39;Search for a column name&#39; and the system will list all the matching name for selection. If no matching columns list pop up, manual input is also accepted. To delete columns, click the <strong>&#39;X&#39;</strong> at the end of column name.</p>
-<ul>
-<li><code>Show Full System Columns List</code> : Show / Hide full columns list that current stored in the system.</li>
-<li><code>Save</code> : Save the operations to database.</li>
-<li><code>Reset</code> : Clear all the current operations and go back to the original version before saving.</li>
-</ul>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li><p>Always remember to click &#39;Save&#39; to store the new modified list to database.</p>
-</li>
-<li><p>System allowed to enter a columns that not exists in the system, ATTENTION for typos.This is only for administrator to set up at the very beginning.</p>
-</li>
-</ul>
-</blockquote>
-<h4 id="data-setting">Data Setting</h4>
-<p>Administrator could set up &#39;Program / Record Mode&#39; pair and &#39;Experiment Type&#39; in the data setting page. Different tab page will be similar information for &#39;Program / Record Mode&#39; pair and &#39;Experiment Type&#39;.</p>
-<ul>
-<li><p><code>Create New Row</code> : Add one new record into the information list from the left part.</p>
-<ul>
-<li>Input Values for information fields.</li>
-<li>Click <code>Add Row</code> button to add into list on the right side.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p><code>Edit</code> : The current values will be automatically showed on the left part for modifications.</p>
-<ul>
-<li>Modified the information fields as needed.</li>
-<li>Click &#39;Save change&#39; button to save into list on the right side.</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><code>Delete</code> : Delete the selected record from the list on the right side.</li>
-<li><code>Save</code> : Save the modifications to database.</li>
-<li><code>Reset</code> : Clear all the current operations and go back to the original version before saving.</li>
-</ul>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li>Always remember to click &#39;Save&#39; to store the new modified list to database.</li>
-</ul>
-</blockquote>
-<h4 id="column-mapping">Column Mapping</h4>
-<p>Administrator could set up &#39;Column Mapping&#39; for legacy columns name changed problem. The system will automatically mapping the new columns to the old columns and replace it for user retrieved files. The mapping only work for data files.</p>
-<p>Operation are similar to section <a href="#data-setting">Data Setting</a>.</p>
-<h4 id="file-upload-setting">File Upload Setting</h4>
-<p>Administrator have to set up &#39;Auto-upload configuration&#39; for test file uploading.</p>
-<ul>
-<li>Upload File Prefix : Define the file name prefix for both data file and configuration file. By default, data file prefix is <strong>data</strong> and configuration file prefix is <strong>conf</strong>.</li>
-<li>Linkage Columns : Define the linking columns list that merging the data file and the corresponding configuration file.  </li>
-</ul>
-<p>Operation are similar to section <a href="#data-setting">Data Setting</a>.</p>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li>Always remember to click &#39;Save&#39; to store the new modified list to database.</li>
-</ul>
-</blockquote>
-<h2 id="auto-upload-rules">Auto Upload Rules</h2>
-<ol>
-<li><p>Test file naming convention : <em>&#39;part1_part2_part3_part4_part5&#39;</em>.   <strong>ALL lower case</strong>.</p>
-<ul>
-<li>Part 1: prefix for data file or configuration file that matching system setup.</li>
-<li>Part 2: name of program name that existing in the system.</li>
-<li>Part 3: name of record mode that existing in the system.</li>
-<li>Part 4: &#39;y&#39; for read only and &#39;n&#39; for full device.</li>
-<li>Part 5: unique name for this file.(Same for the data and configuration file pair)</li>
-</ul>
-</li>
-<li><p>Data file and configuration file should have the same file name, except for the prefix part (part 1).</p>
-</li>
-<li><p>Data file and configuration file both have columns for Linkage as system set up, see section <a href="#file-upload-setting">File Upload Setting</a>.</p>
-</li>
-<li><p>Data file also have the standard columns lists that system stored, see section <a href="#standard-setting">Standard Setting</a></p>
-</li>
-<li><p>Both data file and configuration file should be placed on the folder <a href="\\172.18.60.20\DETDP\Upload_Files">\\mapserverdev\DETDP\Upload_Files</a> (Enter this address into your fold path).</p>
-</li>
-<li><p>If same data file and configuration file exiting in the system (checking by file name), system will replace the current files and write to log for duplicates.</p>
-</li>
-<li><p>Upload log will be stored daily as <em>csv</em> file in the same location. Name convention is <em>&#39;user_UplaodMethod_log_timestamps&#39;</em>. Log files will be deleted 60 days later.</p>
-</li>
-<li><p>If upload succeed, system will delete the uploaded files from the location. If not, system will leave it as it is. The server will regard it as garbage to delete later (7 days).</p>
-</li>
-</ol>
-<blockquote>
-<p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
-<ul>
-<li><p>Example for data file name: data_apollo_cmr_n_DOE976WFTY.csv.</p>
-</li>
-<li><p>Example for corresponding configuration file name: conf_apollo_cmr_n_DOE976WFTY.csv.</p>
-</li>
-<li><p>Example for system log file name: Sys_auto_log_20160116110034.csv</p>
-</li>
-<li><p>Example for administrator manual upload log file name: Admin_manual_log_20160116110034.csv</p>
-</li>
-</ul>
-</blockquote>
+      <ul>
+        <li><code>Experiment User</code> : Input for experiment owner.</li>
+        <li><code>Experiment Number</code> : Input for experiment number.</li>
+        <li><p><code>Sub Experiments</code> : Input for list of sub work files, use character <strong>&#39;,&#39;</strong> for delimiter for a set of sub experiments, use the character <strong>&#39;*&#39;</strong> to select all sub work files.</p>
+        </li>
+        <li><p><code>Concat</code> : Button on the top to perform concat. The successful concat will return the file name to the user and user could locate the created file <a id = 'rf' value="\\172.18.60.20\DETDP\Retrieve_Files">\\mapserverdev\DETDP\Retrieve_Files</a>
+        <a href="" ngclipboard data-clipboard-target="#rf">
+            [Copy]
+        </a>
+        (Enter this address into your fold path).</p>
+        </li>
+      </ul>
+      <p>Use the <code>Reset</code> button or <code>Show Summary</code> check box to go back to overview.</p>
+
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li><p>Using &quot;Add to&quot; button for each experiment to avoid manual error typos for experiment owner and experiment number and then modify the sub experiment number as needed.</p>
+          </li>
+          <li><p>Concat file followed the naming convention, e.g. &#39;user_concat_timestamps&#39;</p>
+          </li>
+        </ul>
+      </blockquote>
+    <h2 id="test-file-retrieve-page">Test File Retrieve Page</h2>
+    <h4 id="tab-file-summary">Tab - File Summary</h4>
+      <p>User could overview the uploaded test files here. Default show period is last three months. One record is only attached to one configuration file from the system database. The <strong>&#39;DOE File Name&#39;</strong> should be the unique identifier. DOE File Name is abstracted from the uploading process. (Auto upload or manual upload by admin)</p>
+      <ul>
+        <li><code>Record Mode</code> : Search selection for record mode.</li>
+        <li><code>Program</code> : Search selection for Program.</li>
+        <li><code>Read Only / Full Device</code> : Search selection for record type.</li>
+        <li><code>DOE File Name</code> : Search input for one DOE configuration by file name.</li>
+        <li><code>Start Date</code> : Search input for start date.</li>
+        <li><code>End Date</code> : Search input for end date.</li>
+        <li><p><code>Search</code> : Search button for filter shown experiments by selected data scope.</p>
+        </li>
+        <li><p><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</p>
+        </li>
+      </ul>
+      <p>For each DOE file, using <code>Add to</code> button to add this DOE file into the Retrieve list, for the entire DOE, combined with the parameters filter set up, see section <a ng-click="scrollTo('tab-file-retrieve')">Tab - File Retrieve</a>.</p>
+      <p>Use <code>Reset</code> button to clear all the search conditions.</p>
+    <h4 id="tab-file-retrieve">Tab - File Retrieve</h4>
+      <p>User could merge test files (both data and configuration files) based on the selection of retrieving conditions. By default, the page only hide the detail configuration file content for the last three months. Check <code>Show Conf.File Summary</code> to show them and choose from <code>Shown Period</code> for change the time scope of data, last three months, last six months, last one year, and all.</p>
+      <p>The configuration file summary table support filter by column, just click the right part of each column. It also support paging.</p>
+      <p>For file retrieving, user should setup conditions of merging. All the conditions can be left to empty if no preferred filter for this conditions. For each condition, the multiple input are delimited by character <strong>&#39;,&#39;</strong>. Multiple input values will give a summarized return result.</p>
+      <ul>
+        <li><code>Record Mode</code> : Retrieve file by record mode.</li>
+        <li><code>Program</code> : Retrieve file by Program.</li>
+        <li><code>Read Only / Full Device</code> : Retrieve file by record type.</li>
+        <li><code>DOE#</code> : Retrieve file by DOE number, match the column in the configuration file summary table.</li>
+        <li><code>Design#</code> : Retrieve file by design, match the column in the configuration file summary table.</li>
+        <li><p><code>Parameters</code> : Retrieve file by various Parameters.</p>
+          <ul>
+            <li>Select one parameter from the list and click <code>Add</code> button to add the parameter into the condition pool.</li>
+            <li>Input the values for the added parameter, multiple values are separated by character <strong>&#39;,&#39;</strong>.</li>
+            <li>Delete one parameter from the condition pool using <code>Delete</code> button.</li>
+          </ul>
+        </li>
+      </ul>
+      <p>User could also configure the retrieved file format by choosing from the check boxes</p>
+      <ul>
+        <li><code>Full File</code> : return a retrieved file with full columns list.</li>
+        <li><code>Customized File</code> : return a retrieved file with user Customized columns list.</li>
+        <li><code>Standard File</code> : return a retrieved file with user Standard columns list.</li>
+      </ul>
+      <p>Customized and Standard columns list should be set up before retrieving in the section <a ng-click="scrollTo('user-setting')">User Setting</a>, otherwise, system won&#39;t return the retrieved file.</p>
+      <p>After setting up the condition for retrieving, using <code>Retrieve</code> button on the top to perform selected files merging that satisfy all the set conditions. The successful retrieving will return the file name to the user and user could locate the created file <a id = 'rf' value="\\172.18.60.20\DETDP\Retrieve_Files">\\mapserverdev\DETDP\Retrieve_Files</a>
+        <a href="" ngclipboard data-clipboard-target="#rf">
+            [Copy]
+        </a>
+        (Enter this address into your fold path).</p>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li><p>Duplicated selection of the same parameter represent as combination that drive the return result.</p>
+          </li>
+          <li><p>Retrieved file followed the naming convention, e.g. &#39;user_STANDARD_timestamps&#39;, &#39;user_CUSTOMIZED_timestamps&#39;, &#39;user_FULL_timestamps&#39;</p>
+          </li>
+        </ul>
+      </blockquote>
+    <h2 id="user-setting">User Setting</h2>
+      <p>User could set up user owned standard / Customized columns list from the full columns list in the system. To add columns, type the name in the top part &#39;Search for a column name&#39; and the system will list all the matching name for selection. To delete columns, click the <strong>&#39;X&#39;</strong> at the end of column name.</p>
+      <ul>
+        <li><code>Show Full System Columns List</code> : Show / Hide full columns list that current stored in the system.</li>
+        <li><code>Get Sys.Standard</code> : Copy System standard columns list to user owned standard / Customized columns list.</li>
+        <li><code>Save</code> : Save the operations to database.</li>
+        <li><code>Reset</code> : clear all the current operations and go back to the original version before saving.</li>
+      </ul>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li><p>Always remember to click &#39;Save&#39; to store the new modified list to database.</p>
+          </li>
+          <li><p>System not allowed to enter a columns that not exists in the system, always select from searching list.</p>
+          </li>
+        </ul>
+      </blockquote>
+    <h2 id="test-file-upload-log">Test File Upload Log</h2>
+      <p>Page show the log information for testing files uploading (Auto upload or manual upload by admin). By default, it only list the log information for the last three months. The comment show detail upload information for each data and configuration file.</p>
+      <ul>
+        <li><code>Start Date</code> : Search input for start date.</li>
+        <li><code>End Date</code> : Search input for end date.</li>
+        <li><code>Search</code> : Search button for filter shown experiments by selected data scope.</li>
+        <li><code>Shown Period</code> : Filter shown experiments by various selections, last three months, last six months, last one year, and all.</li>
+        <li><code>Reset</code> : Clear the time scope selection.</li>
+      </ul>
+      <p>In case if need to manual upload test file from default location, go to <code>Manual Operation</code> tab to click the button.</p>
+
+    <h2 id="system-setting-administrator-only">System setting - Administrator Only</h2>
+    <h4 id="standard-setting">Standard Setting</h4>
+      <p>Administrator need to set up system standard columns list when the project started. Auto upload or manual upload for test files (data and configuration file) need to check whether the uploaded files have the system standard columns. To add columns, type the name in the top part &#39;Search for a column name&#39; and the system will list all the matching name for selection. If no matching columns list pop up, manual input is also accepted. To delete columns, click the <strong>&#39;X&#39;</strong> at the end of column name.</p>
+      <ul>
+        <li><code>Show Full System Columns List</code> : Show / Hide full columns list that current stored in the system.</li>
+        <li><code>Save</code> : Save the operations to database.</li>
+        <li><code>Reset</code> : Clear all the current operations and go back to the original version before saving.</li>
+      </ul>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li><p>Always remember to click &#39;Save&#39; to store the new modified list to database.</p>
+          </li>
+          <li><p>System allowed to enter a columns that not exists in the system, ATTENTION for typos.This is only for administrator to set up at the very beginning.</p>
+          </li>
+        </ul>
+      </blockquote>
+    <h4 id="data-setting">Data Setting</h4>
+      <p>Administrator could set up &#39;Program / Record Mode&#39; pair and &#39;Experiment Type&#39; in the data setting page. Different tab page will be similar information for &#39;Program / Record Mode&#39; pair and &#39;Experiment Type&#39;.</p>
+      <ul>
+        <li><p><code>Create New Row</code> : Add one new record into the information list from the left part.</p>
+          <ul>
+          <li>Input Values for information fields.</li>
+          <li>Click <code>Add Row</code> button to add into list on the right side.</li>
+          </ul>
+        </li>
+      </ul>
+      <ul>
+        <li><p><code>Edit</code> : The current values will be automatically showed on the left part for modifications.</p>
+          <ul>
+            <li>Modified the information fields as needed.</li>
+            <li>Click &#39;Save change&#39; button to save into list on the right side.</li>
+          </ul>
+        </li>
+      </ul>
+      <ul>
+        <li><code>Delete</code> : Delete the selected record from the list on the right side.</li>
+        <li><code>Save</code> : Save the modifications to database.</li>
+        <li><code>Reset</code> : Clear all the current operations and go back to the original version before saving.</li>
+      </ul>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li>Always remember to click &#39;Save&#39; to store the new modified list to database.</li>
+        </ul>
+      </blockquote>
+    <h4 id="column-mapping">Column Mapping</h4>
+      <p>Administrator could set up &#39;Column Mapping&#39; for legacy columns name changed problem. The system will automatically mapping the new columns to the old columns and replace it for user retrieved files. The mapping only work for data files.</p>
+      <p>Operation are similar to section <a ng-click="scrollTo('data-setting')">Data Setting</a>.</p>
+
+    <h4 id="file-upload-setting">File Upload Setting</h4>
+      <p>Administrator have to set up &#39;Auto-upload configuration&#39; for test file uploading.</p>
+      <ul>
+        <li>Upload File Prefix : Define the file name prefix for both data file and configuration file. By default, data file prefix is <strong>data</strong> and configuration file prefix is <strong>conf</strong>.</li>
+        <li>Linkage Columns : Define the linking columns list that merging the data file and the corresponding configuration file.  </li>
+      </ul>
+      <p>Operation are similar to section <a ng-click="scrollTo('data-setting')">Data Setting</a>.</p>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li>Always remember to click &#39;Save&#39; to store the new modified list to database.</li>
+        </ul>
+      </blockquote>
+    <h2 id="auto-upload-rules">Auto Upload Rules</h2>
+      <ol>
+        <li><p>Test file naming convention : <em>&#39;part1_part2_part3_part4_part5&#39;</em>.   <strong>ALL lower case</strong>.</p>
+          <ul>
+            <li>Part 1: prefix for data file or configuration file that matching system setup.</li>
+            <li>Part 2: name of program name that existing in the system.</li>
+            <li>Part 3: name of record mode that existing in the system.</li>
+            <li>Part 4: &#39;y&#39; for read only and &#39;n&#39; for full device.</li>
+            <li>Part 5: unique name for this file.(Same for the data and configuration file pair)</li>
+          </ul>
+        </li>
+        <li><p>Data file and configuration file should have the same file name, except for the prefix part (part 1).</p>
+        </li>
+        <li><p>Data file and configuration file both have columns for Linkage as system set up, see section <a ng-click="scrollTo('file-upload-setting')">File Upload Setting</a>.</p>
+        </li>
+        <li><p>Data file also have the standard columns lists that system stored, see section <a ng-click="scrollTo('standard-setting')">Standard Setting</a></p>
+        </li>
+        <li><p>Both data file and configuration file should be placed on the folder <a id = 'uf' value ="\\172.18.60.20\DETDP\Upload_Files">\\mapserverdev\DETDP\Upload_Files</a>
+          <a href="" ngclipboard data-clipboard-target="#uf">
+              [Copy]
+          </a>
+          (Enter this address into your fold path).</p>
+        </li>
+        <li><p>If same data file and configuration file exiting in the system (checking by file name), system will replace the current files and write to log for duplicates.</p>
+        </li>
+        <li><p>Upload log will be stored daily as <em>csv</em> file in the same location. Name convention is <em>&#39;user_UplaodMethod_log_timestamps&#39;</em>. Log files will be deleted 60 days later.</p>
+        </li>
+        <li><p>If upload succeed, system will delete the uploaded files from the location. If not, system will leave it as it is. The server will regard it as garbage to delete later (7 days).</p>
+        </li>
+      </ol>
+      <blockquote>
+        <p><img class="emoji" title=":tada:" alt="tada" src="images/icon/tada.png" height="20">Tips:</p>
+        <ul>
+          <li><p>Example for data file name: <em>&#39;data_apollo_cmr_n_DOE976WFTY.csv&#39;</em>.</p>
+          </li>
+          <li><p>Example for corresponding configuration file name: <em>&#39;conf_apollo_cmr_n_DOE976WFTY.csv&#39;</em>.</p>
+          </li>
+          <li><p>Example for system log file name: <em>&#39;Sys_auto_log_20160116110034.csv&#39;</em>.</p>
+          </li>
+          <li><p>Example for administrator manual upload log file name: <em>&#39;Admin_manual_log_20160116110034.csv&#39;</em>.</p>
+          </li>
+        </ul>
+      </blockquote>
 </div>
 <div flex = "5"></div>
 </div>
