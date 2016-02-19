@@ -43,28 +43,38 @@
         </div>
       </md-toolbar>
       <md-list>
-      <md-item ng-repeat="item in menu">
-        <a>
-          <md-item-content md-ink-ripple layout="row" layout-align="start center">
-            <div class="inset">
-              <md-icon md-svg-src="{{item.icon}}"></md-icon>
-            </div>
-            <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
-          </md-item-content>
-        </a>
-      </md-item>
-      <md-divider></md-divider>
-      <md-subheader ng-show = "currentUser.role == 'admin'">System Setting</md-subheader>
-      <md-item ng-show = "currentUser.role == 'admin'" ng-repeat="item in admin">
-        <a>
-          <md-item-content md-ink-ripple layout="row" layout-align="start center">
-            <div class="inset">
-              <ng-md-icon icon="item.icon"></ng-md-icon>
-            </div>
-            <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
-          </md-item-content>
-        </a>
-      </md-item>
+        <md-item ng-show = "currentUser.role === 'grouper' || currentUser.role === 'admin' " ng-repeat="item in group_menu">
+          <a>
+            <md-item-content md-ink-ripple layout="row" layout-align="start center">
+              <div class="inset">
+                <md-icon md-svg-src="{{item.icon}}"></md-icon>
+              </div>
+              <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
+            </md-item-content>
+          </a>
+        </md-item>
+        <md-item ng-repeat="item in menu">
+          <a>
+            <md-item-content md-ink-ripple layout="row" layout-align="start center">
+              <div class="inset">
+                <md-icon md-svg-src="{{item.icon}}"></md-icon>
+              </div>
+              <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
+            </md-item-content>
+          </a>
+        </md-item>
+        <md-divider></md-divider>
+        <md-subheader ng-show = "currentUser.role === 'admin'">System Setting</md-subheader>
+        <md-item ng-show = "currentUser.role === 'admin'" ng-repeat="item in admin">
+          <a>
+            <md-item-content md-ink-ripple layout="row" layout-align="start center">
+              <div class="inset">
+                <ng-md-icon icon="item.icon"></ng-md-icon>
+              </div>
+              <div class="inset" ng-click= "doDirectPage(item.title)">{{item.title}}</div>
+            </md-item-content>
+          </a>
+        </md-item>
     </md-list>
     <br>
     <br>
@@ -120,6 +130,7 @@
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="bower_components/angular-animate/angular-animate.js"></script>
 <script src="bower_components/angular-aria/angular-aria.js"></script>
+<script src="bower_components/angular-messages/angular-messages.js"></script>
 <script src="bower_components/angular-material/angular-material.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
 <script src="bower_components/angular-file-upload/dist/angular-file-upload.min.js"></script>

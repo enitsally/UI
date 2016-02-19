@@ -47,8 +47,10 @@ def login():
     id = var_username
     if var_user_group == 'A':
       role = 'admin'
+    elif var_user_group == 'G':
+      role = 'grouper'
     elif var_user_group == 'U':
-      role = 'public'
+      role = 'user'
     else:
       role = ''
     user = {'id': var_username, 'role': role}
@@ -398,9 +400,13 @@ def get_upload_log():
 def get_manual_upload():
   print 'API: /get$manual$upload, method: get_manual_upload()'
   auto_upload = detdpautoupload()
-  auto_upload.get_file('Admin_manual')
+  result = auto_upload.get_file('Admin_manual')
+  if result:
+    msg = 'Upload finished, go to log for information.'
+  else:
+    msg = 'System error, need admin configuration '
   print 'Finish manual upload,call method'
-  return jsonify({'status': 'Upload finished, go to log for information.'})
+  return jsonify({'status': msg})
 
 
 @app.route('/get$link$cols$list$predix')

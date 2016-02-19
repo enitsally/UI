@@ -273,7 +273,7 @@ angular
       };
     }
 
-    $scope.menu = [
+    $scope.group_menu = [
           {
             link : '',
             title: 'Work File Upload',
@@ -284,6 +284,9 @@ angular
             title: 'Work File Concat',
             icon: 'images/icon/getfile.svg'
           },
+    ]
+    $scope.menu = [
+
           {
             link : '',
             title: 'Test File Retrieve',
@@ -291,12 +294,12 @@ angular
           },
           {
             link : '',
-            title: 'User Setting',
+            title: 'Test File Upload Log',
             icon: 'images/icon/settings.svg'
           },
           {
             link : '',
-            title: 'Test File Upload Log',
+            title: 'User Setting',
             icon: 'images/icon/settings.svg'
           }
     ];
@@ -304,22 +307,22 @@ angular
           {
             link : '',
             title: 'Standard Setting',
-            icon: 'images/icon/ssy_setting.svg'
+            icon: 'images/icon/settings.svg'
           },
           {
             link : '',
             title: 'Data Setting',
-            icon: 'images/icon/data_setting.svg'
+            icon: 'images/icon/settings.svg'
           },
           {
             link : '',
             title: 'Column Mapping',
-            icon: 'images/icon/data_setting.svg'
+            icon: 'images/icon/settings.svg'
           },
           {
             link : '',
             title: 'File Upload Setting',
-            icon: 'images/icon/data_setting.svg'
+            icon: 'images/icon/settings.svg'
           }
     ];
   })

@@ -40,7 +40,15 @@ class detdpautoupload:
       if len(link_list) == 0:
         sys_mgs += '''No link cols exist in database, need administration setup. '''
         print 'System Message: {}'.format(sys_mgs)
-        return
+
+        print 'Start to write error log to shared folder:----'
+        log_time = time.strftime('%Y%m%d%H%M%S')
+        log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
+        with open (log_name, 'w') as log_file:
+          log_file.write(sys_mgs)
+        print 'Finish writing error log----'
+
+        return False
 
     mapping = self.db.column_mapping.find({}, {'_id': False})
     mapping_head = {}
@@ -56,7 +64,15 @@ class detdpautoupload:
     else:
       sys_mgs += '''No system prefix info, need administration setup. '''
       print 'System Message: {}'.format(sys_mgs)
-      return
+
+      print 'Start to write error log to shared folder:----'
+      log_time = time.strftime('%Y%m%d%H%M%S')
+      log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
+      with open (log_name, 'w') as log_file:
+        log_file.write(sys_mgs)
+      print 'Finish writing error log----'
+
+      return False
     log_dict = {}
 
     for data_name in dfileList:
@@ -132,6 +148,7 @@ class detdpautoupload:
         log_dict[key]['column_check'] = 'Check Pass'
         for col in link_list:
           if col not in data_head or col not in conf_head:
+            print 'check in header'
             log_dict[key]['column_check'] = 'Check Failed'
             log_dict[key]['ready_upload'] = 'N'
             comment += '''Required link column: {} is not provided. '''.format(col)
@@ -144,13 +161,36 @@ class detdpautoupload:
             break
 
         if log_dict[key]['column_check'] == 'Check Pass':
-          std_col = [] if self.db.user.find_one({'user_name': std_col_user}).get('standard_cols') is None else [x for x in self.db.user.find_one({'user_name': std_col_user}).get('standard_cols')]
-          print '{} have cols:'.format(user_name), std_col
-          if len(std_col) == 0:
+          t = self.db.user.find_one({'user_name': std_col_user})
+          if t is None:
             sys_mgs += '''No std cols exist for {} in database, need administration setup. '''.format(std_col_user)
             print 'System Message: {}'.format(sys_mgs)
-            return
 
+            print 'Start to write error log to shared folder:----'
+            log_time = time.strftime('%Y%m%d%H%M%S')
+            log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
+            with open (log_name, 'w') as log_file:
+              log_file.write(sys_mgs)
+            print 'Finish writing error log----'
+
+            return False
+          else:
+            std_col = [] if t.get('standard_cols') is None else [x for x in t.get('standard_cols')]
+            print len(std_col)
+            print '{} have cols:'.format(user_name)
+            print std_col
+            if len(std_col) == 0:
+              sys_mgs += '''No std cols exist for {} in database, need administration setup. '''.format(std_col_user)
+              print 'System Message: {}'.format(sys_mgs)
+
+              print 'Start to write error log to shared folder:----'
+              log_time = time.strftime('%Y%m%d%H%M%S')
+              log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
+              with open (log_name, 'w') as log_file:
+                log_file.write(sys_mgs)
+              print 'Finish writing error log----'
+
+              return False
           for col in std_col:
             if col not in data_head and mapping_head.get(col) not in data_head:
               log_dict[key]['column_check'] = 'Check Failed'
@@ -291,6 +331,8 @@ class detdpautoupload:
       for key, log in log_dict.items():
         writer.writerow(log)
     print 'Finish writing log----'
+
+    return True
 
 
 def chk_dup(value, lst):

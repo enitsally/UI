@@ -48,8 +48,14 @@ angular.module('detdpdemoApp')
       AuthService.login(credentials).then(function (user) {
         $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
         $scope.setCurrentUser(user);
-        if (user.role === 'public'){
+        if (user.role === 'grouper' ){
           $state.go('upload');
+          $scope.message = user.id + ", You are logged in.";
+          IdleService.start();
+        }
+        else if(user.role === 'user')
+        {
+          $state.go('retrieve');
           $scope.message = user.id + ", You are logged in.";
           IdleService.start();
         }
@@ -104,5 +110,6 @@ angular.module('detdpdemoApp')
   .constant('USER_ROLES', {
     all: '*',
     admin: 'admin',
-    public: 'public user'
+    user: 'public user',
+    grouper: 'group user'
   });

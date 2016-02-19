@@ -159,8 +159,9 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doManualUpload = function (){
-      $http.get('/get$manual$upload').then (function (response) {
-        $scope.showSimpleToast("DONE, PLEASE GO TO LOG.");
+      $http.post('/get$manual$upload').then (function (response) {
+        var msg = response.data.status;
+        $scope.showSimpleToast(msg);
       }, function () {
       });
     };
