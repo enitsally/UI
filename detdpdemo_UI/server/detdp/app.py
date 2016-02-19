@@ -239,11 +239,12 @@ def get_search_summary():
   return jsonify({'status': result})
 
 
-@app.route('/get$conf$summary')
+@app.route('/get$conf$summary', methods=['GET', 'POST'])
 def get_conf_summary():
   print 'API: /get$conf$summary, method: get_conf_summary()'
   db = detdp()
-  result = db.get_conf_overview()
+  period = request.data
+  result = db.get_conf_overview(period)
   return jsonify({'status': result})
 
 

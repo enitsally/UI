@@ -5,3 +5,4 @@
 /bower_components
 *.pyc
 server/detdp/static
+**/.idea/*

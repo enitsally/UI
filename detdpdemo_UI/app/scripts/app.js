@@ -15,7 +15,8 @@ angular
     'angularFileUpload',
     'agGrid',
     'angularSpinner',
-    'ngIdle'
+    'ngIdle',
+    'ngclipboard'
   ])
   .config(['usSpinnerConfigProvider', function (usSpinnerConfigProvider) {
     usSpinnerConfigProvider.setDefaults({radius:30, width:8, length: 16});

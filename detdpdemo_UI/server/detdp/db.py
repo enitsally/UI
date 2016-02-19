@@ -466,10 +466,34 @@ class detdp:
     print query_dict
     return list(self.db.data_file.find(query_dict, {'_id': False, 'data_file_id': False}))
 
-  def get_conf_overview(self):
-    str_method = 'get_conf_overview()'
+  def get_conf_overview(self, time_range):
+    str_method = 'get_conf_overview( period = {})'.format(time_range)
     print 'call method: ', str_method
-    tmp = self.db.conf_file.find({}, projection={'_id': False})
+
+    lt_time = datetime.now()
+    if time_range == '1':
+      gt_time = datetime.now() + timedelta(days=-365)
+    elif time_range == '6':
+      gt_time = datetime.now() + timedelta(days=-183)
+    elif time_range == '3':
+      gt_time = datetime.now() + timedelta(days=-93)
+    else:
+      gt_time = '*'
+
+    print 'start_time:', gt_time
+    print 'end_time:', lt_time
+
+    upload_key_list = []
+    if gt_time == '*':
+      keys = self.db.data_file.find({'upload_date': {'$lt': lt_time}})
+    else:
+      keys = self.db.data_file.find({'upload_date': {'$lt': lt_time, '$gt': gt_time}})
+
+    for k in keys:
+      upload_key_list.append(k.get('upload_key'))
+
+
+    tmp = self.db.conf_file.find({'upload_key': { '$in' : upload_key_list}}, projection={'_id': False})
     conf_tmp = self.db.system_conf.find_one({})
     if tmp.count() > 0:
       result = list(tmp)

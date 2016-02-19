@@ -46,6 +46,7 @@ angular.module('detdpdemoApp')
     $scope.paramsList = [];
     $scope.paramsSelection=[];
     $scope.ShownPeriod = "3";
+    $scope.confShownPeriod = "3";
 
     var todayDate = new Date();
     $scope.maxDate = new Date(
@@ -278,11 +279,12 @@ angular.module('detdpdemoApp')
 
     $scope.pageSize = '100';
     $scope.totalSize = 0;
+    $scope.gridOptions;
     var content;
     var gridOptions;
 
-    $http.get("/get$conf$summary")
-      .then(function (res) {
+
+    $http.post("/get$conf$summary", $scope.confShownPeriod).then(function (res) {
         content = res.data.status.conf_content;
         var colslist = res.data.status.conf_col;
         var noparam = ['program', 'record_mode', 'read_only', 'doe_name','doe#', 'design', 'wafer'];
@@ -334,44 +336,93 @@ angular.module('detdpdemoApp')
         };
         gridOptions.datasource = dataSource;
         $scope.gridOptions = gridOptions;
+
       });
 
+    $scope.onConfShowPeriodChanged = function (){
+      $http.post("/get$conf$summary", $scope.confShownPeriod).then(function (res) {
+          content = res.data.status.conf_content;
+          var colslist = res.data.status.conf_col;
+          var noparam = ['program', 'record_mode', 'read_only', 'doe_name','doe#', 'design', 'wafer'];
+          var diff = $(colslist).not(noparam).get();
+          $scope.paramsList = diff.slice(0);
+          $scope.totalSize = content.length;
+          var colHead = [];
+          for (var i = 0; i < colslist.length; i++) {
+            var tmp = {
+              headerName: colslist[i],
+              field: colslist[i],
+              filter: 'text',
+              filterParams: {apply: true}
+            };
+            colHead.push(tmp);
+          }
+          console.log(content.length);
+          var dataSource = {
+              //rowCount: ???, - not setting the row count, infinite paging will be used
+              pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
+              getRows: function (params) {
+                  // this code should contact the server for rows. however for the purposes of the demo,
+                  // the data is generated locally, a timer is used to give the experience of
+                  // an asynchronous call
+                  //console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                  setTimeout( function() {
+                      // take a chunk of the array, matching the start and finish times
+                      var rowsThisPage = content.slice(params.startRow, params.endRow);
+                      // see if we have come to the last page. if we have, set lastRow to
+                      // the very last row of the last page. if you are getting data from
+                      // a server, lastRow could be returned separately if the lastRow
+                      // is not in the current page.
+                      var lastRow = -1;
+                      if (content.length <= params.endRow) {
+                          lastRow = content.length;
+                      }
+                      params.successCallback(rowsThisPage, lastRow);
+                  }, 500);
+              }
+          };
+          $scope.gridOptions.api.setColumnDefs(colHead);
+          $scope.gridOptions.api.setDatasource(dataSource);
+    })
+  }
+
+
       $scope.showSimpleToast = function(showmgs) {
-        $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
+          $mdToast.show($mdToast.simple().content(showmgs).position('bottom right').hideDelay(1000));
       };
 
-    function createNewDatasource() {
-        if (!content) {
-            // in case user selected 'onPageSizeChanged()' before the json was loaded
-            return;
-        }
+      function createNewDatasource() {
+          if (!content) {
+              // in case user selected 'onPageSizeChanged()' before the json was loaded
+              return;
+          }
 
-        var dataSource = {
-            //rowCount: ???, - not setting the row count, infinite paging will be used
-            pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
-            getRows: function (params) {
-                // this code should contact the server for rows. however for the purposes of the demo,
-                // the data is generated locally, a timer is used to give the experience of
-                // an asynchronous call
-                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-                setTimeout( function() {
-                    // take a chunk of the array, matching the start and finish times
-                    var rowsThisPage = content.slice(params.startRow, params.endRow);
-                    // see if we have come to the last page. if we have, set lastRow to
-                    // the very last row of the last page. if you are getting data from
-                    // a server, lastRow could be returned separately if the lastRow
-                    // is not in the current page.
-                    var lastRow = -1;
-                    if (content.length <= params.endRow) {
-                        lastRow = content.length;
-                    }
-                    params.successCallback(rowsThisPage, lastRow);
-                }, 500);
-            }
-        };
+          var dataSource = {
+              //rowCount: ???, - not setting the row count, infinite paging will be used
+              pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
+              getRows: function (params) {
+                  // this code should contact the server for rows. however for the purposes of the demo,
+                  // the data is generated locally, a timer is used to give the experience of
+                  // an asynchronous call
+                  console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                  setTimeout( function() {
+                      // take a chunk of the array, matching the start and finish times
+                      var rowsThisPage = content.slice(params.startRow, params.endRow);
+                      // see if we have come to the last page. if we have, set lastRow to
+                      // the very last row of the last page. if you are getting data from
+                      // a server, lastRow could be returned separately if the lastRow
+                      // is not in the current page.
+                      var lastRow = -1;
+                      if (content.length <= params.endRow) {
+                          lastRow = content.length;
+                      }
+                      params.successCallback(rowsThisPage, lastRow);
+                  }, 500);
+              }
+          };
 
-        $scope.gridOptions.api.setDatasource(dataSource);
-    }
+          $scope.gridOptions.api.setDatasource(dataSource);
+      }
 
     $scope.onPageSizeChanged = function() {
         createNewDatasource();
