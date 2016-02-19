@@ -1103,7 +1103,6 @@ class detdp:
     # result = True
     try:
       final_pf = pd.concat(final)
-      print 'tet1'
       final_pf.to_csv(final_adr, index=False)
       print "write to: ", final_adr
       mgs = True
@@ -1263,16 +1262,16 @@ if __name__ == '__main__':
   # b = datetime.now()
   # print type(a)
   # print type(b)
-  concat_file = [
-    # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
-    # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
-    # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': [1, 2, 3]},
-    # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': [4, 5, 6]},
-    # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
-    {'exp_user': 'map', 'exp_no': 7, 'sub_exps': [1, 2]},
-    {'exp_user': 'map', 'exp_no': 6, 'sub_exps': [2, 3]},
-    {'exp_user': 'map', 'exp_no': 8, 'sub_exps': ['*']},
-    {'exp_user': 'test', 'exp_no': 1, 'sub_exps': [1, 2, 3]}
-  ]
-  result = obj.concat_work_file('map', concat_file)
-  print result
+  # concat_file = [
+  #   # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
+  #   # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
+  #   # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': [1, 2, 3]},
+  #   # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': [4, 5, 6]},
+  #   # {'exp_user': 'map', 'exp_no': 1, 'sub_exps': ['*']},
+  #   {'exp_user': 'map', 'exp_no': 7, 'sub_exps': [1, 2]},
+  #   {'exp_user': 'map', 'exp_no': 6, 'sub_exps': [2, 3]},
+  #   {'exp_user': 'map', 'exp_no': 8, 'sub_exps': ['*']},
+  #   {'exp_user': 'test', 'exp_no': 1, 'sub_exps': [1, 2, 3]}
+  # ]
+  # result = obj.concat_work_file('map', concat_file)
+  # print result

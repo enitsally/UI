@@ -33,12 +33,9 @@ class detdpautoupload:
 
       full_list = [] if system_conf.get('full_cols') is None else [x for x in system_conf.get('full_cols')]
       conf_list = [] if system_conf.get('conf_cols') is None else [x for x in system_conf.get('conf_cols')]
-      std_col = [] if system_conf.get('standard_cols') is None else [x for x in system_conf.get('standard_cols')]
+
       link_list = [] if system_conf.get('link_list') is None else [str(x) for x in system_conf.get('link_list')]
-      if len(std_col) == 0:
-        sys_mgs += '''No std cols exist in database, need administration setup. '''
-        print 'System Message: {}'.format(sys_mgs)
-        return
+
 
       if len(link_list) == 0:
         sys_mgs += '''No link cols exist in database, need administration setup. '''
@@ -99,6 +96,7 @@ class detdpautoupload:
         recordmode = features[2].lower()
         readonly = features[3].lower()
         doename = features[4]
+        std_col_user = recordmode+'_'+readonly
 
         print 'File name is good, start to check program, readonly'
         chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
@@ -146,6 +144,13 @@ class detdpautoupload:
             break
 
         if log_dict[key]['column_check'] == 'Check Pass':
+          std_col = [] if self.db.user.find_one({'user_name': std_col_user}).get('standard_cols') is None else [x for x in self.db.user.find_one({'user_name': std_col_user}).get('standard_cols')]
+          print '{} have cols:'.format(user_name), std_col
+          if len(std_col) == 0:
+            sys_mgs += '''No std cols exist for {} in database, need administration setup. '''.format(std_col_user)
+            print 'System Message: {}'.format(sys_mgs)
+            return
+
           for col in std_col:
             if col not in data_head and mapping_head.get(col) not in data_head:
               log_dict[key]['column_check'] = 'Check Failed'

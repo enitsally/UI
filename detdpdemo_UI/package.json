@@ -1,5 +1,6 @@
 {
   "name": "detdpdemo",
+  "version": "0.1.1",
   "private": true,
   "devDependencies": {
     "autoprefixer-core": "^5.2.1",

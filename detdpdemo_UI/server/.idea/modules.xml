@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../../../dataprofiling/.idea/dataprofiling.iml" filepath="$PROJECT_DIR$/../../../dataprofiling/.idea/dataprofiling.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../mapdev/.idea/mapdev.iml" filepath="$PROJECT_DIR$/../../../mapdev/.idea/mapdev.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/server.iml" filepath="$PROJECT_DIR$/.idea/server.iml" />
     </modules>
   </component>
