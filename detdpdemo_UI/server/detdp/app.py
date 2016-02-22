@@ -6,6 +6,7 @@ from datetime import datetime
 import json
 import os
 import pymongo
+import logging
 
 # UPLOAD_FOLDER_D = 'uploads/data'
 # UPLOAD_FOLDER_C = 'uploads/conf'
@@ -31,7 +32,7 @@ def root():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-  print 'API: /login, method: login()'
+  logging.info('API: /login, method: login()')
   input_data = json.loads(request.data)
   var_username = input_data['username']
   var_password = input_data['password']
@@ -59,7 +60,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-  print 'API: /logout, method: logout()'
+  logging.info('API: /logout, method: logout()')
   session.pop('logged_in', None)
   status = "You are logged out."
   return jsonify({'status': status})
@@ -68,7 +69,7 @@ def logout():
 @cross_origin()
 @app.route('/get$record$mode')
 def get_record_mode():
-  print 'API: /get$record$mode, method: get_record_mode()'
+  logging.info('API: /get$record$mode, method: get_record_mode()')
   db = detdp()
   status = db.get_record_mode()
   return jsonify({'status': status})
@@ -77,7 +78,7 @@ def get_record_mode():
 @cross_origin()
 @app.route('/get$program')
 def get_program():
-  print 'API: /get$program, method: get_program()'
+  logging.info('API: /get$program, method: get_program()')
   db = detdp()
   status = db.get_program()
   return jsonify({'status': status})
@@ -85,7 +86,7 @@ def get_program():
 
 @app.route('/get$upload$overview')
 def get_upload_overview():
-  print 'API: /get$upload$overview, method: get_upload_overview()'
+  logging.info('API: /get$upload$overview, method: get_upload_overview()')
   db = detdp()
   status = db.get_upload_overview()
   return jsonify({'status': status})
@@ -93,7 +94,7 @@ def get_upload_overview():
 
 @app.route('/get$exist$chk', methods=['GET', 'POST'])
 def get_exist_chk():
-  print 'API: /get$exist$chk, method: get_exist_chk()'
+  logging.info('API: /get$exist$chk, method: get_exist_chk()')
   db = detdp()
   input_data = json.loads(request.data)
   doe_name = input_data['doe_name']
@@ -106,7 +107,7 @@ def get_exist_chk():
 
 @app.route('/upload$d', methods=['GET', 'POST'])
 def get_chk_data():
-  print 'API: /upload$d, method: get_chk_data()'
+  logging.info('API: /upload$d, method: get_chk_data()')
   if request.method == 'POST':
     db = detdp()
     file = request.files['data']
@@ -119,7 +120,7 @@ def get_chk_data():
 
 @app.route('/upload$c', methods=['GET', 'POST'])
 def get_chk_conf():
-  print 'API: /upload$c, method: get_chk_conf()'
+  logging.info('API: /upload$c, method: get_chk_conf()')
   if request.method == 'POST':
     db = detdp()
     file = request.files['conf']
@@ -129,7 +130,7 @@ def get_chk_conf():
 
 @app.route('/get$upload', methods=['GET', 'POST'])
 def get_upload():
-  print 'API: /get$upload, method: get_upload()'
+  logging.info('API: /get$upload, method: get_upload()')
   db = detdp()
   var_input = json.loads(request.data)
   doe_name = var_input['doe_name']
@@ -145,13 +146,13 @@ def get_upload():
   result = db.upload_data_files(doe_program, doe_record_mode, doe_read_only, data_file, conf_file, doe_name,
                                 doe_descr,
                                 doe_comment, upload_user, flag)
-  print result
+
   return jsonify({'status': result})
 
 
 @app.route('/get$del$temp', methods=['GET', 'POST'])
 def get_delete_temp():
-  print 'API: /get$del$temp, method: get_delete_temp()'
+  logging.info('API: /get$del$temp, method: get_delete_temp()')
   db = detdp()
   var_input = json.loads(request.data)
   data_file = var_input['data_file']
@@ -165,7 +166,7 @@ def get_delete_temp():
 
 @app.route('/get$system$setup', methods=['GET', 'POST'])
 def get_system_setup():
-  print 'API: /get$system$setup, method: get_system_setup()'
+  logging.info('API: /get$system$setup, method: get_system_setup()')
   db = detdp()
   result = db.get_system_cols()
   return jsonify({'status': result})
@@ -173,7 +174,7 @@ def get_system_setup():
 
 @app.route('/get$user$setup', methods=['GET', 'POST'])
 def get_user_setup():
-  print 'API: /get$user$setup, method: get_user_setup()'
+  logging.info('API: /get$user$setup, method: get_user_setup()')
   input_data = json.loads(request.data)
   user_name = input_data['user_name']
   db = detdp()
@@ -183,7 +184,7 @@ def get_user_setup():
 
 @app.route('/get$save$setup', methods=['GET', 'POST'])
 def set_user_setup():
-  print 'API: /get$save$setup, method: set_user_setup()'
+  logging.info('API: /get$save$setup, method: set_user_setup()')
   input_data = json.loads(request.data)
   user_name = input_data['user_name']
   std_cols = input_data['std_cols']
@@ -195,7 +196,7 @@ def set_user_setup():
 
 @app.route('/get$search$summary', methods=['GET', 'POST'])
 def get_search_summary():
-  print 'API: /get$search$summary, method: get_search_summary()'
+  logging.info('API: /get$search$summary, method: get_search_summary()')
   db = detdp()
   input_data = json.loads(request.data)
   var_doe_name = input_data['doe_name']
@@ -210,7 +211,7 @@ def get_search_summary():
   e_y = input_data['e_y']
   e_m = input_data['e_m']
   e_d = input_data['e_d']
-  print s_y, s_m, s_d, e_y, e_m, e_d
+  logging.info('s_y:{}, s_m:{}, s_d:{}, e_y:{}, e_m:{}, e_d:{}'.format(s_y, s_m, s_d, e_y, e_m, e_d))
   if var_doe_name == '':
     doe_name = []
   else:
@@ -243,7 +244,7 @@ def get_search_summary():
 
 @app.route('/get$conf$summary', methods=['GET', 'POST'])
 def get_conf_summary():
-  print 'API: /get$conf$summary, method: get_conf_summary()'
+  logging.info('API: /get$conf$summary, method: get_conf_summary()')
   db = detdp()
   period = request.data
   result = db.get_conf_overview(period)
@@ -252,7 +253,7 @@ def get_conf_summary():
 
 @app.route('/get$program$recordmode$pair')
 def get_program_recordmode_pair():
-  print 'API: /get$program$recordmode$pair, method: get_program_recordmode_pair()'
+  logging.info('API: /get$program$recordmode$pair, method: get_program_recordmode_pair()')
   db = detdp()
   result = db.get_program_recordmode()
   return jsonify({'status': result})
@@ -260,7 +261,7 @@ def get_program_recordmode_pair():
 
 @app.route('/set$program$recordmode$pair', methods=['GET', 'POST'])
 def set_program_recordmode_pair():
-  print 'API: /set$program$recordmode$pair, method: set_program_recordmode_pair()'
+  logging.info('API: /set$program$recordmode$pair, method: set_program_recordmode_pair()')
   db = detdp()
   input_data = json.loads(request.data)
   old_pair = []
@@ -277,7 +278,7 @@ def set_program_recordmode_pair():
 
 @app.route('/get$save$system$setup', methods=['GET', 'POST'])
 def set_system_setup():
-  print 'API: /get$save$setup, method: set_user_setup()'
+  logging.info('API: /get$save$setup, method: set_user_setup()')
   input_data = json.loads(request.data)
   user_name = input_data['admin_name']
   std_cols = input_data['std_cols']
@@ -291,7 +292,7 @@ def set_system_setup():
 
 @app.route('/get$file$retrieve', methods=['GET', 'POST'])
 def get_file_retrieve():
-  print 'API: /get$file$retrieve, method: get_file_retrieve()'
+  logging.info('API: /get$file$retrieve, method: get_file_retrieve()')
   input_data = json.loads(request.data)
   user_name = input_data['user_name']
   var_flag = input_data['flag']
@@ -303,7 +304,6 @@ def get_file_retrieve():
   var_email = input_data['email']
   var_param = input_data['params']
 
-  print input_data
 
   if var_record_mode == '':
     record_mode = []
@@ -353,13 +353,12 @@ def get_file_retrieve():
 
   db = detdp()
   result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
-  print "TEST", result
   return jsonify({'status': result})
 
 
 @app.route('/get$colmn$mapping$pair')
 def get_colmapping_pair():
-  print 'API: /get$colmn$mapping$pair, method: get_colmapping_pair()'
+  logging.info('API: /get$colmn$mapping$pair, method: get_colmapping_pair()')
   db = detdp()
   result = db.get_col_mapping()
   return jsonify({'status': result})
@@ -367,7 +366,7 @@ def get_colmapping_pair():
 
 @app.route('/set$colmn$mapping$pair', methods=['GET', 'POST'])
 def set_colmapping_pair():
-  print 'API: /set$colmn$mapping$pair, method: set_colmapping_pair()'
+  logging.info('API: /set$colmn$mapping$pair, method: set_colmapping_pair()')
   input_data = json.loads(request.data)
   new_pair = []
   for row in input_data:
@@ -383,7 +382,7 @@ def set_colmapping_pair():
 
 @app.route('/get$upload$log', methods=['GET', 'POST'])
 def get_upload_log():
-  print 'API: /get$upload$log, method: get_upload_log()'
+  logging.info('API: /get$upload$log, method: get_upload_log()')
   input_data = json.loads(request.data)
   s_y = input_data['s_y']
   s_m = input_data['s_m']
@@ -398,20 +397,20 @@ def get_upload_log():
 
 @app.route('/get$manual$upload', methods=['GET', 'POST'])
 def get_manual_upload():
-  print 'API: /get$manual$upload, method: get_manual_upload()'
+  logging.info('API: /get$manual$upload, method: get_manual_upload()')
   auto_upload = detdpautoupload()
   result = auto_upload.get_file('Admin_manual')
   if result:
     msg = 'Upload finished, go to log for information.'
   else:
     msg = 'System error, need admin configuration '
-  print 'Finish manual upload,call method'
+  logging.info('Finish manual upload,call method')
   return jsonify({'status': msg})
 
 
 @app.route('/get$link$cols$list$predix')
 def get_linkcols_prefix():
-  print 'API: /get$link$cols$list$predix, method: get_autoupload_conf()'
+  logging.info('API: /get$link$cols$list$predix, method: get_autoupload_conf()')
   db = detdp()
   result = db.get_autoupload_conf()
   return jsonify({'status': result})
@@ -419,7 +418,7 @@ def get_linkcols_prefix():
 
 @app.route('/set$link$cols$list$predix', methods=['GET', 'POST'])
 def set_linlcols_prefix():
-  print 'API: /set$link$cols$list$predix, method : set_autoupload_conf'
+  logging.info('API: /set$link$cols$list$predix, method : set_autoupload_conf')
   input_data = json.loads(request.data)
   data_prefix = input_data['data_prefix']
   conf_prefix = input_data['conf_prefix']
@@ -435,7 +434,7 @@ def set_linlcols_prefix():
 
 @app.route('/get$exp$type')
 def get_exp_type():
-  print 'API: /get$exp$type, method: get_exp_type()'
+  logging.info('API: /get$exp$type, method: get_exp_type()')
   db = detdp()
   result = db.get_exp_type()
   return jsonify({'status': result})
@@ -443,7 +442,7 @@ def get_exp_type():
 
 @app.route('/set$exp$type', methods=['GET', 'POST'])
 def set_exp_type():
-  print 'API: /set$exp$type, method: set_exp_type()'
+  logging.info('API: /set$exp$type, method: set_exp_type()')
   input_data = json.loads(request.data)
   exp_type = [x.lower() for x in input_data]
   db = detdp()
@@ -457,7 +456,7 @@ def set_exp_type():
 
 @app.route('/upload$work$file', methods=['GET', 'POST'])
 def upload_work_file():
-  print 'API: /upload$work$file, method: upload_temp()'
+  logging.info('API: /upload$work$file, method: upload_temp()')
   if request.method == 'POST':
     db = detdp()
     file = request.files['file']
@@ -471,12 +470,12 @@ def upload_work_file():
 
 @app.route('/cancel$work$file$upload', methods=['GET', 'POST'])
 def del_work_file():
-  print 'API: /cancel$work$file$upload, method: delete_temp()'
+  logging.info('API: /cancel$work$file$upload, method: delete_temp()')
   result = True
   db = detdp()
   input_data = json.loads(request.data)
   for row in input_data:
-    print 'Delete File: ', row['file_name']
+    logging.info('Delete File: '.format(row['file_name']))
     file_id = row['file_id']
     tmp = db.delete_temp(file_id)
     result = result and tmp
@@ -491,7 +490,7 @@ def del_work_file():
 
 @app.route('/confirm$work$file$upload', methods=['GET', 'POST'])
 def confirm_work_file():
-  print 'API: /confirm$work$file$upload, method: upload_work_file_toDB()'
+  logging.info('API: /confirm$work$file$upload, method: upload_work_file_toDB()')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -515,7 +514,7 @@ def confirm_work_file():
 
 @app.route('/get$work$file$summary', methods=['GET', 'POST'])
 def get_work_file_summary():
-  print 'API: /confirm$work$file$upload, method: get_work_file_overview()'
+  logging.info('API: /confirm$work$file$upload, method: get_work_file_overview()')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -527,7 +526,7 @@ def get_work_file_summary():
 
 @app.route('/search$work$file$summary', methods=['GET', 'POST'])
 def search_work_file_summary():
-  print 'API: /search$work$file$summary, method: get_work_file_overview'
+  logging.info('API: /search$work$file$summary, method: get_work_file_overview')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -546,7 +545,7 @@ def search_work_file_summary():
 
 @app.route('/concat$work$file', methods=['GET', 'POST'])
 def concat_work_file_toOne():
-  print 'API: /concat$work$file, method: concat_work_file'
+  logging.info('API: /concat$work$file, method: concat_work_file')
   db = detdp()
   input_data = json.loads(request.data)
   concat_user = input_data['concat_user']
@@ -564,14 +563,13 @@ def concat_work_file_toOne():
       tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
       concat_files.append(tmp)
 
-  print concat_files
   result = db.concat_work_file(concat_user, concat_files)
   return jsonify({'status': result})
 
 
 @app.route('/get$sub$exp$detail', methods=['GET', 'POST'])
 def get_sub_exp_detail():
-  print 'API: /get$sub$exp$detail, method: get_work_file_subfile'
+  logging.info('API: /get$sub$exp$detail, method: get_work_file_subfile')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -582,7 +580,7 @@ def get_sub_exp_detail():
 
 @app.route('/save$sub$work$file$del', methods=['GET', 'POST'])
 def save_sub_work_file_del():
-  print 'API: /save$sub$work$file$del, method: delete_sub_file'
+  logging.info('API: /save$sub$work$file$del, method: delete_sub_file')
   db = detdp()
   del_key = []
   del_list = []
@@ -603,8 +601,8 @@ def save_sub_work_file_del():
 
   result = True
   for t in del_list:
-    print 'Delete --- exp_user : {}, exp_no : {}, del_sub_exp_list : {}'.format(t.get('exp_user'), t.get('exp_no'),
-                                                                                t.get('del_sub_exp_list'))
+    logging.info('Delete --- exp_user : {}, exp_no : {}, del_sub_exp_list : {}'.format(t.get('exp_user'), t.get('exp_no'),
+                                                                                t.get('del_sub_exp_list')))
     result = result and db.delete_sub_file(t.get('exp_user'), t.get('exp_no'), t.get('del_sub_exp_list'))
 
   if result:
@@ -617,7 +615,7 @@ def save_sub_work_file_del():
 
 @app.route('/del$experiment', methods=['GET', 'POST'])
 def del_experiment():
-  print 'API: /del$experiment, method: delete_exp_file'
+  logging.info('API: /del$experiment, method: delete_exp_file')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']
@@ -634,7 +632,7 @@ def del_experiment():
 
 @app.route('/confirm$add$work$file', methods=['GET', 'POST'])
 def add_work_file_to_exp():
-  print 'API: /confirm$add$work$file, method: add_sub_file'
+  logging.info('API: /confirm$add$work$file, method: add_sub_file')
   db = detdp()
   input_data = json.loads(request.data)
   exp_user = input_data['exp_user']

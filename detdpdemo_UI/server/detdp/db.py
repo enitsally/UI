@@ -10,6 +10,7 @@ import StringIO
 import time
 from datetime import datetime
 from datetime import timedelta
+import logging
 
 
 class detdp:
@@ -24,7 +25,7 @@ class detdp:
   def get_login(self, user_name, user_password):
     user_group = self.db.user.find({'user_name': user_name, 'user_password': user_password}, {'user_group': 1})
     str_method = 'get_login(user_name = {}, user_password = {})'.format(user_name, user_password)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     if user_group.count() == 1:
       return user_group[0]['user_group']
     elif user_group.count() == 0 is None:
@@ -34,20 +35,20 @@ class detdp:
 
   def get_record_mode(self):
     str_method = 'get_record_mode()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     result = self.db.data_conf.find({}).distinct('record_mode')
     return result
 
   def get_program(self):
     str_method = 'get_program()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     tmp = self.db.data_conf.find({}, {'_id': False})
     result = [t for t in tmp]
     return result
 
   def get_upload_overview(self):
     str_method = 'get_upload_overview()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     mapper = Code("""
                         function(){
                             var combo_key = { 'doe_name':this.doe_name, 'program':this.program,
@@ -86,7 +87,7 @@ class detdp:
 
   def get_column_chk_conf(self, conf_file):
     str_method = 'get_column_chk_conf(conf_file = {})'.format(conf_file)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     temp_file_id = self.upload_temp(conf_file)
     sys_cols = self.db.system_conf.find_one({})
     sys_cols_conf = sys_cols.get('conf_cols')
@@ -138,7 +139,7 @@ class detdp:
 
   def get_column_chk_data(self, data_file):
     str_method = 'get_column_chk_data(data_file = {})'.format(data_file)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     temp_file_id = self.upload_temp(data_file)
     sys_cols = self.db.system_conf.find_one({})
@@ -193,7 +194,7 @@ class detdp:
                                                                                                        record_mode,
                                                                                                        read_only,
                                                                                                        doe_name)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     status = 'PASS'
     comment = ''
@@ -222,7 +223,7 @@ class detdp:
     str_method = 'get_exist_chk(program = {}, record_mode = {}, read_only = {}, data_file_input = {}, conf_file_input = {}, doe_name = {}, doe_descr = {}, comment = {}, user_name = {}, flag = {} )'.format(
       program, record_mode, read_only, data_file_input, conf_file_input, doe_name, doe_descr,
       doe_comment, user_name, flag)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     fs = gridfs.GridFS(self.db)
     data_id = ObjectId(data_file_input)
@@ -294,14 +295,11 @@ class detdp:
       self.db.system_conf.find_one_and_update({}, {"$set": {"conf_cols": list(update_conf_cols_list)}})
 
       # --------update all the existing document to add new keys
-      print "Update conf col len:", len(update_conf_cols_list)
-      print "Old conf col len:", len(old_conf_cols_list)
+
       if len(update_conf_cols_list) > len(old_conf_cols_list) and len(old_conf_cols_list) != 0:
         for col in update_conf_cols_list:
           if col not in old_conf_cols_list:
-            print "New Col Name", col
             self.db.conf_file.update_many({}, {"$set": {col: ""}})
-            print "Update many here"
 
     # ------- Insert new data file into gridfs and an index file into 'data_file' collection
     data_file.seek(0)
@@ -340,7 +338,7 @@ class detdp:
 
   def upload_temp(self, tempFile):
     str_method = 'upload_temp( tempFile = {})'.format(tempFile)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     fs = gridfs.GridFS(self.db)
     file_id = fs.put(tempFile)
@@ -348,7 +346,7 @@ class detdp:
 
   def delete_temp(self, tempFile):
     str_method = 'delete_temp( tempFile = {})'.format(tempFile)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     fs = gridfs.GridFS(self.db)
     file_id = ObjectId(tempFile)
     fs.delete(file_id)
@@ -359,7 +357,7 @@ class detdp:
 
   def get_system_cols(self):
     str_method = 'get_full_cols( )'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     tmp = self.db.system_conf.find_one({})
     if tmp is not None:
       result = {'standard_cols': ([] if tmp.get('standard_cols') is None else tmp.get('standard_cols')),
@@ -373,13 +371,13 @@ class detdp:
 
   def get_user_cols(self, user_name):
     str_method = 'get_user_cols( user_name = {})'.format(user_name)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     result = {'standard_cols': [],
               'customized_cols': []}
     r = self.db.user.find({'user_name': user_name})
     if r.count() != 1:
-      print "System error, no user or multiple user"
+      logging.info('call method: '.format(str_method))
     else:
       tmp = r[0]
       if tmp.get('standard_cols') == None:
@@ -402,7 +400,7 @@ class detdp:
   def set_user_cols(self, user_name, std_cols, cus_cols):
     str_method = 'set_user_cols( user_name = {}, std_cols = {}, cus_cols = {})'.format(user_name, std_cols,
                                                                                        cus_cols)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     user_column = self.db.user.find_one({'user_name': user_name})
     old_std_cols_list = user_column.get('standard_cols')
@@ -427,7 +425,7 @@ class detdp:
     str_method = 'get_doe_summary(doe_name = {}, doe_descr = {}, doe_comment = {}, program = {}, record_mode = {}, read_only = {}, s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(
       doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y, e_m,
       e_d)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     query_dict = {}
     if len(doe_name) > 0:
       if query_dict.get('doe_name') is None:
@@ -463,12 +461,12 @@ class detdp:
         query_dict['upload_date'] = {}
       e_t = datetime(e_y, e_m, e_d, 23, 59, 59)
       query_dict['upload_date']['$lt'] = e_t
-    print query_dict
+    logging.info('query_dict:'.format(query_dict))
     return list(self.db.data_file.find(query_dict, {'_id': False, 'data_file_id': False}))
 
   def get_conf_overview(self, time_range):
     str_method = 'get_conf_overview( period = {})'.format(time_range)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     lt_time = datetime.now()
     if time_range == '1':
@@ -480,8 +478,8 @@ class detdp:
     else:
       gt_time = '*'
 
-    print 'start_time:', gt_time
-    print 'end_time:', lt_time
+    logging.info('start_time:'.format(gt_time))
+    logging.info('end_time:'.format(lt_time))
 
     upload_key_list = []
     if gt_time == '*':
@@ -513,7 +511,7 @@ class detdp:
 
   def get_program_recordmode(self):
     str_method = 'get_program_recordmode()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     tmp = self.db.data_conf.find({})
     result = []
     for t in tmp:
@@ -527,7 +525,7 @@ class detdp:
 
   def set_program_recordmode(self, input):
     str_method = 'set_program_recordmode( input = {})'.format(input)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     result = self.db.data_conf.delete_many({})
     del_no = result.deleted_count
     if len(input) == 0:
@@ -540,7 +538,7 @@ class detdp:
 
   def set_system_cols(self, std_cols):
     str_method = 'set_system_cols( std_cols = {})'.format(std_cols)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     sys_column = self.db.system_conf.find_one({})
     old_std_cols_list = sys_column.get('standard_cols')
@@ -557,7 +555,7 @@ class detdp:
                         flag):
     str_method = 'get_file_retrieve( user_name = {}, program = {}, record_mode = {}, read_only = {}, doe_no = {}, design_no = {}, parameter = {}, addition_email = {}, flag = {})'.format(
       user_name, program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     fs = gridfs.GridFS(self.db)
     final_msg = {'comment': ''}
@@ -589,7 +587,7 @@ class detdp:
       for key, value in parameter.iteritems():
         query_dict[key] = {}
         query_dict[key]['$in'] = value
-    print query_dict
+    logging.info('query_dict:'.format(query_dict))
     conf_file = self.db.conf_file.find(query_dict, {'_id': False})
     if conf_file.count() > 0:
       # searched file exist--------------------
@@ -619,15 +617,13 @@ class detdp:
         data = self.db.user.find_one({'user_name': user_name}, {'standard_cols': True}).get(
           'standard_cols')
         if data is None:
-          print "User don't have standard columns list, use the system standard column list"
+          logging.warning("User don't have standard columns list, use the system standard column list")
           data = self.db.system_conf.find_one({}).get('standard_cols')
         if data is not None:
           data_header = [x for x in data]
         else:
           comment = 'No system standard column list.'
           return comment
-
-        # print 'mapping_head:', mapping_head
 
         for head in data_header:
           if head not in final_header_list:
@@ -653,14 +649,14 @@ class detdp:
         data_full = self.db.user.find_one({'user_name': user_name}, {'full_cols': True}).get(
           'full_cols')
         if data_full is None:
-          print "User don't have full columns list, use the system full column list"
+          logging.warning("User don't have full columns list, use the system full column list")
           data_full = self.db.system_conf.find_one({}).get('full_cols')
         if data_full is not None:
           data_header_full = [x for x in data_full]
         else:
           data_header_full = []
 
-        # print 'mapping_head:', mapping_head
+
         for head in data_header_full:
           if head not in final_header_list_full:
             tmp = mapping_head.get(head)
@@ -684,13 +680,13 @@ class detdp:
         data_cust = self.db.user.find_one({'user_name': user_name}, {'customized_cols': True}).get(
           'customized_cols')
         if data_cust is None:
-          print "User don't have customized columns list, use the system standard column list"
+          logging.warning( "User don't have customized columns list, use the system standard column list")
           data_cust = self.db.system_conf.find_one({}).get('standard_cols')
         if data_cust is not None:
           data_header_cust = [x for x in data_cust]
         else:
           data_header_cust = []
-        # print 'mapping_head:', mapping_head
+
         for head in data_header_cust:
           if head not in final_header_list_cust:
             tmp = mapping_head.get(head)
@@ -719,10 +715,10 @@ class detdp:
         doe_recordmode_search = f.get('record_mode')
         doe_readonly_search = f.get('read_only')
         if doe_name_search is not None:
-          print 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search,
+          logging.info( 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search,
                                                                                      doe_program_search,
                                                                                      doe_recordmode_search,
-                                                                                     doe_readonly_search)
+                                                                                     doe_readonly_search))
           data_file_id = self.db.data_file.find_one(
             {'doe_name': doe_name_search, 'program': doe_program_search,
              'record_mode': doe_recordmode_search,
@@ -755,11 +751,11 @@ class detdp:
                 temp['read_only'] = doe_readonly_search
 
                 final.append(temp)
-                print 'standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
+                logging.info( 'standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
                   doe_name_search,
                   doe_program_search,
                   doe_recordmode_search,
-                  doe_readonly_search)
+                  doe_readonly_search))
               if len(final_header_list_cust) > 0:
                 for h in final_header_list_cust:
                   if h not in result_header:
@@ -771,11 +767,11 @@ class detdp:
                 temp['record_mode'] = doe_recordmode_search
                 temp['read_only'] = doe_readonly_search
                 final_cust.append(temp)
-                print 'customized doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
+                logging.info('customized doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
                   doe_name_search,
                   doe_program_search,
                   doe_recordmode_search,
-                  doe_readonly_search)
+                  doe_readonly_search))
 
               if len(final_header_list_full) > 0:
                 for h in final_header_list_full:
@@ -788,27 +784,27 @@ class detdp:
                 temp['record_mode'] = doe_recordmode_search
                 temp['read_only'] = doe_readonly_search
                 final_full.append(temp)
-                print 'full doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
+                logging.info('full doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
                   doe_name_search,
                   doe_program_search,
                   doe_recordmode_search,
-                  doe_readonly_search)
+                  doe_readonly_search))
       if len(final_header_list) > 0:
-        print "concat std file"
+        logging.info("concat std file")
         final_pf = pd.concat(final)
-        print "write to: ", file_name_stand
+        logging.info("write to: ".format(file_name_stand))
         final_pf.to_csv(file_name_stand, index=False)
       if len(final_header_list_cust) > 0:
-        print "concat cust file"
+        logging.info("concat cust file")
         final_cust_pf = pd.concat(final_cust)
-        print "write to: ", file_name_cust
+        logging.info("write to: ".format(file_name_cust))
         final_cust_pf.to_csv(file_name_cust, index=False)
       if len(final_header_list_full) > 0:
-        print "concat full file"
+        logging.info("concat full file")
         final_full_pf = pd.concat(final_full)
-        print "write to: ", file_name_full
+        logging.info("write to: ".format(file_name_full))
         final_full_pf.to_csv(file_name_full, index=False)
-      print final_msg
+      logging.info(final_msg)
       final_msg['comment'] = "File Aggregation succeed!"
     else:
       final_msg['comment'] = "Aggregated file not found."
@@ -816,7 +812,7 @@ class detdp:
 
   def get_col_mapping(self):
     str_method = 'get_col_mapping()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     tmp = self.db.column_mapping.find({})
     result = []
     for t in tmp:
@@ -829,7 +825,7 @@ class detdp:
 
   def set_col_mapping(self, input):
     str_method = 'set_col_mapping( input = {})'.format(input)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     result = self.db.column_mapping.delete_many({})
     del_no = result.deleted_count
     if len(input) == 0:
@@ -844,7 +840,7 @@ class detdp:
     str_method = 'get_upload_log(s_y = {}, s_m = {}, s_d = {}, e_y = {}, e_m = {}, e_d= {} )'.format(s_y, s_m, s_d,
                                                                                                      e_y,
                                                                                                      e_m, e_d)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     query_dict = {}
     if s_y != '' and s_m != '' and s_d != '':
       if query_dict.get('log.status_date') is None:
@@ -857,12 +853,12 @@ class detdp:
       e_t = datetime(e_y, e_m, e_d, 23, 59, 59)
       # .strftime('%m/%d/%Y,%H:%M:%S')
       query_dict['log.status_date']['$lt'] = e_t
-    print query_dict
+    logging.info('query_dict'.format(query_dict))
     return list(self.db.auto_upload_log.find(query_dict, {'_id': False}))
 
   def get_autoupload_conf(self):
     str_method = 'get_autoload_conf()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     conf = self.db.system_conf.find_one({})
     if conf is not None:
       linkCols = [] if conf.get('link_list') is None else conf.get('link_list')
@@ -879,7 +875,7 @@ class detdp:
     str_method = 'set_autoupload_conf( data_prefix = {}, conf_prefix = {}, link_list = {} )'.format(data_prefix,
                                                                                                     conf_prefix,
                                                                                                     link_list)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     result = self.db.system_conf.find_one_and_update({}, {
       '$set': {'data_prefix': data_prefix, 'conf_prefix': conf_prefix, 'link_list': link_list}})
     if (result is not None):
@@ -889,7 +885,7 @@ class detdp:
 
   def get_exp_type(self):
     str_method = 'get_exp_type()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     conf = self.db.system_conf.find_one({})
     if conf is not None:
       result = [] if conf.get('exp_type') is None else conf.get('exp_type')
@@ -897,7 +893,7 @@ class detdp:
 
   def set_exp_type(self, exp_type):
     str_method = 'set_exp_type()'
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     result = self.db.system_conf.find_one_and_update({}, {'$set': {'exp_type': exp_type}})
     if (result is not None):
       return True
@@ -910,7 +906,7 @@ class detdp:
                             file_list = {})'''.format(exp_user, program, record_mode, read_only, exp_type,
                                                       project, tester, comment,
                                                       file_list)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     # --- This is new uploaded files
     user_profile = self.db.work_file.find_one({'exp_user': exp_user})
@@ -951,7 +947,7 @@ class detdp:
   def get_work_file_overview(self, exp_user, time_range, start_time, end_time):
     str_method = 'get_work_file_overview( exp_user = {}, time_range = {}, start_time = {}, end_time = {})'.format(
       exp_user, time_range, start_time, end_time)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     if start_time == '' and end_time == '':
       lt_time = datetime.now()
@@ -966,8 +962,8 @@ class detdp:
     else:
       gt_time = start_time
       lt_time = end_time
-    print 'start_time:', start_time
-    print 'end_time:', end_time
+    logging.info('start_time:'.format(start_time))
+    logging.info('end_time:'.format(end_time))
 
     if gt_time == '*' and exp_user == '*':
       result = self.db.work_file.aggregate([
@@ -1021,7 +1017,7 @@ class detdp:
 
   def get_work_file_subfile(self, exp_user, exp_no):
     str_method = 'get_work_file_subfile( exp_user = {}, exp_no = {})'.format(exp_user, exp_no)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     info = []
 
@@ -1029,7 +1025,7 @@ class detdp:
       {'$unwind': '$experiments'},
       {'$match': {'exp_user': exp_user, 'experiments.exp_no': exp_no}},
       {'$sort': {'experiments.exp_sub_files.exp_sub_no': 1}}
-    ]);
+    ])
 
     for row in result:
       tmp = row.get('experiments')
@@ -1090,7 +1086,7 @@ class detdp:
             dict.append(ele)
 
     for d in dict:
-      print d
+      logging.info('work file for concat:'.format(d))
     result = self.concat_csv(file_name, dict)
     return {'comment': result, 'file_name': file_name}
 
@@ -1120,22 +1116,22 @@ class detdp:
             data_df = data_df.T.drop_duplicates().T
           final.append(data_df)
       else:
-        print 'exp_user: {}, exp_no: {}, sub_exp: {}, file_id: {}, NOT EXIST.'.format(exp_user, exp_no, sub_exp,
-                                                                                      file_id)
+        logging.info('exp_user: {}, exp_no: {}, sub_exp: {}, file_id: {}, NOT EXIST.'.format(exp_user, exp_no, sub_exp,
+                                                                                      file_id))
     # final_pf = pd.concat(final)
     # final_pf.to_csv(final_adr, index=False)
     # result = True
     try:
       final_pf = pd.concat(final)
       final_pf.to_csv(final_adr, index=False)
-      print "write to: ", final_adr
+      logging.info("write to: ".format(final_adr))
       mgs = True
 
     except ValueError as e:
-      print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
 
     except UnicodeEncodeError as e:
-      print 'ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('ERROR:---exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
 
     finally:
       return mgs
@@ -1143,13 +1139,13 @@ class detdp:
   def delete_sub_file(self, exp_user, exp_no, del_sub_exp_list):
     str_method = 'delete_sub_file( exp_user = {}, exp_no = {}, sub_exp_list = {} )'.format(exp_user, exp_no,
                                                                                            del_sub_exp_list)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     mgs = False
     delete_file_ids = []
     fs = gridfs.GridFS(self.db)
 
     if len(del_sub_exp_list) == 0:
-      print "No sub experiments are selected."
+      logging.warning("No sub experiments are selected.")
       return False
     else:
 
@@ -1185,7 +1181,7 @@ class detdp:
         if fs.exists(f_id):
           fs.delete(f_id)
         else:
-          print "File not exit: ", f
+          logging.warning("File not exit: ".format(f))
 
       self.db.work_file.update(
         {'exp_user': exp_user, 'experiments.exp_no': exp_no},
@@ -1194,17 +1190,17 @@ class detdp:
       mgs = True
 
     except ValueError as e:
-      print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
+      logging.error('ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e))
 
     except TypeError as e:
-      print 'ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e)
+      logging.error('ERROR:--- exp_user: {}, exp_no: {}, error: e'.format(exp_user, exp_no, e))
 
     finally:
       return mgs
 
   def delete_exp_file(self, exp_user, exp_no):
     str_method = 'delete_exp_file( exp_user = {}, exp_no = {} )'.format(exp_user, exp_no)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
     mgs = False
     try:
       self.db.work_file.update(
@@ -1216,16 +1212,16 @@ class detdp:
       mgs = True
 
     except ValueError as e:
-      print 'ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
     except TypeError as e:
-      print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
 
     finally:
       return mgs
 
   def add_sub_file(self, exp_user, exp_no, file_list):
     str_method = 'add_sub_file( exp_user = {}, exp_no = {} ,file_list = {})'.format(exp_user, exp_no, file_list)
-    print 'call method: ', str_method
+    logging.info('call method: '.format(str_method))
 
     mgs = False
     tmp = self.db.work_file.find_one({'exp_user': exp_user, 'experiments.exp_no': exp_no},
@@ -1255,10 +1251,10 @@ class detdp:
       mgs = True
 
     except ValueError as e:
-      print 'ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('ValueError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
 
     except TypeError as e:
-      print 'TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e)
+      logging.error('TypeError:--- exp_user: {}, exp_no: {}, error: {}'.format(exp_user, exp_no, e))
 
     finally:
       return mgs

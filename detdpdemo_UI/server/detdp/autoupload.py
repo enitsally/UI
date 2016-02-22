@@ -5,6 +5,8 @@ from os import remove
 import time
 from datetime import datetime
 import unicodecsv
+import logging
+
 
 
 class detdpautoupload:
@@ -17,15 +19,12 @@ class detdpautoupload:
     return self.db
 
   def get_file(self, user_name):
-    print 'OK, You are in.'
     # path = 'input/'
     path = '/MAP-Apps/DETDataProcessing/Upload_Files/'
     suffix = '.csv'
     sys_mgs = ''
     fs = gridfs.GridFS(self.db)
-    print 'Godd for GridFS'
     filenames = listdir(path)
-    print 'File names', filenames
     system_conf = self.db.system_conf.find_one({})
     if system_conf is not None:
       data_prefix = system_conf.get('data_prefix')
@@ -39,14 +38,14 @@ class detdpautoupload:
 
       if len(link_list) == 0:
         sys_mgs += '''No link cols exist in database, need administration setup. '''
-        print 'System Message: {}'.format(sys_mgs)
+        logging.warning('System Message: {}'.format(sys_mgs))
 
-        print 'Start to write error log to shared folder:----'
+        logging.info('Start to write error log to shared folder:----')
         log_time = time.strftime('%Y%m%d%H%M%S')
         log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
         with open (log_name, 'w') as log_file:
           log_file.write(sys_mgs)
-        print 'Finish writing error log----'
+        logging.info('Finish writing error log----')
 
         return False
 
@@ -63,20 +62,20 @@ class detdpautoupload:
       cfileList = [file for file in filenames if file.endswith(suffix) and file.startswith(conf_prefix)]
     else:
       sys_mgs += '''No system prefix info, need administration setup. '''
-      print 'System Message: {}'.format(sys_mgs)
+      logging.warning('System Message: {}'.format(sys_mgs))
 
-      print 'Start to write error log to shared folder:----'
+      logging.info('Start to write error log to shared folder:----')
       log_time = time.strftime('%Y%m%d%H%M%S')
       log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
       with open (log_name, 'w') as log_file:
         log_file.write(sys_mgs)
-      print 'Finish writing error log----'
+      logging.info('Finish writing error log----')
 
       return False
     log_dict = {}
 
     for data_name in dfileList:
-      print 'Start File: {} here'.format(data_name)
+      logging.info('Start File: {}.'.format(data_name))
       comment = ''
       sys_mgs = ''
       key = data_name.replace(suffix, '')
@@ -86,11 +85,11 @@ class detdpautoupload:
       log_dict[key]['ready_upload'] = 'Y'
       existlog = self.db.auto_upload_log.find_one({'key': key})
       if existlog is not None:
-        print 'File exist in System, update duplicate number'
+        logging.info('File exist in System, update duplicate number')
         log_dict[key]['number_of_check'] = existlog.get('log').get('number_of_check') + 1
         log_dict[key]['checkIn_date'] = existlog.get('log').get('checkIn_date')
       else:
-        print 'File checkin in system for the first time'
+        logging.info('File checkin in system for the first time')
         log_dict[key]['number_of_check'] = 1
         log_dict[key]['checkIn_date'] = timestamp
       conf_name = data_name.replace(data_prefix, conf_prefix)
@@ -114,7 +113,6 @@ class detdpautoupload:
         doename = features[4]
         std_col_user = recordmode+'_'+readonly
 
-        print 'File name is good, start to check program, readonly'
         chk_program = self.db.data_conf.find_one({'program': program, 'record_mode': recordmode})
         if chk_program is not None:
           log_dict[key]['program'] = 'Match'
@@ -132,7 +130,7 @@ class detdpautoupload:
 
       if log_dict[key]['ready_upload'] == 'Y':
         # ------Open files--------------------------------------------------------
-        print 'Open two files, ready for checking cols'
+        logging.info('Open two files, ready for checking cols')
         with open(path + data_name, 'rb') as data_file:
           with open(path + conf_name, 'rb') as conf_file:
             data_file.seek(0)
@@ -148,7 +146,6 @@ class detdpautoupload:
         log_dict[key]['column_check'] = 'Check Pass'
         for col in link_list:
           if col not in data_head or col not in conf_head:
-            print 'check in header'
             log_dict[key]['column_check'] = 'Check Failed'
             log_dict[key]['ready_upload'] = 'N'
             comment += '''Required link column: {} is not provided. '''.format(col)
@@ -164,31 +161,28 @@ class detdpautoupload:
           t = self.db.user.find_one({'user_name': std_col_user})
           if t is None:
             sys_mgs += '''No std cols exist for {} in database, need administration setup. '''.format(std_col_user)
-            print 'System Message: {}'.format(sys_mgs)
+            logging.warning('System Message: {}'.format(sys_mgs))
 
-            print 'Start to write error log to shared folder:----'
+            logging.info('Start to write error log to shared folder:----')
             log_time = time.strftime('%Y%m%d%H%M%S')
             log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
             with open (log_name, 'w') as log_file:
               log_file.write(sys_mgs)
-            print 'Finish writing error log----'
+            logging.info('Finish writing error log----')
 
             return False
           else:
             std_col = [] if t.get('standard_cols') is None else [x for x in t.get('standard_cols')]
-            print len(std_col)
-            print '{} have cols:'.format(user_name)
-            print std_col
             if len(std_col) == 0:
               sys_mgs += '''No std cols exist for {} in database, need administration setup. '''.format(std_col_user)
-              print 'System Message: {}'.format(sys_mgs)
+              logging.warning('System Message: {}'.format(sys_mgs))
 
-              print 'Start to write error log to shared folder:----'
+              logging.info('Start to write error log to shared folder:----')
               log_time = time.strftime('%Y%m%d%H%M%S')
               log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
               with open (log_name, 'w') as log_file:
                 log_file.write(sys_mgs)
-              print 'Finish writing error log----'
+              logging.info('Finish writing error log----')
 
               return False
           for col in std_col:
@@ -203,14 +197,14 @@ class detdpautoupload:
 
       log_dict[key]['comment'] = comment
       log_dict[key]['upload_user'] = user_name
-      print 'All checking finished, start to upload the good ones'
+      logging.info('All checking finished, start to upload the good ones')
       if log_dict[key]['ready_upload'] == 'Y':
         # upload files
-        print 'update full columns list'
+        logging.info('update full columns list')
         # -------- Update the full columns list, in the 'system_conf' collection
         updated_full_list = set(full_list).union(set(data_head))
         self.db.system_conf.find_one_and_update({}, {"$set": {"full_cols": list(updated_full_list)}})
-        print 'update conf columns list'
+        logging.info('update conf columns list')
         # ----------- Update the conf columns list, in the 'system_conf' collection
         updated_conf_list = set(conf_list).union(set(conf_head))
         self.db.system_conf.find_one_and_update({}, {"$set": {"conf_cols": list(updated_conf_list)}})
@@ -218,7 +212,7 @@ class detdpautoupload:
         # -------------Update all existing conf files in conf_file if new column (key) is coming
 
         if len(updated_conf_list) > len(conf_list) and len(conf_list) != 0:
-          print 'update all exiting conf file if there is new conf column'
+          logging.info('update all exiting conf file if there is new conf column')
           for col in updated_conf_list:
             if col not in conf_list:
               self.db.conf_file.update_many({}, {"$set": {col: ""}})
@@ -226,7 +220,7 @@ class detdpautoupload:
         # ---------delete duplicate files----------------------------
         if log_dict[key]['number_of_check'] != 1:
           # -----------delete existing data file from gridfd and collection data_file
-          print 'delete duplicated files'
+          logging.info('delete duplicated files')
           del_data_file = self.db.data_file.find(
             {'upload_key': key, 'doe_name': doename, 'program': program, 'record_mode': recordmode,
              'read_only': readonly})
@@ -254,14 +248,14 @@ class detdpautoupload:
             result.deleted_count)
 
         # ------Open files for add new files into system-----------------------------------------------------
-        print 'Open file for actual uploading'
+        logging.info('Open file for actual uploading')
         with open(path + data_name, 'rb') as data_file:
           with open(path + conf_name, 'rb') as conf_file:
 
             # ------- Insert new data file into gridfs and an index file into 'data_file' collection
             data_file.seek(0)
             data_file_id = fs.put(data_file)
-            print 'Finish putting file in GridFS'
+            logging.info('Finish putting file in GridFS')
             temp = fs.find_one(filter=data_file_id)
             data_dict = {'doe_name': doename,
                          'program': program,
@@ -274,7 +268,7 @@ class detdpautoupload:
                          'data_file_id': data_file_id,
                          'upload_key': key}
             self.db.data_file.insert_one(data_dict)
-            print 'Finish insert into data_file'
+            logging.info('Finish insert into data_file')
             # -------- Insert conf file into the 'conf_file' collection
             conf_file.seek(0)
             reader = unicodecsv.reader(conf_file)
@@ -297,14 +291,14 @@ class detdpautoupload:
                 row['read_only'] = readonly
                 row['upload_key'] = key
                 self.db.conf_file.insert_one(row)
-              print 'Finish insert into conf_file'
+              logging.info('Finish insert into conf_file')
               # ------Close opened files
               log_dict[key]['upload_date'] = timestamp
               log_dict[key]['status'] = 'Uploaded'
         if log_dict[key]['status'] == 'Uploaded':
-          print 'delete uploaded data file:', data_name
+          logging.info('delete uploaded data file: {}'.format(data_name))
           remove(path + data_name)
-          print 'delete uploaded conf file:', conf_name
+          logging.info('delete uploaded conf file:{}'.format(conf_name))
           remove(path + conf_name)
 
       else:
@@ -313,15 +307,15 @@ class detdpautoupload:
 
       log_dict[key]['status_date'] = timestamp
 
-      print 'update log file'
+      logging.info('update log file')
       if log_dict[key]['number_of_check'] == 1:
         self.db.auto_upload_log.insert_one({'key': key, 'log': log_dict[key]})
       else:
         self.db.auto_upload_log.update_one({'key': key}, {'$set': {'log': log_dict[key]}})
 
-      print 'Finish File: {} -- System Message: {}'.format(key, sys_mgs)
+      logging.info('Finish File: {} -- System Message: {}'.format(key, sys_mgs))
 
-    print 'Start to write log to shared folder:----'
+    logging.info('Start to write log to shared folder:----')
     log_time = time.strftime('%Y%m%d%H%M%S')
     log_name = path + user_name +'_log' + '_' + str(log_time) + '.csv'
     fieldnames = ['data_file', 'conf_file', 'checkIn_date','number_of_check', 'program', 'read_only','column_check', 'ready_upload', 'upload_user', 'status','status_date', 'upload_date', 'comment']
@@ -330,7 +324,7 @@ class detdpautoupload:
       writer.writeheader()
       for key, log in log_dict.items():
         writer.writerow(log)
-    print 'Finish writing log----'
+    logging.info('Finish writing log----')
 
     return True
 
