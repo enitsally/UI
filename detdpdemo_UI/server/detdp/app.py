@@ -7,6 +7,9 @@ import json
 import os
 import pymongo
 import logging
+import logging.config
+
+logging.config.fileConfig('logging.conf')
 
 # UPLOAD_FOLDER_D = 'uploads/data'
 # UPLOAD_FOLDER_C = 'uploads/conf'
@@ -21,632 +24,633 @@ CORS(app)
 
 
 def allowed_file(filename):
-  result = '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-  return result
+    result = '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+    return result
 
 
 @app.route('/')
 def root():
-  return app.send_static_file('index.html')
+    return app.send_static_file('index.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-  logging.info('API: /login, method: login()')
-  input_data = json.loads(request.data)
-  var_username = input_data['username']
-  var_password = input_data['password']
-  db = detdp()
-  var_user_group = db.get_login(var_username, var_password)
-  if var_user_group is None:
-    status = None
-    id = ''
-    user = {}
-  else:
-    session['logged_in'] = True
-    status = var_user_group
-    id = var_username
-    if var_user_group == 'A':
-      role = 'admin'
-    elif var_user_group == 'G':
-      role = 'grouper'
-    elif var_user_group == 'U':
-      role = 'user'
+    logging.info('API: /login, method: login()')
+    input_data = json.loads(request.data)
+    var_username = input_data['username']
+    var_password = input_data['password']
+    db = detdp()
+    var_user_group = db.get_login(var_username, var_password)
+    if var_user_group is None:
+        status = None
+        id = ''
+        user = {}
     else:
-      role = ''
-    user = {'id': var_username, 'role': role}
-  return jsonify({'status': status, 'id': id, 'user': user})
+        session['logged_in'] = True
+        status = var_user_group
+        id = var_username
+        if var_user_group == 'A':
+            role = 'admin'
+        elif var_user_group == 'G':
+            role = 'grouper'
+        elif var_user_group == 'U':
+            role = 'user'
+        else:
+            role = ''
+        user = {'id': var_username, 'role': role}
+    return jsonify({'status': status, 'id': id, 'user': user})
 
 
 @app.route('/logout')
 def logout():
-  logging.info('API: /logout, method: logout()')
-  session.pop('logged_in', None)
-  status = "You are logged out."
-  return jsonify({'status': status})
+    logging.info('API: /logout, method: logout()')
+    session.pop('logged_in', None)
+    status = "You are logged out."
+    return jsonify({'status': status})
 
 
 @cross_origin()
 @app.route('/get$record$mode')
 def get_record_mode():
-  logging.info('API: /get$record$mode, method: get_record_mode()')
-  db = detdp()
-  status = db.get_record_mode()
-  return jsonify({'status': status})
+    logging.info('API: /get$record$mode, method: get_record_mode()')
+    db = detdp()
+    status = db.get_record_mode()
+    return jsonify({'status': status})
 
 
 @cross_origin()
 @app.route('/get$program')
 def get_program():
-  logging.info('API: /get$program, method: get_program()')
-  db = detdp()
-  status = db.get_program()
-  return jsonify({'status': status})
+    logging.info('API: /get$program, method: get_program()')
+    db = detdp()
+    status = db.get_program()
+    return jsonify({'status': status})
 
 
 @app.route('/get$upload$overview')
 def get_upload_overview():
-  logging.info('API: /get$upload$overview, method: get_upload_overview()')
-  db = detdp()
-  status = db.get_upload_overview()
-  return jsonify({'status': status})
+    logging.info('API: /get$upload$overview, method: get_upload_overview()')
+    db = detdp()
+    status = db.get_upload_overview()
+    return jsonify({'status': status})
 
 
 @app.route('/get$exist$chk', methods=['GET', 'POST'])
 def get_exist_chk():
-  logging.info('API: /get$exist$chk, method: get_exist_chk()')
-  db = detdp()
-  input_data = json.loads(request.data)
-  doe_name = input_data['doe_name']
-  program = input_data['doe_program']
-  record_mode = input_data['doe_record_mode']
-  read_only = input_data['doe_read_only']
-  result = db.get_exist_chk(program, record_mode, read_only, doe_name)
-  return jsonify({'status': result})
+    logging.info('API: /get$exist$chk, method: get_exist_chk()')
+    db = detdp()
+    input_data = json.loads(request.data)
+    doe_name = input_data['doe_name']
+    program = input_data['doe_program']
+    record_mode = input_data['doe_record_mode']
+    read_only = input_data['doe_read_only']
+    result = db.get_exist_chk(program, record_mode, read_only, doe_name)
+    return jsonify({'status': result})
 
 
 @app.route('/upload$d', methods=['GET', 'POST'])
 def get_chk_data():
-  logging.info('API: /upload$d, method: get_chk_data()')
-  if request.method == 'POST':
-    db = detdp()
-    file = request.files['data']
-    # file_name = file.filename
-    # if file and allowed_file(file_name):
-    #   file.save(os.path.join(app.config['UPLOAD_FOLDER_D'], file_name))
-    result = db.get_column_chk_data(file)
-    return jsonify({'status': result})
+    logging.info('API: /upload$d, method: get_chk_data()')
+    if request.method == 'POST':
+        db = detdp()
+        file = request.files['data']
+        # file_name = file.filename
+        # if file and allowed_file(file_name):
+        #   file.save(os.path.join(app.config['UPLOAD_FOLDER_D'], file_name))
+        result = db.get_column_chk_data(file)
+        return jsonify({'status': result})
 
 
 @app.route('/upload$c', methods=['GET', 'POST'])
 def get_chk_conf():
-  logging.info('API: /upload$c, method: get_chk_conf()')
-  if request.method == 'POST':
-    db = detdp()
-    file = request.files['conf']
-    result = db.get_column_chk_conf(file)
-    return jsonify({'status': result})
+    logging.info('API: /upload$c, method: get_chk_conf()')
+    if request.method == 'POST':
+        db = detdp()
+        file = request.files['conf']
+        result = db.get_column_chk_conf(file)
+        return jsonify({'status': result})
 
 
 @app.route('/get$upload', methods=['GET', 'POST'])
 def get_upload():
-  logging.info('API: /get$upload, method: get_upload()')
-  db = detdp()
-  var_input = json.loads(request.data)
-  doe_name = var_input['doe_name']
-  doe_descr = var_input['doe_descr']
-  doe_comment = var_input['doe_comment']
-  doe_program = var_input['doe_program']
-  doe_record_mode = var_input['doe_record_mode']
-  doe_read_only = var_input['doe_read_only']
-  upload_user = var_input['upload_user']
-  data_file = var_input['data_file']
-  conf_file = var_input['conf_file']
-  flag = var_input['flag']
-  result = db.upload_data_files(doe_program, doe_record_mode, doe_read_only, data_file, conf_file, doe_name,
-                                doe_descr,
-                                doe_comment, upload_user, flag)
+    logging.info('API: /get$upload, method: get_upload()')
+    db = detdp()
+    var_input = json.loads(request.data)
+    doe_name = var_input['doe_name']
+    doe_descr = var_input['doe_descr']
+    doe_comment = var_input['doe_comment']
+    doe_program = var_input['doe_program']
+    doe_record_mode = var_input['doe_record_mode']
+    doe_read_only = var_input['doe_read_only']
+    upload_user = var_input['upload_user']
+    data_file = var_input['data_file']
+    conf_file = var_input['conf_file']
+    flag = var_input['flag']
+    result = db.upload_data_files(doe_program, doe_record_mode, doe_read_only, data_file, conf_file, doe_name,
+                                  doe_descr,
+                                  doe_comment, upload_user, flag)
 
-  return jsonify({'status': result})
+    return jsonify({'status': result})
 
 
 @app.route('/get$del$temp', methods=['GET', 'POST'])
 def get_delete_temp():
-  logging.info('API: /get$del$temp, method: get_delete_temp()')
-  db = detdp()
-  var_input = json.loads(request.data)
-  data_file = var_input['data_file']
-  conf_file = var_input['conf_file']
-  data_status = db.delete_temp(data_file)
-  conf_status = db.delete_temp(conf_file)
-  # result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
-  result = {'data_status': data_status, 'conf_status': conf_status}
-  return jsonify({'status': result})
+    logging.info('API: /get$del$temp, method: get_delete_temp()')
+    db = detdp()
+    var_input = json.loads(request.data)
+    data_file = var_input['data_file']
+    conf_file = var_input['conf_file']
+    data_status = db.delete_temp(data_file)
+    conf_status = db.delete_temp(conf_file)
+    # result = 'Delete data file: {}\n Delete Conf file: {}'.format(data_status, conf_status)
+    result = {'data_status': data_status, 'conf_status': conf_status}
+    return jsonify({'status': result})
 
 
 @app.route('/get$system$setup', methods=['GET', 'POST'])
 def get_system_setup():
-  logging.info('API: /get$system$setup, method: get_system_setup()')
-  db = detdp()
-  result = db.get_system_cols()
-  return jsonify({'status': result})
+    logging.info('API: /get$system$setup, method: get_system_setup()')
+    db = detdp()
+    result = db.get_system_cols()
+    return jsonify({'status': result})
 
 
 @app.route('/get$user$setup', methods=['GET', 'POST'])
 def get_user_setup():
-  logging.info('API: /get$user$setup, method: get_user_setup()')
-  input_data = json.loads(request.data)
-  user_name = input_data['user_name']
-  db = detdp()
-  result = db.get_user_cols(user_name)
-  return jsonify({'status': result})
+    logging.info('API: /get$user$setup, method: get_user_setup()')
+    input_data = json.loads(request.data)
+    user_name = input_data['user_name']
+    db = detdp()
+    result = db.get_user_cols(user_name)
+    return jsonify({'status': result})
 
 
 @app.route('/get$save$setup', methods=['GET', 'POST'])
 def set_user_setup():
-  logging.info('API: /get$save$setup, method: set_user_setup()')
-  input_data = json.loads(request.data)
-  user_name = input_data['user_name']
-  std_cols = input_data['std_cols']
-  cus_cols = input_data['cus_cols']
-  db = detdp()
-  result = db.set_user_cols(user_name, std_cols, cus_cols)
-  return jsonify({'status': result})
+    logging.info('API: /get$save$setup, method: set_user_setup()')
+    input_data = json.loads(request.data)
+    user_name = input_data['user_name']
+    std_cols = input_data['std_cols']
+    cus_cols = input_data['cus_cols']
+    db = detdp()
+    result = db.set_user_cols(user_name, std_cols, cus_cols)
+    return jsonify({'status': result})
 
 
 @app.route('/get$search$summary', methods=['GET', 'POST'])
 def get_search_summary():
-  logging.info('API: /get$search$summary, method: get_search_summary()')
-  db = detdp()
-  input_data = json.loads(request.data)
-  var_doe_name = input_data['doe_name']
-  var_doe_descr = input_data['doe_descr']
-  var_doe_comment = input_data['doe_comment']
-  var_doe_program = input_data['doe_program']
-  var_doe_record_mode = input_data['doe_record_mode']
-  var_doe_read_only = input_data['doe_read_only']
-  s_y = input_data['s_y']
-  s_m = input_data['s_m']
-  s_d = input_data['s_d']
-  e_y = input_data['e_y']
-  e_m = input_data['e_m']
-  e_d = input_data['e_d']
-  logging.info('s_y:{}, s_m:{}, s_d:{}, e_y:{}, e_m:{}, e_d:{}'.format(s_y, s_m, s_d, e_y, e_m, e_d))
-  if var_doe_name == '':
-    doe_name = []
-  else:
-    doe_name = [str(x).strip() for x in var_doe_name.split(',')]
-  if var_doe_descr == '':
-    doe_descr = []
-  else:
-    doe_descr = [str(x).strip() for x in var_doe_descr.split(',')]
-  if var_doe_comment == '':
-    doe_comment = []
-  else:
-    doe_comment = [str(x).strip() for x in var_doe_comment.split(',')]
-  if var_doe_program == '':
-    program = []
-  else:
-    program = [str(x).strip() for x in var_doe_program.split(',')]
-  if var_doe_record_mode == '':
-    record_mode = []
-  else:
-    record_mode = [str(x).strip() for x in var_doe_record_mode.split(',')]
-  if var_doe_read_only == '':
-    read_only = []
-  else:
-    read_only = var_doe_read_only.split(',')
+    logging.info('API: /get$search$summary, method: get_search_summary()')
+    db = detdp()
+    input_data = json.loads(request.data)
+    var_doe_name = input_data['doe_name']
+    var_doe_descr = input_data['doe_descr']
+    var_doe_comment = input_data['doe_comment']
+    var_doe_program = input_data['doe_program']
+    var_doe_record_mode = input_data['doe_record_mode']
+    var_doe_read_only = input_data['doe_read_only']
+    s_y = input_data['s_y']
+    s_m = input_data['s_m']
+    s_d = input_data['s_d']
+    e_y = input_data['e_y']
+    e_m = input_data['e_m']
+    e_d = input_data['e_d']
+    logging.info('s_y:{}, s_m:{}, s_d:{}, e_y:{}, e_m:{}, e_d:{}'.format(s_y, s_m, s_d, e_y, e_m, e_d))
+    if var_doe_name == '':
+        doe_name = []
+    else:
+        doe_name = [str(x).strip() for x in var_doe_name.split(',')]
+    if var_doe_descr == '':
+        doe_descr = []
+    else:
+        doe_descr = [str(x).strip() for x in var_doe_descr.split(',')]
+    if var_doe_comment == '':
+        doe_comment = []
+    else:
+        doe_comment = [str(x).strip() for x in var_doe_comment.split(',')]
+    if var_doe_program == '':
+        program = []
+    else:
+        program = [str(x).strip() for x in var_doe_program.split(',')]
+    if var_doe_record_mode == '':
+        record_mode = []
+    else:
+        record_mode = [str(x).strip() for x in var_doe_record_mode.split(',')]
+    if var_doe_read_only == '':
+        read_only = []
+    else:
+        read_only = var_doe_read_only.split(',')
 
-  result = db.get_doe_summary(doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y,
-                              e_m, e_d)
-  return jsonify({'status': result})
+    result = db.get_doe_summary(doe_name, doe_descr, doe_comment, program, record_mode, read_only, s_y, s_m, s_d, e_y,
+                                e_m, e_d)
+    return jsonify({'status': result})
 
 
 @app.route('/get$conf$summary', methods=['GET', 'POST'])
 def get_conf_summary():
-  logging.info('API: /get$conf$summary, method: get_conf_summary()')
-  db = detdp()
-  period = request.data
-  result = db.get_conf_overview(period)
-  return jsonify({'status': result})
+    logging.info('API: /get$conf$summary, method: get_conf_summary()')
+    db = detdp()
+    period = request.data
+    result = db.get_conf_overview(period)
+    return jsonify({'status': result})
 
 
 @app.route('/get$program$recordmode$pair')
 def get_program_recordmode_pair():
-  logging.info('API: /get$program$recordmode$pair, method: get_program_recordmode_pair()')
-  db = detdp()
-  result = db.get_program_recordmode()
-  return jsonify({'status': result})
+    logging.info('API: /get$program$recordmode$pair, method: get_program_recordmode_pair()')
+    db = detdp()
+    result = db.get_program_recordmode()
+    return jsonify({'status': result})
 
 
 @app.route('/set$program$recordmode$pair', methods=['GET', 'POST'])
 def set_program_recordmode_pair():
-  logging.info('API: /set$program$recordmode$pair, method: set_program_recordmode_pair()')
-  db = detdp()
-  input_data = json.loads(request.data)
-  old_pair = []
+    logging.info('API: /set$program$recordmode$pair, method: set_program_recordmode_pair()')
+    db = detdp()
+    input_data = json.loads(request.data)
+    old_pair = []
 
-  for row in input_data:
-    tmp = {
-      'program': str(row['program']).lower(),
-      'record_mode': str(row['record_mode']).lower()
-    }
-    old_pair.append(tmp)
-  result = db.set_program_recordmode(old_pair)
-  return jsonify({'status': result})
+    for row in input_data:
+        tmp = {
+            'program': str(row['program']).lower(),
+            'record_mode': str(row['record_mode']).lower()
+        }
+        old_pair.append(tmp)
+    result = db.set_program_recordmode(old_pair)
+    return jsonify({'status': result})
 
 
 @app.route('/get$save$system$setup', methods=['GET', 'POST'])
 def set_system_setup():
-  logging.info('API: /get$save$setup, method: set_user_setup()')
-  input_data = json.loads(request.data)
-  user_name = input_data['admin_name']
-  std_cols = input_data['std_cols']
-  db = detdp()
-  if user_name == 'admin':
-    result = db.set_system_cols(std_cols)
-  else:
-    result = 'Permission denied!'
-  return jsonify({'status': result})
+    logging.info('API: /get$save$setup, method: set_user_setup()')
+    input_data = json.loads(request.data)
+    user_name = input_data['admin_name']
+    std_cols = input_data['std_cols']
+    db = detdp()
+    if user_name == 'admin':
+        result = db.set_system_cols(std_cols)
+    else:
+        result = 'Permission denied!'
+    return jsonify({'status': result})
 
 
 @app.route('/get$file$retrieve', methods=['GET', 'POST'])
 def get_file_retrieve():
-  logging.info('API: /get$file$retrieve, method: get_file_retrieve()')
-  input_data = json.loads(request.data)
-  user_name = input_data['user_name']
-  var_flag = input_data['flag']
-  var_record_mode = input_data['record_mode']
-  var_program = input_data['program']
-  var_read_only = input_data['read_only']
-  var_doe_no = input_data['doe_no']
-  var_design_no = input_data['design_no']
-  var_email = input_data['email']
-  var_param = input_data['params']
+    logging.info('API: /get$file$retrieve, method: get_file_retrieve()')
+    input_data = json.loads(request.data)
+    user_name = input_data['user_name']
+    var_flag = input_data['flag']
+    var_record_mode = input_data['record_mode']
+    var_program = input_data['program']
+    var_read_only = input_data['read_only']
+    var_doe_no = input_data['doe_no']
+    var_design_no = input_data['design_no']
+    var_email = input_data['email']
+    var_param = input_data['params']
 
+    if var_record_mode == '':
+        record_mode = []
+    else:
+        record_mode = [str(x).strip() for x in var_record_mode.split(',')]
 
-  if var_record_mode == '':
-    record_mode = []
-  else:
-    record_mode = [str(x).strip() for x in var_record_mode.split(',')]
+    if var_program == '':
+        program = []
+    else:
+        program = [str(x).strip() for x in var_program.split(',')]
 
-  if var_program == '':
-    program = []
-  else:
-    program = [str(x).strip() for x in var_program.split(',')]
+    if len(var_read_only) == 0:
+        read_only = ''
+    else:
+        read_only = [str(x).strip() for x in var_read_only]
 
-  if len(var_read_only) == 0:
-    read_only = ''
-  else:
-    read_only = [str(x).strip() for x in var_read_only]
+    if var_doe_no == '':
+        doe_no = []
+    else:
+        doe_no = [str(x).strip() for x in var_doe_no.split(',')]
 
-  if var_doe_no == '':
-    doe_no = []
-  else:
-    doe_no = [str(x).strip() for x in var_doe_no.split(',')]
+    if var_design_no == '':
+        design_no = []
+    else:
+        design_no = [str(x).strip() for x in var_design_no.split(',')]
 
-  if var_design_no == '':
-    design_no = []
-  else:
-    design_no = [str(x).strip() for x in var_design_no.split(',')]
+    if var_email == '':
+        email = []
+    else:
+        email = [str(x).strip() for x in var_email.split(',')]
 
-  if var_email == '':
-    email = []
-  else:
-    email = [str(x).strip() for x in var_email.split(',')]
+    if len(var_param) == 0:
+        param = {}
+    else:
+        param = {}
+        for p in var_param:
+            for k, v in p.iteritems():
+                if v == '':
+                    param[str(k)] = []
+                else:
+                    param[str(k)] = [str(x).strip() for x in v.split(',')]
 
-  if len(var_param) == 0:
-    param = {}
-  else:
-    param = {}
-    for p in var_param:
-      for k, v in p.iteritems():
-        if v == '':
-          param[str(k)] = []
-        else:
-          param[str(k)] = [str(x).strip() for x in v.split(',')]
+    if len(var_flag) == 0:
+        flag = ['S']
+    else:
+        flag = var_flag
 
-  if len(var_flag) == 0:
-    flag = ['S']
-  else:
-    flag = var_flag
-
-  db = detdp()
-  result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
-  return jsonify({'status': result})
+    db = detdp()
+    result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
+    return jsonify({'status': result})
 
 
 @app.route('/get$colmn$mapping$pair')
 def get_colmapping_pair():
-  logging.info('API: /get$colmn$mapping$pair, method: get_colmapping_pair()')
-  db = detdp()
-  result = db.get_col_mapping()
-  return jsonify({'status': result})
+    logging.info('API: /get$colmn$mapping$pair, method: get_colmapping_pair()')
+    db = detdp()
+    result = db.get_col_mapping()
+    return jsonify({'status': result})
 
 
 @app.route('/set$colmn$mapping$pair', methods=['GET', 'POST'])
 def set_colmapping_pair():
-  logging.info('API: /set$colmn$mapping$pair, method: set_colmapping_pair()')
-  input_data = json.loads(request.data)
-  new_pair = []
-  for row in input_data:
-    tmp = {
-      'old_cols': str(row['old_cols']).lower(),
-      'new_cols': str(row['new_cols']).lower()
-    }
-    new_pair.append(tmp)
-  db = detdp()
-  result = db.set_col_mapping(new_pair)
-  return jsonify({'status': result})
+    logging.info('API: /set$colmn$mapping$pair, method: set_colmapping_pair()')
+    input_data = json.loads(request.data)
+    new_pair = []
+    for row in input_data:
+        tmp = {
+            'old_cols': str(row['old_cols']).lower(),
+            'new_cols': str(row['new_cols']).lower()
+        }
+        new_pair.append(tmp)
+    db = detdp()
+    result = db.set_col_mapping(new_pair)
+    return jsonify({'status': result})
 
 
 @app.route('/get$upload$log', methods=['GET', 'POST'])
 def get_upload_log():
-  logging.info('API: /get$upload$log, method: get_upload_log()')
-  input_data = json.loads(request.data)
-  s_y = input_data['s_y']
-  s_m = input_data['s_m']
-  s_d = input_data['s_d']
-  e_y = input_data['e_y']
-  e_m = input_data['e_m']
-  e_d = input_data['e_d']
-  db = detdp()
-  result = db.get_upload_log(s_y, s_m, s_d, e_y, e_m, e_d)
-  return jsonify({'status': result})
+    logging.info('API: /get$upload$log, method: get_upload_log()')
+    input_data = json.loads(request.data)
+    s_y = input_data['s_y']
+    s_m = input_data['s_m']
+    s_d = input_data['s_d']
+    e_y = input_data['e_y']
+    e_m = input_data['e_m']
+    e_d = input_data['e_d']
+    db = detdp()
+    result = db.get_upload_log(s_y, s_m, s_d, e_y, e_m, e_d)
+    return jsonify({'status': result})
 
 
 @app.route('/get$manual$upload', methods=['GET', 'POST'])
 def get_manual_upload():
-  logging.info('API: /get$manual$upload, method: get_manual_upload()')
-  auto_upload = detdpautoupload()
-  result = auto_upload.get_file('Admin_manual')
-  if result:
-    msg = 'Upload finished, go to log for information.'
-  else:
-    msg = 'System error, need admin configuration '
-  logging.info('Finish manual upload,call method')
-  return jsonify({'status': msg})
+    logging.info('API: /get$manual$upload, method: get_manual_upload()')
+    auto_upload = detdpautoupload()
+    result = auto_upload.get_file('Admin_manual')
+    if result:
+        msg = 'Upload finished, go to log for information.'
+    else:
+        msg = 'System error, need admin configuration '
+    logging.info('Finish manual upload,call method')
+    return jsonify({'status': msg})
 
 
 @app.route('/get$link$cols$list$predix')
 def get_linkcols_prefix():
-  logging.info('API: /get$link$cols$list$predix, method: get_autoupload_conf()')
-  db = detdp()
-  result = db.get_autoupload_conf()
-  return jsonify({'status': result})
+    logging.info('API: /get$link$cols$list$predix, method: get_autoupload_conf()')
+    db = detdp()
+    result = db.get_autoupload_conf()
+    return jsonify({'status': result})
 
 
 @app.route('/set$link$cols$list$predix', methods=['GET', 'POST'])
 def set_linlcols_prefix():
-  logging.info('API: /set$link$cols$list$predix, method : set_autoupload_conf')
-  input_data = json.loads(request.data)
-  data_prefix = input_data['data_prefix']
-  conf_prefix = input_data['conf_prefix']
-  link_list = [x.lower() for x in input_data['link_list']]
-  db = detdp()
-  result = db.set_autoupload_conf(data_prefix, conf_prefix, link_list)
-  if result:
-    msg = 'SAVE DONE!'
-  else:
-    msg = 'SAVE FAILED'
-  return jsonify({'status': msg})
+    logging.info('API: /set$link$cols$list$predix, method : set_autoupload_conf')
+    input_data = json.loads(request.data)
+    data_prefix = input_data['data_prefix']
+    conf_prefix = input_data['conf_prefix']
+    link_list = [x.lower() for x in input_data['link_list']]
+    db = detdp()
+    result = db.set_autoupload_conf(data_prefix, conf_prefix, link_list)
+    if result:
+        msg = 'SAVE DONE!'
+    else:
+        msg = 'SAVE FAILED'
+    return jsonify({'status': msg})
 
 
 @app.route('/get$exp$type')
 def get_exp_type():
-  logging.info('API: /get$exp$type, method: get_exp_type()')
-  db = detdp()
-  result = db.get_exp_type()
-  return jsonify({'status': result})
+    logging.info('API: /get$exp$type, method: get_exp_type()')
+    db = detdp()
+    result = db.get_exp_type()
+    return jsonify({'status': result})
 
 
 @app.route('/set$exp$type', methods=['GET', 'POST'])
 def set_exp_type():
-  logging.info('API: /set$exp$type, method: set_exp_type()')
-  input_data = json.loads(request.data)
-  exp_type = [x.lower() for x in input_data]
-  db = detdp()
-  result = db.set_exp_type(exp_type)
-  if result:
-    msg = 'SAVE DONE!'
-  else:
-    msg = 'SAVE FAILED'
-  return jsonify({'status': msg})
+    logging.info('API: /set$exp$type, method: set_exp_type()')
+    input_data = json.loads(request.data)
+    exp_type = [x.lower() for x in input_data]
+    db = detdp()
+    result = db.set_exp_type(exp_type)
+    if result:
+        msg = 'SAVE DONE!'
+    else:
+        msg = 'SAVE FAILED'
+    return jsonify({'status': msg})
 
 
 @app.route('/upload$work$file', methods=['GET', 'POST'])
 def upload_work_file():
-  logging.info('API: /upload$work$file, method: upload_temp()')
-  if request.method == 'POST':
-    db = detdp()
-    file = request.files['file']
-    file_id = db.upload_temp(file)
-    result = {
-      'file_name': file.filename,
-      'file_id': str(file_id)
-    }
-  return jsonify({'status': result})
+    logging.info('API: /upload$work$file, method: upload_temp()')
+    if request.method == 'POST':
+        db = detdp()
+        file = request.files['file']
+        file_id = db.upload_temp(file)
+        result = {
+            'file_name': file.filename,
+            'file_id': str(file_id)
+        }
+    return jsonify({'status': result})
 
 
 @app.route('/cancel$work$file$upload', methods=['GET', 'POST'])
 def del_work_file():
-  logging.info('API: /cancel$work$file$upload, method: delete_temp()')
-  result = True
-  db = detdp()
-  input_data = json.loads(request.data)
-  for row in input_data:
-    logging.info('Delete File: '.format(row['file_name']))
-    file_id = row['file_id']
-    tmp = db.delete_temp(file_id)
-    result = result and tmp
+    logging.info('API: /cancel$work$file$upload, method: delete_temp()')
+    result = True
+    db = detdp()
+    input_data = json.loads(request.data)
+    for row in input_data:
+        logging.info('Delete File: '.format(row['file_name']))
+        file_id = row['file_id']
+        tmp = db.delete_temp(file_id)
+        result = result and tmp
 
-  if result:
-    msg = "CANCEL DONE"
-  else:
-    msg = "CANCAL FAILED"
+    if result:
+        msg = "CANCEL DONE"
+    else:
+        msg = "CANCAL FAILED"
 
-  return jsonify({'status': msg})
+    return jsonify({'status': msg})
 
 
 @app.route('/confirm$work$file$upload', methods=['GET', 'POST'])
 def confirm_work_file():
-  logging.info('API: /confirm$work$file$upload, method: upload_work_file_toDB()')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  program = input_data['program']
-  record_mode = input_data['record_mode']
-  read_only = input_data['read_only']
-  exp_type = input_data['exp_type']
-  project = input_data['project']
-  tester = input_data['tester']
-  comment = input_data['comment']
-  file_list = input_data['files']
+    logging.info('API: /confirm$work$file$upload, method: upload_work_file_toDB()')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    program = input_data['program']
+    record_mode = input_data['record_mode']
+    read_only = input_data['read_only']
+    exp_type = input_data['exp_type']
+    project = input_data['project']
+    tester = input_data['tester']
+    comment = input_data['comment']
+    file_list = input_data['files']
 
-  result = db.upload_work_file_toDB(exp_user, program, record_mode, read_only, exp_type, project, tester, comment,
-                                    file_list)
-  if result:
-    msg = 'UPLOAD DONE.'
-  else:
-    msg = 'UPLOAD FAILED'
-  return jsonify({'status': msg})
+    result = db.upload_work_file_toDB(exp_user, program, record_mode, read_only, exp_type, project, tester, comment,
+                                      file_list)
+    if result:
+        msg = 'UPLOAD DONE.'
+    else:
+        msg = 'UPLOAD FAILED'
+    return jsonify({'status': msg})
 
 
 @app.route('/get$work$file$summary', methods=['GET', 'POST'])
 def get_work_file_summary():
-  logging.info('API: /confirm$work$file$upload, method: get_work_file_overview()')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  time_range = input_data['shownPeriod']
-  result = db.get_work_file_overview(exp_user, time_range, '', '')
+    logging.info('API: /confirm$work$file$upload, method: get_work_file_overview()')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    time_range = input_data['shownPeriod']
+    result = db.get_work_file_overview(exp_user, time_range, '', '')
 
-  return jsonify({'status': result})
+    return jsonify({'status': result})
 
 
 @app.route('/search$work$file$summary', methods=['GET', 'POST'])
 def search_work_file_summary():
-  logging.info('API: /search$work$file$summary, method: get_work_file_overview')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  s_y = input_data['s_y']
-  s_m = input_data['s_m']
-  s_d = input_data['s_d']
+    logging.info('API: /search$work$file$summary, method: get_work_file_overview')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    s_y = input_data['s_y']
+    s_m = input_data['s_m']
+    s_d = input_data['s_d']
 
-  e_y = input_data['e_y']
-  e_m = input_data['e_m']
-  e_d = input_data['e_d']
-  start_time = datetime(int(s_y), int(s_m), int(s_d))
-  end_time = datetime(int(e_y), int(e_m), int(e_d), 23, 59, 59)
-  result = db.get_work_file_overview(exp_user, '', start_time, end_time)
-  return jsonify({'status': result})
+    e_y = input_data['e_y']
+    e_m = input_data['e_m']
+    e_d = input_data['e_d']
+    start_time = datetime(int(s_y), int(s_m), int(s_d))
+    end_time = datetime(int(e_y), int(e_m), int(e_d), 23, 59, 59)
+    result = db.get_work_file_overview(exp_user, '', start_time, end_time)
+    return jsonify({'status': result})
 
 
 @app.route('/concat$work$file', methods=['GET', 'POST'])
 def concat_work_file_toOne():
-  logging.info('API: /concat$work$file, method: concat_work_file')
-  db = detdp()
-  input_data = json.loads(request.data)
-  concat_user = input_data['concat_user']
-  expSelection = input_data['expSelection']
-  concat_files = []
-  for row in expSelection:
-    if row.get('exp_user') == '' or row.get('exp_no') == '' or row.get('sub_exps') == '' or row.get(
-      'exp_user') is None or row.get('exp_no') is None or row.get('sub_exps') is None:
-      result = []
-      break
-    else:
-      tmp = {}
-      tmp['exp_user'] = row.get('exp_user')
-      tmp['exp_no'] = int(row.get('exp_no'))
-      tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
-      concat_files.append(tmp)
+    logging.info('API: /concat$work$file, method: concat_work_file')
+    db = detdp()
+    input_data = json.loads(request.data)
+    concat_user = input_data['concat_user']
+    expSelection = input_data['expSelection']
+    concat_files = []
+    for row in expSelection:
+        if row.get('exp_user') == '' or row.get('exp_no') == '' or row.get('sub_exps') == '' or row.get(
+                'exp_user') is None or row.get('exp_no') is None or row.get('sub_exps') is None:
+            result = []
+            break
+        else:
+            tmp = {}
+            tmp['exp_user'] = row.get('exp_user')
+            tmp['exp_no'] = int(row.get('exp_no'))
+            tmp['sub_exps'] = '*' if row.get('sub_exps') == '*' else [int(x) for x in row.get('sub_exps').split(',')]
+            concat_files.append(tmp)
 
-  result = db.concat_work_file(concat_user, concat_files)
-  return jsonify({'status': result})
+    result = db.concat_work_file(concat_user, concat_files)
+    return jsonify({'status': result})
 
 
 @app.route('/get$sub$exp$detail', methods=['GET', 'POST'])
 def get_sub_exp_detail():
-  logging.info('API: /get$sub$exp$detail, method: get_work_file_subfile')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  exp_no = input_data['exp_no']
-  result = db.get_work_file_subfile(exp_user, exp_no)
-  return jsonify({'status': result})
+    logging.info('API: /get$sub$exp$detail, method: get_work_file_subfile')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    exp_no = input_data['exp_no']
+    result = db.get_work_file_subfile(exp_user, exp_no)
+    return jsonify({'status': result})
 
 
 @app.route('/save$sub$work$file$del', methods=['GET', 'POST'])
 def save_sub_work_file_del():
-  logging.info('API: /save$sub$work$file$del, method: delete_sub_file')
-  db = detdp()
-  del_key = []
-  del_list = []
-  input_data = json.loads(request.data)
-  for row in input_data:
-    tmp = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no')}
-    if tmp not in del_key:
-      del_key.append(tmp)
-      del_sub_exp_list = [row.get('sub_exp')]
-      oneList = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no'),
-                 'del_sub_exp_list': del_sub_exp_list}
-      del_list.append(oneList)
+    logging.info('API: /save$sub$work$file$del, method: delete_sub_file')
+    db = detdp()
+    del_key = []
+    del_list = []
+    input_data = json.loads(request.data)
+    for row in input_data:
+        tmp = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no')}
+        if tmp not in del_key:
+            del_key.append(tmp)
+            del_sub_exp_list = [row.get('sub_exp')]
+            oneList = {'exp_user': row.get('exp_user'), 'exp_no': row.get('exp_no'),
+                       'del_sub_exp_list': del_sub_exp_list}
+            del_list.append(oneList)
+        else:
+            for one in del_list:
+                if one.get('exp_user') == row.get('exp_user') and one.get('exp_no') == row.get('exp_no'):
+                    one.get('del_sub_exp_list').append(row.get('sub_exp'))
+                    break;
+
+    result = True
+    for t in del_list:
+        logging.info(
+            'Delete --- exp_user : {}, exp_no : {}, del_sub_exp_list : {}'.format(t.get('exp_user'), t.get('exp_no'),
+                                                                                  t.get('del_sub_exp_list')))
+        result = result and db.delete_sub_file(t.get('exp_user'), t.get('exp_no'), t.get('del_sub_exp_list'))
+
+    if result:
+        msg = 'DELETE SUB FILES SUCCEED.'
     else:
-      for one in del_list:
-        if one.get('exp_user') == row.get('exp_user') and one.get('exp_no') == row.get('exp_no'):
-          one.get('del_sub_exp_list').append(row.get('sub_exp'))
-          break;
+        msg = 'DELETE SUB FILES FAILED.'
 
-  result = True
-  for t in del_list:
-    logging.info('Delete --- exp_user : {}, exp_no : {}, del_sub_exp_list : {}'.format(t.get('exp_user'), t.get('exp_no'),
-                                                                                t.get('del_sub_exp_list')))
-    result = result and db.delete_sub_file(t.get('exp_user'), t.get('exp_no'), t.get('del_sub_exp_list'))
-
-  if result:
-    msg = 'DELETE SUB FILES SUCCEED.'
-  else:
-    msg = 'DELETE SUB FILES FAILED.'
-
-  return jsonify({'status': msg})
+    return jsonify({'status': msg})
 
 
 @app.route('/del$experiment', methods=['GET', 'POST'])
 def del_experiment():
-  logging.info('API: /del$experiment, method: delete_exp_file')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  exp_no = int(input_data['exp_no'])
+    logging.info('API: /del$experiment, method: delete_exp_file')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    exp_no = int(input_data['exp_no'])
 
-  result = db.delete_exp_file(exp_user, exp_no)
-  if result:
-    msg = 'DELETE EXPERIMENT SUCCEED.'
-  else:
-    msg = 'DELETE EXPERIMENT FAILED.'
+    result = db.delete_exp_file(exp_user, exp_no)
+    if result:
+        msg = 'DELETE EXPERIMENT SUCCEED.'
+    else:
+        msg = 'DELETE EXPERIMENT FAILED.'
 
-  return jsonify({'status': msg})
+    return jsonify({'status': msg})
 
 
 @app.route('/confirm$add$work$file', methods=['GET', 'POST'])
 def add_work_file_to_exp():
-  logging.info('API: /confirm$add$work$file, method: add_sub_file')
-  db = detdp()
-  input_data = json.loads(request.data)
-  exp_user = input_data['exp_user']
-  exp_no = int(input_data['exp_no'])
-  sub_exp_list = input_data['files']
+    logging.info('API: /confirm$add$work$file, method: add_sub_file')
+    db = detdp()
+    input_data = json.loads(request.data)
+    exp_user = input_data['exp_user']
+    exp_no = int(input_data['exp_no'])
+    sub_exp_list = input_data['files']
 
-  result = db.add_sub_file(exp_user, exp_no, sub_exp_list)
-  if result:
-    msg = 'ADD FILES SUCCEED.'
-  else:
-    msg = 'ADD FILES FAILED.'
+    result = db.add_sub_file(exp_user, exp_no, sub_exp_list)
+    if result:
+        msg = 'ADD FILES SUCCEED.'
+    else:
+        msg = 'ADD FILES FAILED.'
 
-  return jsonify({'status': msg})
+    return jsonify({'status': msg})
 
 
 if __name__ == "__main__":
-  app.run(debug=True)
+    logging.config.fileConfig('logging.conf')
+    app.run(debug=True)
