@@ -9,7 +9,7 @@
  */
 
 angular.module('detdpdemoApp')
-  .controller('sysUploadLogCtrl', function ($scope, $http, $mdToast) {
+  .controller('sysUploadLogCtrl', function ($scope, $http, $mdToast, usSpinnerService) {
 
     $scope.search = {
       user_name: $scope.currentUser ? $scope.currentUser.id : '',
@@ -159,8 +159,10 @@ angular.module('detdpdemoApp')
     };
 
     $scope.doManualUpload = function (){
+      usSpinnerService.spin('manualUploadSpinner');
       $http.post('/get$manual$upload').then (function (response) {
         var msg = response.data.status;
+        usSpinnerService.stop('manualUploadSpinner');
         $scope.showSimpleToast(msg);
       }, function () {
       });

@@ -21,6 +21,11 @@
   <form flex = "90" layout = "row">
     <span class="md-headline">Search and Retrieve Customized Files</span>
     <span flex></span>
+    <div layout="row">
+      <md-checkbox ng-model="criteria.corr_flag">
+        Correlation
+      </md-checkbox>
+    </div>
     <md-button class="md-primary md-raised" ng-click="doSearchSummary()">Search</md-button>
 
       <div layout="row" layout-align="end center">
@@ -204,11 +209,11 @@
                       Full Device
                     </md-checkbox>
                     <md-input-container>
-                      <label>DOE Number</label>
+                      <label>DOE</label>
                       <input ng-model="criteria.doe_no">
                     </md-input-container>
                     <md-input-container>
-                      <label>Design Number</label>
+                      <label>Design</label>
                       <input ng-model="criteria.design_no" >
                     </md-input-container>
                   </md-content>

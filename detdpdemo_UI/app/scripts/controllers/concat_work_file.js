@@ -145,6 +145,7 @@ angular.module('detdpdemoApp')
     $scope.doConcatWorkFile = function(){
       usSpinnerService.spin('concatSpinner');
       if ($scope.expSelection.length === 0){
+          usSpinnerService.stop('concatSpinner');
           $mdDialog.show(
                       $mdDialog.alert()
                         .parent(angular.element(document.querySelector('#popupContainer')))

@@ -552,7 +552,7 @@ class detdp:
 
   def get_file_retrieve(self, user_name, program, record_mode, read_only, doe_no, design_no, parameter,
                         addition_email,
-                        flag):
+                        flag,var_corr):
     str_method = 'get_file_retrieve( user_name = {}, program = {}, record_mode = {}, read_only = {}, doe_no = {}, design_no = {}, parameter = {}, addition_email = {}, flag = {})'.format(
       user_name, program, record_mode, read_only, doe_no, design_no, parameter, addition_email, flag)
     logging.info('call method: '.format(str_method))
@@ -578,8 +578,8 @@ class detdp:
       query_dict['read_only'] = {}
       query_dict['read_only']['$in'] = read_only
     if len(doe_no) > 0:
-      query_dict['doe#'] = {}
-      query_dict['doe#']['$in'] = doe_no
+      query_dict['doe'] = {}
+      query_dict['doe']['$in'] = doe_no
     if len(design_no) > 0:
       query_dict['design'] = {}
       query_dict['design']['$in'] = design_no
@@ -608,8 +608,8 @@ class detdp:
       final_header_list_full = []
       final_header_list_cust = []
       timestamp = time.strftime('%Y%m%d%H%M%S')
-      # path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
-      path = '//mapserverdev/DETDP/Retrieve_Files'
+      path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
+      # path = '//mapserverdev/DETDP/Retrieve_Files'
       # -----------Flag is 'S', using standard columns list
 
 
@@ -801,21 +801,25 @@ class detdp:
         logging.info("write to: ".format(file_name_stand))
         final_pf.to_csv(file_name_stand, index=False)
 
+
         # ----------Trial for correlation plotting--------------------------
-        dim = 'doe'
-        param_x = 'shsnr (db)'
-        param_y = 'shem (db)'
-        ll_x = 8
-        ll_y = 1.5
-        ul_x = 100000
-        ul_y = 100000
-        p_value_limit = 0.5
-        file_name = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
-        # image_path = '//mapserverdev/DETDP/Images'
-        image_path = 'static/images/tmp'
-        url_path = 'images/tmp'
-        obj = linearregression()
-        plot = obj.get_data(final_pf, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user_name,image_path, url_path, file_name)
+        if var_corr:
+          dim = 'doe'
+          param_x = 'shsnr (db)'
+          param_y = 'shem (db)'
+          ll_x = 8
+          ll_y = 1.5
+          ul_x = 100000
+          ul_y = 100000
+          p_value_limit = 0.5
+          file_name = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
+          # image_path = '//mapserverdev/DETDP/Images'
+          image_path = 'static/images/tmp'
+          url_path = 'images/tmp'
+          obj = linearregression()
+          plot = obj.get_data(final_pf, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user_name,image_path, url_path, file_name)
+        else:
+          plot = {}
 
       if len(final_header_list_cust) > 0:
         logging.info("concat cust file")

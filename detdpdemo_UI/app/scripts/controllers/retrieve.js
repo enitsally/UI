@@ -21,6 +21,7 @@ angular.module('detdpdemoApp')
       doe_no: '',
       design_no : '',
       email : '',
+      corr_flag: false,
       user_name: $scope.currentUser ? $scope.currentUser.id : ''
     };
 
@@ -271,48 +272,62 @@ angular.module('detdpdemoApp')
         }
 
         if (fileName.length !==0){
-          var confirm =  $mdDialog.confirm()
-                       .parent(angular.element(document.querySelector('#popupContainer')))
-                       .ariaLabel('Lucky day')
-                       .title(fileName)
-                       .ok('See plotting!')
-                       .cancel('No, Finished.');
-          $mdDialog.show(confirm).then(function() {
-              var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
-              $mdDialog.show({
-                templateUrl: 'views/correlation_plot.html',
-                parent: angular.element(document.body),
-                clickOutsideToClose: false,
-                locals: {
-                  corr: $scope.correlation.result_dict,
-                  info: $scope.correlation.corr_info
-                },
-                scope: $scope,        // use parent scope in template
-                preserveScope: true,
-                fullscreen: useFullScreen,
-                controller: DialogController
-              });
+          if ($scope.criteria.corr_flag === true)
+          {
+              var confirm =  $mdDialog.confirm()
+                           .parent(angular.element(document.querySelector('#popupContainer')))
+                           .ariaLabel('Lucky day')
+                           .title(fileName)
+                           .ok('See plotting!')
+                           .cancel('No, Finished.');
+              $mdDialog.show(confirm).then(function() {
+                  var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+                  $mdDialog.show({
+                    templateUrl: 'views/correlation_plot.html',
+                    parent: angular.element(document.body),
+                    clickOutsideToClose: false,
+                    locals: {
+                      corr: $scope.correlation.result_dict,
+                      info: $scope.correlation.corr_info
+                    },
+                    scope: $scope,        // use parent scope in template
+                    preserveScope: true,
+                    fullscreen: useFullScreen,
+                    controller: DialogController
+                  });
 
-              $scope.$watch(function() {
-                  return $mdMedia('xs') || $mdMedia('sm');
-                }, function(wantsFullScreen) {
-                  $scope.customFullscreen = (wantsFullScreen === true);
-                });
+                  $scope.$watch(function() {
+                      return $mdMedia('xs') || $mdMedia('sm');
+                    }, function(wantsFullScreen) {
+                      $scope.customFullscreen = (wantsFullScreen === true);
+                    });
 
-              function DialogController($scope, $mdDialog, corr, info) {
-                $scope.items = corr;
-                $scope.info = info;
-                $scope.cancel = function() {
-                  $mdDialog.cancel();
-                };
+                  function DialogController($scope, $mdDialog, corr, info) {
+                    $scope.items = corr;
+                    $scope.info = info;
+                    $scope.cancel = function() {
+                      $mdDialog.cancel();
+                    };
 
-                $scope.expert = function(){
+                    $scope.expert = function(){
 
-                };
-              };
-            }, function() {
-                }
-          );
+                    };
+                  }
+                }, function() {
+                    }
+              );
+          }
+          else {
+            {
+              var confirm2 =  $mdDialog.confirm()
+                           .parent(angular.element(document.querySelector('#popupContainer')))
+                           .ariaLabel('Lucky day')
+                           .title(fileName)
+                           .ok('OK, Got it.');
+              $mdDialog.show(confirm2);
+            }
+          }
+
         }
 
       });

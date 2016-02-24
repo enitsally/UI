@@ -306,6 +306,7 @@ def get_file_retrieve():
     var_design_no = input_data['design_no']
     var_email = input_data['email']
     var_param = input_data['params']
+    var_corr = input_data['corr_flag']
 
     if var_record_mode == '':
         record_mode = []
@@ -354,7 +355,7 @@ def get_file_retrieve():
         flag = var_flag
 
     db = detdp()
-    result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag)
+    result = db.get_file_retrieve(user_name, program, record_mode, read_only, doe_no, design_no, param, email, flag, var_corr)
     return jsonify({'status': result})
 
 
