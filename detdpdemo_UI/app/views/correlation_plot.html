@@ -1,16 +1,24 @@
 <style>
-         table, th , td {
+         /*table, th , td {
             border-collapse: collapse;
             padding: 5px;
+         }*/
+
+         table {
+           border-collapse: collapse;
          }
 
-         table tr:nth-child(odd) {
+         table, th, td {
+            border: 1px solid black;
+          }
+
+         /*table tr:nth-child(odd) {
             background-color: #f2f2f2;
          }
 
          table tr:nth-child(even) {
             background-color: #ffffff;
-         }
+         }*/
 </style>
 <md-dialog aria-label="Correlation Plot">
   <form>
@@ -27,26 +35,67 @@
       <div class="md-dialog-content">
         <p></p>
         <div ng-repeat ="doe in items">
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Raw Data</th>
-                <th>wo User Outlier</th>
-                <th>wo Algorith Outlier</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-          <div>{{doe}}</div>
-          <!-- <img ng-src="{{doe.image_path}}"/> -->
+          <div layout="row" layout-align="center center">
+            <table>
+              <thead>
+                <tr>
+                  <th bgcolor="#f2f2f2">DOE:{{doe.doe}}</th>
+                  <th bgcolor="#f2f2f2" colspan="2">Raw Data</th>
+                  <th bgcolor="#f2f2f2" colspan="2">wo User Outlier</th>
+                  <th bgcolor="#f2f2f2" colspan="2">wo Algorith Outlier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Equation</td>
+                  <td colspan="2">{{info.param_y}} = {{doe.rd_params[0].toFixed(6)}} + {{doe.rd_params[1].toFixed(6)}} * {{info.param_x}}</td>
+                  <td colspan="2">{{info.param_y}} = {{doe.uo_params[0].toFixed(6)}} + {{doe.uo_params[1].toFixed(6)}} * {{info.param_x}}</td>
+                  <td colspan="2">{{info.param_y}} = {{doe.ao_params[0].toFixed(6)}} + {{doe.ao_params[1].toFixed(6)}} * {{info.param_x}}</td>
+                </tr>
+                <tr>
+                  <td>RSquare</td>
+                  <td colspan="2">{{doe.rd_r_sqr.toFixed(6)}}</td>
+                  <td colspan="2">{{doe.uo_r_sqr.toFixed(6)}}</td>
+                  <td colspan="2">{{doe.ao_r_sqr.toFixed(6)}}</td>
+                </tr>
+                <tr>
+                  <td>Root Mean Square Error</td>
+                  <td colspan="2">{{doe.rd_rmse.toFixed(6)}}</td>
+                  <td colspan="2">{{doe.uo_rmse.toFixed(6)}}</td>
+                  <td colspan="2">{{doe.ao_rmse.toFixed(6)}}</td>
+                </tr>
+                <tr>
+                  <td rowspan="3">Information</td>
+                  <td>Total Data Size</td><td>{{doe.total_data_size}}</td>
+                  <td>Total Data Size</td><td>{{doe.total_data_size_uo}}</td>
+                  <td>Total Data Size</td><td>{{doe.total_data_size_ao}}</td>
+                </tr>
+                <tr>
+                  <td></td><td></td>
+                  <td>User Outlier Size</td><td>{{doe.uo_size}} ({{(doe.uo_size/doe.total_data_size*100).toFixed(6)}}%)</td>
+                  <td>User Outlier Size</td><td>{{doe.ao_size}} ({{(doe.ao_size/doe.total_data_size*100).toFixed(6)}}%)</td>
+                </tr>
+                <tr>
+                  <td></td><td></td>
+                  <td>Spec Limit</td><td>{{info.param_x}}:[{{info.ll_x}},{{info.ul_x}}]; {{info.param_y}}:[{{info.ll_y}},{{info.ul_y}}]</td>
+                  <td>P-Value Limit</td><td>{{info.p_value_limit}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div><img class="md-card-image" ng-src="{{doe.image_path}}"/></div>
+           <md-divider ng-if="!$last"></md-divider>
         </div>
       </div>
     </md-dialog-content>
+    <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button ng-click="export()">
+       Export Images
+      </md-button>
+      <md-button ng-click="cancel()" style="margin-right:20px;">
+        OK, Got it
+      </md-button>
+    </md-dialog-actions>
   </form>
 </md-dialog>

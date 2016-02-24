@@ -608,8 +608,8 @@ class detdp:
       final_header_list_full = []
       final_header_list_cust = []
       timestamp = time.strftime('%Y%m%d%H%M%S')
-      path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
-      # path = '//mapserverdev/DETDP/Retrieve_Files'
+      # path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
+      path = '//mapserverdev/DETDP/Retrieve_Files'
       # -----------Flag is 'S', using standard columns list
 
 
@@ -810,12 +810,12 @@ class detdp:
         ul_x = 100000
         ul_y = 100000
         p_value_limit = 0.5
+        file_name = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
         # image_path = '//mapserverdev/DETDP/Images'
         image_path = 'static/images/tmp'
         url_path = 'images/tmp'
         obj = linearregression()
-        plot = obj.get_data(final_pf, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user_name, timestamp,
-                            image_path, url_path)
+        plot = obj.get_data(final_pf, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user_name,image_path, url_path, file_name)
 
       if len(final_header_list_cust) > 0:
         logging.info("concat cust file")

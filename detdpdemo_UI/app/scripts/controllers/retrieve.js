@@ -9,7 +9,7 @@
  */
 angular.module('detdpdemoApp')
   .controller('RetrieveCtrl', function ($scope, $http, $mdToast, $mdDialog, $mdMedia, usSpinnerService) {
-    $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
+    $scope.customFullscreen = $mdMedia('gt-sm') || $mdMedia('gt-lg');
     $scope.criteria = {
       fullCol : false,
       cusCol : false,
@@ -304,6 +304,10 @@ angular.module('detdpdemoApp')
                 $scope.info = info;
                 $scope.cancel = function() {
                   $mdDialog.cancel();
+                };
+
+                $scope.expert = function(){
+
                 };
               };
             }, function() {

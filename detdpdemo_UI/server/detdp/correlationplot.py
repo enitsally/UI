@@ -5,13 +5,14 @@ from statsmodels.sandbox.regression.predstd import wls_prediction_std
 import math
 import time
 from datetime import datetime
+import os
 
 
 class linearregression:
     def __int__(self):
         pass
 
-    def get_data(self, df, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user, timestamps, image_path, url_path):
+    def get_data(self, df, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user, image_path, url_path, file_name):
         # path = 'input/test.csv'
         # with open(path, 'rb') as file:
         #     df = pd.read_csv(file)
@@ -24,6 +25,10 @@ class linearregression:
         # ul_x = 100000
         # ul_y = 100000
         # p_value_limit = 0.5
+
+        if not os.path.exists(image_path):
+            os.makedirs(image_path)
+
         dim_values = df[dim].unique()
         dim_grouped = df.groupby(dim)
         result_dict = []
@@ -44,12 +49,14 @@ class linearregression:
 
             prstd, iv_l, iv_u = wls_prediction_std(data)
 
-            # plt.style.use('ggplot')
+            plt.style.use('ggplot')
             figure, axes = plt.subplots(ncols=3, nrows=1)
 
             # manager = plt.get_current_fig_manager()
             # manager.window.showMaximized()
             figure.suptitle('{} "{}" (Data Size: {})'.format(dim, dv, total_data_vol), fontsize=14)
+            figure.set_size_inches(14.5,8.5)
+
             ax, ax_wo_user_outlier, ax_wo_algor_outlier = axes.ravel()
             ax.plot(axis_x, axis_y, 'o', label="Data")
 
@@ -62,7 +69,7 @@ class linearregression:
             # figure = smgraph.regressionplots.plot_fit(data, 0, ax=ax)
             ax.set_xlabel(param_x)
             ax.set_ylabel(param_y)
-            ax.set_title("Linear Regression - raw data")
+            ax.set_title("Linear Regression - raw data", fontsize = 10)
             # ax.text(0, 0, 'Total Data Size :{}'.format(total_data_vol), horizontalalignment='left',
             #         verticalalignment='bottom', transform=ax.transAxes)
 
@@ -71,8 +78,11 @@ class linearregression:
                                (axis_x[i] >= ll_x and axis_y[i] >= ll_y and axis_x[i] <= ul_x and axis_y[i] <= ul_y)]
             user_outlier = [(axis_x[i], axis_y[i]) for i in range(total_data_vol) if
                             (axis_x[i] < ll_x or axis_y[i] < ll_y or axis_x[i] > ul_x or axis_y[i] > ul_y)]
-            axis_x_wo_user_outlier, axis_y_wo_user_outlier = map(list, zip(*wo_user_outlier))
-            wo_user_outlier_x, wo_user_outlier_y = map(list, zip(*user_outlier))
+            if len(wo_user_outlier) > 0:
+              axis_x_wo_user_outlier, axis_y_wo_user_outlier = map(list, zip(*wo_user_outlier))
+            else:
+              axis_x_wo_user_outlier, axis_y_wo_user_outlier = [], []
+            # wo_user_outlier_x, wo_user_outlier_y = map(list, zip(*user_outlier))
             axis_X_wo_user_outlier = smapi.add_constant(axis_x_wo_user_outlier)
             total_data_wo_user_outlier_vol = len(axis_y_wo_user_outlier)
             tmp['total_data_size_uo'] = total_data_wo_user_outlier_vol
@@ -98,7 +108,7 @@ class linearregression:
 
             ax_wo_user_outlier.set_xlabel(param_x)
             ax_wo_user_outlier.set_ylabel(param_y)
-            ax_wo_user_outlier.set_title("Linear Regression - wo - User Outlier")
+            ax_wo_user_outlier.set_title("Linear Regression - wo - User Outlier", fontsize = 10)
 
             # ax_wo_user_outlier_position = ax_wo_user_outlier.get_position()
             # print 'location:',ax_wo_user_outlier_position
@@ -116,8 +126,11 @@ class linearregression:
                               enumerate(algor_test[:, 2]) if t < p_value_limit]
             algor_wo_outliers = [(axis_x_wo_user_outlier[i], axis_y_wo_user_outlier[i]) for i, t in
                                  enumerate(algor_test[:, 2]) if t >= p_value_limit]
-            axis_x_wo_algor_outlier, axis_y_wo_algor_outlier = map(list, zip(*algor_wo_outliers))
-            algor_outliers_x, algor_outliers_y = map(list, zip(*algor_outliers))
+            if len(algor_wo_outliers)> 0:
+              axis_x_wo_algor_outlier, axis_y_wo_algor_outlier = map(list, zip(*algor_wo_outliers))
+            else:
+              axis_x_wo_algor_outlier, axis_y_wo_algor_outlier = []
+            # algor_outliers_x, algor_outliers_y = map(list, zip(*algor_outliers))
             axis_X_wo_algor_outlier = smapi.add_constant(axis_x_wo_algor_outlier)
             total_data_wo_algor_outlier_vol = len(axis_y_wo_algor_outlier)
 
@@ -147,7 +160,7 @@ class linearregression:
 
             ax_wo_algor_outlier.set_xlabel(param_x)
             ax_wo_algor_outlier.set_ylabel(param_y)
-            ax_wo_algor_outlier.set_title("Linear Regression - wo - Algor Outlier")
+            ax_wo_algor_outlier.set_title("Linear Regression - wo - Algor Outlier", fontsize = 10)
             # ax_wo_algor_outlier.text(0, 0, 'Total Data Size :{}, Outlier: {}, Pert: {}%'.format(
             #     total_data_wo_algor_outlier_vol, len(algor_outliers),
             #     len(algor_outliers) + 0.0000 / (len(algor_outliers) + total_data_wo_algor_outlier_vol) * 100),
@@ -155,13 +168,12 @@ class linearregression:
 
             # plt.show()
 
-            fig_name = "{}/{}_{}_{}.png".format(image_path,user,dv,timestamps)
-            url_name = "{}/{}_{}_{}.png".format(url_path,user,dv,timestamps)
+            fig_name = "{}/{}_{}_{}.png".format(image_path,user,dv,file_name)
+            url_name = "{}/{}_{}_{}.png".format(url_path,user,dv,file_name)
             tmp['image_path'] = url_name
             result_dict.append(tmp)
-            figure.savefig(fig_name)
-
-        plt.close('all')
+            figure.savefig(fig_name, dpi=100)
+            plt.close('all')
 
         corr_info = {'param_x': param_x,
                      'll_x': ll_x,
@@ -190,5 +202,6 @@ if __name__ == '__main__':
     user = 'test'
     timestamps = time.strftime('%Y%m%d%H%M%S')
     image_path = '//mapserverdev/DETDP/Images'
-    result = obj.get_data(df,dim,param_x,ll_x,ul_x,param_y,ll_y, ul_y,p_value_limit,user, timestamps,image_path)
+    url_path = '//mapserverdev/DETDP/Images'
+    result = obj.get_data(df,dim,param_x,ll_x,ul_x,param_y,ll_y, ul_y,p_value_limit,user,image_path,url_path,'test_only')
     print result
