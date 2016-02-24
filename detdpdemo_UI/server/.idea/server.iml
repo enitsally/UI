@@ -6,6 +6,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="dataprofiling" />
     <orderEntry type="module" module-name="mapdev" />
+    <orderEntry type="module" module-name="machinelearning" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="Nosetests" />

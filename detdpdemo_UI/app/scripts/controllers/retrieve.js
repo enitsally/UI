@@ -8,8 +8,8 @@
  * Controller of the detdpdemoApp
  */
 angular.module('detdpdemoApp')
-  .controller('RetrieveCtrl', function ($scope, $http, $mdToast, $mdDialog, usSpinnerService) {
-
+  .controller('RetrieveCtrl', function ($scope, $http, $mdToast, $mdDialog, $mdMedia, usSpinnerService) {
+    $scope.customFullscreen = $mdMedia('xs') || $mdMedia('sm');
     $scope.criteria = {
       fullCol : false,
       cusCol : false,
@@ -66,9 +66,8 @@ angular.module('detdpdemoApp')
 
     $scope.doAddParam = function (){
       var tmp = {
-        'key': $scope.currentParam,
-        'value' : ''
-
+        key: $scope.currentParam,
+        value: ''
       };
 
       $scope.paramsSelection.push(tmp);
@@ -254,25 +253,65 @@ angular.module('detdpdemoApp')
         var std = response.data.status.std_file;
         var cus = response.data.status.cus_file;
         var full = response.data.status.full_file;
+        $scope.correlation = response.data.status.correlation;
         $scope.showSimpleToast(retrieveResult);
         var fileName = '';
-        if ($scope.criteria.fullCol === true){
+
+        if ($scope.criteria.fullCol === true ){
           fileName = fileName + full + ';';
+
         }
         if ($scope.criteria.cusCol === true){
-          fileName = fileName + cus + ';'
+          fileName = fileName + cus + ';';
+
         }
-        if ($scope.criteria.stdCol === true){
-          fileName = fileName + std + ';'
+        if ($scope.criteria.stdCol === true && std !== undefined){
+          fileName = fileName + std + ';';
+
         }
 
-        var alert =  $mdDialog.confirm()
-                     .parent(angular.element(document.querySelector('#popupContainer')))
-                     .title(fileName)
-                     .ok('Got it!');
-         $mdDialog.show(alert);
-      }, function () {
+        if (fileName.length !==0){
+          var confirm =  $mdDialog.confirm()
+                       .parent(angular.element(document.querySelector('#popupContainer')))
+                       .ariaLabel('Lucky day')
+                       .title(fileName)
+                       .ok('See plotting!')
+                       .cancel('No, Finished.');
+          $mdDialog.show(confirm).then(function() {
+              var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+              $mdDialog.show({
+                templateUrl: 'views/correlation_plot.html',
+                parent: angular.element(document.body),
+                clickOutsideToClose: false,
+                locals: {
+                  corr: $scope.correlation
+                },
+                scope: $scope,        // use parent scope in template
+                preserveScope: true,
+                fullscreen: useFullScreen,
+                controller: DialogController
+              });
+
+              $scope.$watch(function() {
+                  return $mdMedia('xs') || $mdMedia('sm');
+                }, function(wantsFullScreen) {
+                  $scope.customFullscreen = (wantsFullScreen === true);
+                });
+
+              function DialogController($scope, $mdDialog, corr) {
+                $scope.items = corr;
+                $scope.closeDialog = function () {
+                  $mdDialog.hide();
+                };
+              };
+            }, function() {
+                }
+          );
+        }
+
       });
+
+
     };
 
 
@@ -357,7 +396,6 @@ angular.module('detdpdemoApp')
             };
             colHead.push(tmp);
           }
-          console.log(content.length);
           var dataSource = {
               //rowCount: ???, - not setting the row count, infinite paging will be used
               pageSize: parseInt($scope.pageSize), // changing to number, as scope keeps it as a string
@@ -383,8 +421,8 @@ angular.module('detdpdemoApp')
           };
           $scope.gridOptions.api.setColumnDefs(colHead);
           $scope.gridOptions.api.setDatasource(dataSource);
-    })
-  }
+    });
+  };
 
 
       $scope.showSimpleToast = function(showmgs) {
@@ -404,7 +442,6 @@ angular.module('detdpdemoApp')
                   // this code should contact the server for rows. however for the purposes of the demo,
                   // the data is generated locally, a timer is used to give the experience of
                   // an asynchronous call
-                  console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                   setTimeout( function() {
                       // take a chunk of the array, matching the start and finish times
                       var rowsThisPage = content.slice(params.startRow, params.endRow);
@@ -427,6 +464,5 @@ angular.module('detdpdemoApp')
     $scope.onPageSizeChanged = function() {
         createNewDatasource();
     };
-
 
   });

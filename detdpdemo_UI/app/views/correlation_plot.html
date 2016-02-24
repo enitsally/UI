@@ -1,0 +1,36 @@
+<style>
+         table, th , td {
+            border-collapse: collapse;
+            padding: 5px;
+         }
+
+         table tr:nth-child(odd) {
+            background-color: #f2f2f2;
+         }
+
+         table tr:nth-child(even) {
+            background-color: #ffffff;
+         }
+</style>
+<md-dialog aria-label="Correlation Plot">
+  <form>
+    <md-toolbar>
+     <div class="md-toolbar-tools">
+       <h2>Correlation Plot</h2>
+       <span flex></span>
+       <md-button class="md-icon-button" ng-click="cancel()">
+         <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+       </md-button>
+     </div>
+   </md-toolbar>
+   <md-dialog-content>
+      <div class="md-dialog-content">
+        <h2>Using .md-dialog-content class that sets the padding as the spec</h2>
+        <p>
+          <div ng-repeat ="doe in items">
+            {{doe}}
+          </div>
+      </div>
+    </md-dialog-content>
+  </form>
+</md-dialog>

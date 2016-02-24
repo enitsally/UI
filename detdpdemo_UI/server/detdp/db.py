@@ -11,6 +11,7 @@ import time
 from datetime import datetime
 from datetime import timedelta
 import logging
+from correlationplot import linearregression
 
 
 class detdp:
@@ -490,8 +491,7 @@ class detdp:
     for k in keys:
       upload_key_list.append(k.get('upload_key'))
 
-
-    tmp = self.db.conf_file.find({'upload_key': { '$in' : upload_key_list}}, projection={'_id': False})
+    tmp = self.db.conf_file.find({'upload_key': {'$in': upload_key_list}}, projection={'_id': False})
     conf_tmp = self.db.system_conf.find_one({})
     if tmp.count() > 0:
       result = list(tmp)
@@ -608,8 +608,11 @@ class detdp:
       final_header_list_full = []
       final_header_list_cust = []
       timestamp = time.strftime('%Y%m%d%H%M%S')
+      # path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
+      path = '//mapserverdev/DETDP/Retrieve_Files'
       # -----------Flag is 'S', using standard columns list
-      path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
+
+
       if 'S' in flag:
         file_name_stand = '{}/{}_STANDARD_{}.csv'.format(path, user_name, timestamp)
         final_msg['std_file'] = '{}_STANDARD_{}.csv'.format(user_name, timestamp)
@@ -623,7 +626,9 @@ class detdp:
           data_header = [x for x in data]
         else:
           comment = 'No system standard column list.'
-          return comment
+          logging.warning(comment)
+          final_msg['comment'] = comment
+          return final_msg
 
         for head in data_header:
           if head not in final_header_list:
@@ -656,7 +661,6 @@ class detdp:
         else:
           data_header_full = []
 
-
         for head in data_header_full:
           if head not in final_header_list_full:
             tmp = mapping_head.get(head)
@@ -680,7 +684,7 @@ class detdp:
         data_cust = self.db.user.find_one({'user_name': user_name}, {'customized_cols': True}).get(
           'customized_cols')
         if data_cust is None:
-          logging.warning( "User don't have customized columns list, use the system standard column list")
+          logging.warning("User don't have customized columns list, use the system standard column list")
           data_cust = self.db.system_conf.find_one({}).get('standard_cols')
         if data_cust is not None:
           data_header_cust = [x for x in data_cust]
@@ -715,10 +719,10 @@ class detdp:
         doe_recordmode_search = f.get('record_mode')
         doe_readonly_search = f.get('read_only')
         if doe_name_search is not None:
-          logging.info( 'doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search,
-                                                                                     doe_program_search,
-                                                                                     doe_recordmode_search,
-                                                                                     doe_readonly_search))
+          logging.info('doe_name: {}, program : {}, record_mode : {}, read_only: {}'.format(doe_name_search,
+                                                                                            doe_program_search,
+                                                                                            doe_recordmode_search,
+                                                                                            doe_readonly_search))
           data_file_id = self.db.data_file.find_one(
             {'doe_name': doe_name_search, 'program': doe_program_search,
              'record_mode': doe_recordmode_search,
@@ -726,7 +730,9 @@ class detdp:
             {'data_file_id': True})
           if data_file_id is None:
             comment = "data file not found."
-            return comment
+            logging.warning(comment)
+            final_msg['comment'] = comment
+            return final_msg
           else:
             data_file_id = data_file_id.get('data_file_id')
           if data_file_id is not None:
@@ -751,7 +757,7 @@ class detdp:
                 temp['read_only'] = doe_readonly_search
 
                 final.append(temp)
-                logging.info( 'standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
+                logging.info('standard doe_name_search:{}, program:{}, record_mode:{}, read_only:{}'.format(
                   doe_name_search,
                   doe_program_search,
                   doe_recordmode_search,
@@ -794,20 +800,41 @@ class detdp:
         final_pf = pd.concat(final)
         logging.info("write to: ".format(file_name_stand))
         final_pf.to_csv(file_name_stand, index=False)
+
+        # ----------Trial for correlation plotting--------------------------
+        dim = 'doe'
+        param_x = 'shsnr (db)'
+        param_y = 'shem (db)'
+        ll_x = 8
+        ll_y = 1.5
+        ul_x = 100000
+        ul_y = 100000
+        p_value_limit = 0.5
+        image_path = '//mapserverdev/DETDP/Images'
+        obj = linearregression()
+        plot = obj.get_data(final_pf, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user_name, timestamp,
+                            image_path)
+
       if len(final_header_list_cust) > 0:
         logging.info("concat cust file")
         final_cust_pf = pd.concat(final_cust)
         logging.info("write to: ".format(file_name_cust))
         final_cust_pf.to_csv(file_name_cust, index=False)
+        plot = 'Not supported'
       if len(final_header_list_full) > 0:
         logging.info("concat full file")
         final_full_pf = pd.concat(final_full)
         logging.info("write to: ".format(file_name_full))
         final_full_pf.to_csv(file_name_full, index=False)
+        plot = 'Not supported'
       logging.info(final_msg)
       final_msg['comment'] = "File Aggregation succeed!"
+      final_msg['correlation'] = plot
+
     else:
       final_msg['comment'] = "Aggregated file not found."
+      final_msg['correlation'] = "No correlation images created due to aggregation file not found"
+
     return final_msg
 
   def get_col_mapping(self):
@@ -1103,7 +1130,7 @@ class detdp:
       file_id = d.get('file_id')
       if fs.exists(ObjectId(file_id)):
         with fs.get(ObjectId(file_id)) as data_file:
-          data_df = pd.read_csv(data_file, encoding='utf-8-sig')
+          data_df = pd.read_csv(data_file)
           data_df.columns = [x.lower() for x in data_df.columns]
           data_df.is_copy = False
 
@@ -1117,7 +1144,7 @@ class detdp:
           final.append(data_df)
       else:
         logging.info('exp_user: {}, exp_no: {}, sub_exp: {}, file_id: {}, NOT EXIST.'.format(exp_user, exp_no, sub_exp,
-                                                                                      file_id))
+                                                                                             file_id))
     # final_pf = pd.concat(final)
     # final_pf.to_csv(final_adr, index=False)
     # result = True
