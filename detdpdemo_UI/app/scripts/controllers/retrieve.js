@@ -284,7 +284,8 @@ angular.module('detdpdemoApp')
                 parent: angular.element(document.body),
                 clickOutsideToClose: false,
                 locals: {
-                  corr: $scope.correlation
+                  corr: $scope.correlation.result_dict,
+                  info: $scope.correlation.corr_info
                 },
                 scope: $scope,        // use parent scope in template
                 preserveScope: true,
@@ -298,10 +299,11 @@ angular.module('detdpdemoApp')
                   $scope.customFullscreen = (wantsFullScreen === true);
                 });
 
-              function DialogController($scope, $mdDialog, corr) {
+              function DialogController($scope, $mdDialog, corr, info) {
                 $scope.items = corr;
-                $scope.closeDialog = function () {
-                  $mdDialog.hide();
+                $scope.info = info;
+                $scope.cancel = function() {
+                  $mdDialog.cancel();
                 };
               };
             }, function() {

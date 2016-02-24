@@ -11,7 +11,7 @@ class linearregression:
     def __int__(self):
         pass
 
-    def get_data(self, df, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user, timestamps, image_path):
+    def get_data(self, df, dim, param_x, ll_x, ul_x, param_y, ll_y, ul_y, p_value_limit, user, timestamps, image_path, url_path):
         # path = 'input/test.csv'
         # with open(path, 'rb') as file:
         #     df = pd.read_csv(file)
@@ -44,8 +44,9 @@ class linearregression:
 
             prstd, iv_l, iv_u = wls_prediction_std(data)
 
-            plt.style.use('ggplot')
+            # plt.style.use('ggplot')
             figure, axes = plt.subplots(ncols=3, nrows=1)
+
             # manager = plt.get_current_fig_manager()
             # manager.window.showMaximized()
             figure.suptitle('{} "{}" (Data Size: {})'.format(dim, dv, total_data_vol), fontsize=14)
@@ -155,11 +156,23 @@ class linearregression:
             # plt.show()
 
             fig_name = "{}/{}_{}_{}.png".format(image_path,user,dv,timestamps)
-            tmp['image_path'] = fig_name
+            url_name = "{}/{}_{}_{}.png".format(url_path,user,dv,timestamps)
+            tmp['image_path'] = url_name
             result_dict.append(tmp)
             figure.savefig(fig_name)
 
-        return result_dict
+        plt.close('all')
+
+        corr_info = {'param_x': param_x,
+                     'll_x': ll_x,
+                     'ul_x': ul_x,
+                     'param_y': param_y,
+                     'll_y':ll_y,
+                     'ul_y':ul_y,
+                     'p_value_limit': p_value_limit
+                     }
+
+        return {'result_dict': result_dict, 'corr_info': corr_info}
 if __name__ == '__main__':
     obj = linearregression()
     path = '//mapserverdev/DETDP/Images/test.csv'

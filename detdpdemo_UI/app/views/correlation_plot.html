@@ -19,17 +19,33 @@
        <h2>Correlation Plot</h2>
        <span flex></span>
        <md-button class="md-icon-button" ng-click="cancel()">
-         <md-icon md-svg-src="img/icons/ic_close_24px.svg" aria-label="Close dialog"></md-icon>
+         <md-icon md-svg-src="images/icon/dialog_close.svg" aria-label="Close dialog"></md-icon>
        </md-button>
      </div>
    </md-toolbar>
    <md-dialog-content>
       <div class="md-dialog-content">
-        <h2>Using .md-dialog-content class that sets the padding as the spec</h2>
-        <p>
-          <div ng-repeat ="doe in items">
-            {{doe}}
-          </div>
+        <p></p>
+        <div ng-repeat ="doe in items">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Raw Data</th>
+                <th>wo User Outlier</th>
+                <th>wo Algorith Outlier</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+          <div>{{doe}}</div>
+          <!-- <img ng-src="{{doe.image_path}}"/> -->
+        </div>
       </div>
     </md-dialog-content>
   </form>
