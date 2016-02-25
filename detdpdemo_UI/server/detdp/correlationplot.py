@@ -55,7 +55,7 @@ class linearregression:
             # manager = plt.get_current_fig_manager()
             # manager.window.showMaximized()
             figure.suptitle('{} "{}" (Data Size: {})'.format(dim, dv, total_data_vol), fontsize=14)
-            figure.set_size_inches(14.5,8.5)
+            figure.set_size_inches(14.5,4.5)
 
             ax, ax_wo_user_outlier, ax_wo_algor_outlier = axes.ravel()
             ax.plot(axis_x, axis_y, 'o', label="Data")
