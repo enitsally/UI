@@ -608,8 +608,8 @@ class detdp:
       final_header_list_full = []
       final_header_list_cust = []
       timestamp = time.strftime('%Y%m%d%H%M%S')
-      # path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
-      path = '//mapserverdev/DETDP/Retrieve_Files'
+      path = '/MAP-Apps/DETDataProcessing/Retrieve_Files'
+      # path = '//mapserverdev/DETDP/Retrieve_Files'
       # -----------Flag is 'S', using standard columns list
 
 

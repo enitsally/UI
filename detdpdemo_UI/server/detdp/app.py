@@ -9,7 +9,7 @@ import pymongo
 import logging
 import logging.config
 
-# logging.config.fileConfig('logging.conf')
+logging.config.fileConfig('logging.conf')
 
 # UPLOAD_FOLDER_D = 'uploads/data'
 # UPLOAD_FOLDER_C = 'uploads/conf'
@@ -653,5 +653,5 @@ def add_work_file_to_exp():
 
 
 if __name__ == "__main__":
-    # logging.config.fileConfig('logging.conf')
+    logging.config.fileConfig('logging.conf')
     app.run(debug=True)

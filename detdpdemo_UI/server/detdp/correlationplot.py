@@ -1,12 +1,14 @@
 import pandas as pd
 import statsmodels.api as smapi
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 from statsmodels.sandbox.regression.predstd import wls_prediction_std
 import math
 import time
 from datetime import datetime
 import os
-
+import logging
 
 class linearregression:
     def __int__(self):
@@ -173,6 +175,7 @@ class linearregression:
             tmp['image_path'] = url_name
             result_dict.append(tmp)
             figure.savefig(fig_name, dpi=100)
+            logging.info('Save image:{}'.format(fig_name))
             plt.close('all')
 
         corr_info = {'param_x': param_x,
